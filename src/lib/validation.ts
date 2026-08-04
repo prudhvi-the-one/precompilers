@@ -1,7 +1,13 @@
 import { z } from "zod";
+import { isPasswordValid, PASSWORD_SPECIAL_CHARS } from "./passwordPolicy";
 
 const email = z.string().trim().toLowerCase().email();
-const password = z.string().min(8, "Password must be at least 8 characters");
+const password = z
+  .string()
+  .max(72, "Password must be at most 72 characters")
+  .refine(isPasswordValid, {
+    message: `Password must be at least 8 characters and include a letter, a number, and a special character (${PASSWORD_SPECIAL_CHARS})`,
+  });
 const otpCode = z.string().regex(/^\d{6}$/, "Code must be 6 digits");
 
 export const registerSchema = z.object({

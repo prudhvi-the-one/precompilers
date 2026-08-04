@@ -6,7 +6,8 @@ import Link from "next/link";
 import AuthCard from "@/components/auth/AuthCard";
 
 const inputClass =
-  "w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-500 focus:outline-none";
+  "w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-300";
+const labelClass = "mb-1 block text-sm font-medium text-gray-700";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -43,22 +44,32 @@ export default function LoginPage() {
   return (
     <AuthCard title="Log in to PreCompilers">
       <form onSubmit={handleSubmit} className="space-y-4">
-        <input
-          type="email"
-          placeholder="Email"
-          required
-          className={inputClass}
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          required
-          className={inputClass}
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
+        <div>
+          <label className={labelClass} htmlFor="email">
+            Email
+          </label>
+          <input
+            id="email"
+            type="email"
+            required
+            className={inputClass}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </div>
+        <div>
+          <label className={labelClass} htmlFor="password">
+            Password
+          </label>
+          <input
+            id="password"
+            type="password"
+            required
+            className={inputClass}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </div>
         {error ? <p className="text-sm text-red-600">{error}</p> : null}
         <button
           type="submit"

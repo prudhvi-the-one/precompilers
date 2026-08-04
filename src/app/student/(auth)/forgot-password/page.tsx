@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation";
 import AuthCard from "@/components/auth/AuthCard";
 
 const inputClass =
-  "w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-500 focus:outline-none";
+  "w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-300";
+const labelClass = "mb-1 block text-sm font-medium text-gray-700";
 
 export default function ForgotPasswordPage() {
   const router = useRouter();
@@ -32,14 +33,19 @@ export default function ForgotPasswordPage() {
       description="Enter your email and we'll send you a reset code, if an account exists."
     >
       <form onSubmit={handleSubmit} className="space-y-4">
-        <input
-          type="email"
-          placeholder="Email"
-          required
-          className={inputClass}
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
+        <div>
+          <label className={labelClass} htmlFor="email">
+            Email
+          </label>
+          <input
+            id="email"
+            type="email"
+            required
+            className={inputClass}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </div>
         <button
           type="submit"
           disabled={loading}
