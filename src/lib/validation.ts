@@ -43,3 +43,10 @@ export const resetPasswordSchema = z.object({
   code: otpCode,
   newPassword: password,
 });
+
+export const profileUpdateSchema = z.object({
+  name: z.string().trim().max(100).optional(),
+  college: z.string().trim().max(150).optional(),
+  branch: z.string().trim().max(100).optional(),
+  gradYear: z.number().int().min(2000).max(2100).nullable().optional(),
+});
