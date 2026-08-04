@@ -1,0 +1,128 @@
+"use client";
+
+import { useState } from "react";
+
+const inputClass =
+  "w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-300";
+const labelClass = "mb-1 block text-sm font-medium text-gray-700";
+
+const currentYear = new Date().getFullYear();
+const GRAD_YEARS = Array.from({ length: 7 }, (_, i) => currentYear - 1 + i);
+
+export default function ProfileForm({
+  initialName,
+  initialCollege,
+  initialBranch,
+  initialGradYear,
+}: {
+  initialName: string;
+  initialCollege: string;
+  initialBranch: string;
+  initialGradYear: number | null;
+}) {
+  const [name, setName] = useState(initialName);
+  const [college, setCollege] = useState(initialCollege);
+  const [branch, setBranch] = useState(initialBranch);
+  const [gradYear, setGradYear] = useState(
+    initialGradYear ? String(initialGradYear) : ""
+  );
+  const [status, setStatus] = useState<"idle" | "saving" | "saved" | "error">(
+    "idle"
+  );
+  const [error, setError] = useState<string | null>(null);
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setStatus("saving");
+    setError(null);
+
+    const res = await fetch("/api/profile", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name,
+        college,
+        branch,
+        gradYear: gradYear ? Number(gradYear) : null,
+      }),
+    });
+    const data = await res.json();
+
+    if (!res.ok) {
+      setStatus("error");
+      setError(data.error ?? "Something went wrong");
+      return;
+    }
+    setStatus("saved");
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div>
+        <label className={labelClass} htmlFor="name">
+          Full name
+        </label>
+        <input
+          id="name"
+          type="text"
+          className={inputClass}
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+      </div>
+      <div>
+        <label className={labelClass} htmlFor="college">
+          College
+        </label>
+        <input
+          id="college"
+          type="text"
+          className={inputClass}
+          value={college}
+          onChange={(e) => setCollege(e.target.value)}
+        />
+      </div>
+      <div>
+        <label className={labelClass} htmlFor="branch">
+          Branch
+        </label>
+        <input
+          id="branch"
+          type="text"
+          className={inputClass}
+          value={branch}
+          onChange={(e) => setBranch(e.target.value)}
+        />
+      </div>
+      <div>
+        <label className={labelClass} htmlFor="gradYear">
+          Graduation year
+        </label>
+        <select
+          id="gradYear"
+          className={inputClass}
+          value={gradYear}
+          onChange={(e) => setGradYear(e.target.value)}
+        >
+          <option value="">Select year</option>
+          {GRAD_YEARS.map((year) => (
+            <option key={year} value={year}>
+              {year}
+            </option>
+          ))}
+        </select>
+      </div>
+      {error ? <p className="text-sm text-red-600">{error}</p> : null}
+      {status === "saved" ? (
+        <p className="text-sm text-green-700">Saved.</p>
+      ) : null}
+      <button
+        type="submit"
+        disabled={status === "saving"}
+        className="rounded-md bg-black px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
+      >
+        {status === "saving" ? "Saving…" : "Save changes"}
+      </button>
+    </form>
+  );
+}
