@@ -20,7 +20,13 @@ function BoltBracketIcon() {
   );
 }
 
-export default function Logo({ className = "" }: { className?: string }) {
+export default function Logo({
+  className = "",
+  forceLight = false,
+}: {
+  className?: string;
+  forceLight?: boolean;
+}) {
   return (
     <Link
       href="/"
@@ -29,7 +35,13 @@ export default function Logo({ className = "" }: { className?: string }) {
       <BoltBracketIcon />
       <span className="text-lg font-extrabold tracking-tight">
         <span className="text-indigo-600">Pre</span>
-        <span className="text-gray-900 dark:text-white">Compilers</span>
+        <span
+          className={
+            forceLight ? "text-gray-900" : "text-gray-900 dark:text-white"
+          }
+        >
+          Compilers
+        </span>
       </span>
     </Link>
   );

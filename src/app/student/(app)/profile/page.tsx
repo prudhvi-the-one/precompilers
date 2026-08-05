@@ -14,12 +14,14 @@ export default async function ProfilePage() {
         <h1 className="text-2xl font-semibold text-gray-900">Profile</h1>
         <p className="text-sm text-gray-500">{user.email}</p>
       </div>
-      <ProfileForm
-        initialName={user.name ?? ""}
-        initialCollege={user.college ?? ""}
-        initialBranch={user.branch ?? ""}
-        initialGradYear={user.gradYear}
-      />
+      <div className="rounded-lg border border-gray-200 p-6">
+        <ProfileForm
+          initialName={user.name ?? ""}
+          initialCollege={user.college ?? ""}
+          initialBranch={user.branch ?? ""}
+          initialGradYear={user.gradYear}
+        />
+      </div>
     </div>
   );
 }
