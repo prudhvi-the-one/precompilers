@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
-import ProfileForm from "@/components/dashboard/ProfileForm";
+import ProfileForm from "@/components/profile/ProfileForm";
 
 export default async function ProfilePage() {
   const user = await getCurrentUser();
@@ -11,10 +11,12 @@ export default async function ProfilePage() {
   return (
     <div className="max-w-md space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold text-gray-900">Profile</h1>
-        <p className="text-sm text-gray-500">{user.email}</p>
+        <h1 className="font-brand text-[25px] font-bold tracking-[-0.02em] text-[#0F1020]">
+          Profile
+        </h1>
+        <p className="text-[14.5px] text-[#55556B]">{user.email}</p>
       </div>
-      <div className="rounded-lg border border-gray-200 p-6">
+      <div className="rounded-xl border border-[#E6E6EF] bg-white p-6">
         <ProfileForm
           initialName={user.name ?? ""}
           initialCollege={user.college ?? ""}

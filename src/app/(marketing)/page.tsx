@@ -1,15 +1,15 @@
-import Hero from "@/components/Hero";
-import Features from "@/components/Features";
-import HowItWorks from "@/components/HowItWorks";
-import WaitlistCta from "@/components/WaitlistCta";
+import Hero from "@/components/marketing/Hero";
+import HowWeCloseIt from "@/components/marketing/HowWeCloseIt";
+import ReadinessBand from "@/components/marketing/ReadinessBand";
+import TwoDoors from "@/components/marketing/TwoDoors";
 
 export default function Home() {
   return (
     <>
       <Hero />
-      <Features />
-      <HowItWorks />
-      <WaitlistCta />
+      <HowWeCloseIt />
+      <ReadinessBand />
+      <TwoDoors />
     </>
   );
 }

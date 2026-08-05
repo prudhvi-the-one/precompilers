@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
-import DashboardShell from "@/components/dashboard/DashboardShell";
+import AppShell from "@/components/shell/AppShell";
 
 export default async function AppLayout({
   children,
@@ -12,5 +12,5 @@ export default async function AppLayout({
     redirect("/login");
   }
 
-  return <DashboardShell user={user}>{children}</DashboardShell>;
+  return <AppShell user={user}>{children}</AppShell>;
 }

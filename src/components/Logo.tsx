@@ -1,11 +1,17 @@
 import Link from "next/link";
 
-function BoltBracketIcon() {
+function BoltBracketIcon({ compact }: { compact: boolean }) {
   return (
-    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-indigo-600">
+    <span
+      className={
+        compact
+          ? "flex h-6 w-6 shrink-0 items-center justify-center rounded-[7px] bg-indigo-600"
+          : "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-indigo-600"
+      }
+    >
       <svg
         viewBox="0 0 64 64"
-        className="h-5 w-5"
+        className={compact ? "h-4 w-4" : "h-5 w-5"}
         fill="none"
         stroke="white"
         strokeWidth={10}
@@ -22,26 +28,28 @@ function BoltBracketIcon() {
 
 export default function Logo({
   className = "",
-  forceLight = false,
+  size = "default",
 }: {
   className?: string;
-  forceLight?: boolean;
+  /** "compact" matches the app-shell topbar spec: 24px tile, Sora 700 14px. */
+  size?: "default" | "compact";
 }) {
+  const compact = size === "compact";
   return (
     <Link
       href="/"
       className={`flex items-center gap-2 font-brand ${className}`}
     >
-      <BoltBracketIcon />
-      <span className="text-lg font-extrabold tracking-tight">
+      <BoltBracketIcon compact={compact} />
+      <span
+        className={
+          compact
+            ? "text-[14px] font-bold tracking-tight"
+            : "text-lg font-extrabold tracking-tight"
+        }
+      >
         <span className="text-indigo-600">Pre</span>
-        <span
-          className={
-            forceLight ? "text-gray-900" : "text-gray-900 dark:text-white"
-          }
-        >
-          Compilers
-        </span>
+        <span className="text-gray-900">Compilers</span>
       </span>
     </Link>
   );

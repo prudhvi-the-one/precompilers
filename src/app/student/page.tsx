@@ -6,7 +6,7 @@ import PortalPlaceholder from "@/components/PortalPlaceholder";
 export default async function StudentPortalPage() {
   const session = await getSession();
   if (session) {
-    redirect("/dashboard");
+    redirect("/home");
   }
 
   return (
