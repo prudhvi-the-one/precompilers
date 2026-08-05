@@ -28,11 +28,9 @@ function BoltBracketIcon({ compact }: { compact: boolean }) {
 
 export default function Logo({
   className = "",
-  forceLight = false,
   size = "default",
 }: {
   className?: string;
-  forceLight?: boolean;
   /** "compact" matches the app-shell topbar spec: 24px tile, Sora 700 14px. */
   size?: "default" | "compact";
 }) {
@@ -51,13 +49,7 @@ export default function Logo({
         }
       >
         <span className="text-indigo-600">Pre</span>
-        <span
-          className={
-            forceLight ? "text-gray-900" : "text-gray-900 dark:text-white"
-          }
-        >
-          Compilers
-        </span>
+        <span className="text-gray-900">Compilers</span>
       </span>
     </Link>
   );

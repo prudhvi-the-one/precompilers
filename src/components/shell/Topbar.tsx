@@ -20,7 +20,7 @@ export default function Topbar({ user }: { user: User }) {
   return (
     <header className="flex h-15 items-center border-b border-[#EDEDF3] bg-white px-6">
       <div className="w-54 shrink-0">
-        <Logo size="compact" forceLight />
+        <Logo size="compact" />
       </div>
 
       <div className="flex flex-1 justify-center px-4">

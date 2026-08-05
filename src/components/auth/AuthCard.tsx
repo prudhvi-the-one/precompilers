@@ -13,7 +13,7 @@ export default function AuthCard({
     <div className="flex flex-1 items-center justify-center bg-gray-50 px-6 py-16">
       <div className="w-full max-w-md space-y-6">
         <div className="space-y-2 text-center">
-          <Logo className="justify-center" forceLight />
+          <Logo className="justify-center" />
           <div className="space-y-1">
             <h1 className="font-brand text-[25px] font-bold tracking-[-0.02em] text-gray-900">
               {title}
