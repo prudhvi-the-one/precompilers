@@ -12,10 +12,17 @@ const LEARN_SUB_ITEMS = [
   { label: "Notes & resources", href: "/learn/notes" },
 ];
 
+const PRACTICE_SUB_ITEMS = [
+  { label: "Quizzes", href: "/practice/quizzes" },
+  { label: "Aptitude papers", href: "/practice/aptitude" },
+  { label: "History", href: "/practice/quizzes/history" },
+  { label: "Coding problems", href: "/practice", soon: true },
+];
+
 const NAV_ITEMS = [
   { label: "Home", href: "/home", icon: Home },
   { label: "Learn", href: "/learn", icon: BookOpen, subItems: LEARN_SUB_ITEMS },
-  { label: "Practice", href: "/practice", icon: Code2, soon: true },
+  { label: "Practice", href: "/practice", icon: Code2, subItems: PRACTICE_SUB_ITEMS },
   { label: "Prove", href: "/prove", icon: Award, soon: true },
   { label: "Career", href: "/career", icon: Briefcase, soon: true },
 ];
@@ -73,6 +80,19 @@ export default function SidebarNav() {
               {active && item.subItems ? (
                 <div className="mt-1 flex flex-col gap-2.25 pl-9.75">
                   {item.subItems.map((sub) => {
+                    if ("soon" in sub && sub.soon) {
+                      return (
+                        <span
+                          key={sub.label}
+                          className="flex cursor-default items-center gap-1.5 text-[13.5px] text-[#B8B8C7]"
+                        >
+                          {sub.label}
+                          <span className="rounded-full bg-[#F2F2F7] px-1.5 py-0.5 font-mono text-[9px] text-[#9A9AAE]">
+                            Soon
+                          </span>
+                        </span>
+                      );
+                    }
                     const subActive = pathname === sub.href;
                     return (
                       <Link
