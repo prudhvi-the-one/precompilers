@@ -2,15 +2,13 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
+import { computeReadinessPillars } from "@/lib/readiness";
 
-const PILLARS = [
-  "Fundamentals",
-  "Aptitude & communication",
-  "Problem solving",
-  "Industry skills",
-  "Projects",
-  "Interview performance",
-];
+function barColor(value: number): string {
+  if (value < 40) return "#DB2777";
+  if (value < 60) return "#D97706";
+  return "#4F46E5";
+}
 
 function minutesUntil(date: Date): number {
   return Math.round((date.getTime() - Date.now()) / 60000);
@@ -58,6 +56,8 @@ export default async function HomePage() {
     const mins = minutesUntil(lc.scheduledAt);
     return mins >= 0 && mins <= 60;
   });
+
+  const pillars = await computeReadinessPillars(user.id);
 
   return (
     <div className="max-w-3xl space-y-4.5">
@@ -137,11 +137,33 @@ export default async function HomePage() {
           Readiness by pillar
         </h2>
         <div className="mt-3 grid grid-cols-2 gap-4 sm:grid-cols-3">
-          {PILLARS.map((pillar) => (
-            <div key={pillar}>
-              <div className="text-xs text-[#55556B]">{pillar}</div>
-              <div className="mt-1.5 h-1.5 rounded-full bg-[#EDEDF3]" />
-              <div className="mt-1 text-xs text-[#9A9AAE]">Not assessed</div>
+          {pillars.map((pillar) => (
+            <div key={pillar.label}>
+              <div className="flex min-h-4.25 flex-wrap items-start gap-1.5 text-xs text-[#55556B]">
+                {pillar.label}
+                {pillar.provenance ? (
+                  <span
+                    className={
+                      pillar.provenance === "VERIFIED"
+                        ? "rounded-full bg-[#E7F7F0] px-1.5 py-0.5 font-mono text-[9px] font-semibold text-[#059669]"
+                        : "rounded-full bg-[#F2F2F7] px-1.5 py-0.5 font-mono text-[9px] font-semibold text-[#9A9AAE]"
+                    }
+                  >
+                    {pillar.provenance}
+                  </span>
+                ) : null}
+              </div>
+              <div className="mt-1.5 h-1.5 rounded-full bg-[#EDEDF3]">
+                {pillar.value !== null ? (
+                  <div
+                    className="h-full rounded-full"
+                    style={{ width: `${pillar.value}%`, backgroundColor: barColor(pillar.value) }}
+                  />
+                ) : null}
+              </div>
+              <div className="mt-1 text-xs text-[#9A9AAE]">
+                {pillar.value !== null ? `${pillar.value} · ${pillar.caption}` : "Not assessed"}
+              </div>
             </div>
           ))}
         </div>

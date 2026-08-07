@@ -124,6 +124,462 @@ const TRACKS = [
   },
 ];
 
+type QuestionSeed = {
+  text: string;
+  marks?: number;
+  options: string[];
+  correctIndex: number;
+};
+
+type SectionSeed = {
+  name: string;
+  durationMinutes: number;
+  questions: QuestionSeed[];
+};
+
+type QuizSeed = {
+  slug: string;
+  title: string;
+  topic: string;
+  kind: "TOPIC_QUIZ" | "APTITUDE_PAPER";
+  order: number;
+  sections: SectionSeed[];
+};
+
+const QUIZZES: QuizSeed[] = [
+  {
+    slug: "os-core-concepts",
+    title: "Operating systems — core concepts",
+    topic: "Operating systems",
+    kind: "TOPIC_QUIZ",
+    order: 1,
+    sections: [
+      {
+        name: "Core concepts",
+        durationMinutes: 15,
+        questions: [
+          {
+            text: "Which of the four Coffman conditions is broken by requiring a process to request all its resources at once?",
+            options: [
+              "Mutual exclusion",
+              "Hold and wait",
+              "No preemption",
+              "Circular wait",
+            ],
+            correctIndex: 1,
+          },
+          {
+            text: "What is the main difference between a process and a thread?",
+            options: [
+              "Threads have separate address spaces, processes share memory",
+              "Processes have separate address spaces, threads within a process share memory",
+              "There is no difference",
+              "Threads cannot run concurrently",
+            ],
+            correctIndex: 1,
+          },
+          {
+            text: "Which scheduling algorithm can lead to starvation of long processes?",
+            options: [
+              "Round Robin",
+              "Shortest Job First",
+              "First Come First Served",
+              "Priority scheduling with aging",
+            ],
+            correctIndex: 1,
+          },
+          {
+            text: "A page fault occurs when:",
+            options: [
+              "The CPU executes an invalid instruction",
+              "A process tries to access a page not currently in physical memory",
+              "Two processes deadlock",
+              "The disk fails",
+            ],
+            correctIndex: 1,
+          },
+          {
+            text: "Which of these is NOT one of the four necessary conditions for deadlock?",
+            options: [
+              "Mutual exclusion",
+              "Hold and wait",
+              "Preemption",
+              "Circular wait",
+            ],
+            correctIndex: 2,
+          },
+          {
+            text: "What does a semaphore's wait() (P) operation do when the semaphore value is 0?",
+            options: [
+              "Increments the value and proceeds",
+              "Immediately returns an error",
+              "Blocks the calling process until the value becomes positive",
+              "Terminates the process",
+            ],
+            correctIndex: 2,
+          },
+        ],
+      },
+    ],
+  },
+  {
+    slug: "dbms-core-concepts",
+    title: "Databases — core concepts",
+    topic: "DBMS",
+    kind: "TOPIC_QUIZ",
+    order: 2,
+    sections: [
+      {
+        name: "Core concepts",
+        durationMinutes: 15,
+        questions: [
+          {
+            text: "Which normal form eliminates transitive dependencies on a non-key attribute?",
+            options: ["1NF", "2NF", "3NF", "BCNF"],
+            correctIndex: 2,
+          },
+          {
+            text: "In ACID properties, what does \"Isolation\" guarantee?",
+            options: [
+              "Transactions are never rolled back",
+              "Concurrent transactions do not interfere with each other's intermediate state",
+              "Data is stored durably on disk",
+              "All operations in a transaction succeed or none do",
+            ],
+            correctIndex: 1,
+          },
+          {
+            text: "Which type of SQL join returns rows only when there is a match in both tables?",
+            options: ["LEFT JOIN", "RIGHT JOIN", "INNER JOIN", "FULL OUTER JOIN"],
+            correctIndex: 2,
+          },
+          {
+            text: "A composite index on (a, b) can efficiently serve a query filtering on:",
+            options: [
+              "Only b",
+              "Only a, or a and b together",
+              "Neither a nor b",
+              "Any column in the table",
+            ],
+            correctIndex: 1,
+          },
+          {
+            text: "What is a deadlock in the context of database transactions?",
+            options: [
+              "A transaction that runs forever",
+              "Two or more transactions waiting on locks held by each other, none able to proceed",
+              "A transaction that reads uncommitted data",
+              "A failed disk write",
+            ],
+            correctIndex: 1,
+          },
+          {
+            text: "Which isolation level is the only one, per the ANSI SQL standard, guaranteed to prevent phantom reads?",
+            options: ["Read Uncommitted", "Read Committed", "Repeatable Read", "Serializable"],
+            correctIndex: 3,
+          },
+        ],
+      },
+    ],
+  },
+  {
+    slug: "oop-core-concepts",
+    title: "Object-oriented programming — core concepts",
+    topic: "OOP",
+    kind: "TOPIC_QUIZ",
+    order: 3,
+    sections: [
+      {
+        name: "Core concepts",
+        durationMinutes: 15,
+        questions: [
+          {
+            text: "What is polymorphism?",
+            options: [
+              "Hiding implementation details from the user",
+              "The ability of a single interface to represent different underlying forms",
+              "Bundling data and methods together",
+              "Reusing code via inheritance only",
+            ],
+            correctIndex: 1,
+          },
+          {
+            text: "Which OOP principle is violated when a class's internal fields are made public with no accessors?",
+            options: ["Inheritance", "Polymorphism", "Encapsulation", "Abstraction"],
+            correctIndex: 2,
+          },
+          {
+            text: "Method overriding requires:",
+            options: [
+              "Same method name, different parameter list, same class",
+              "Same method name and parameter list, in a subclass, redefining superclass behavior",
+              "Different method names entirely",
+              "Static methods only",
+            ],
+            correctIndex: 1,
+          },
+          {
+            text: "What is the key difference between an abstract class and an interface (in languages that distinguish them, like Java)?",
+            options: [
+              "Abstract classes cannot have any implemented methods",
+              "Interfaces can have constructors",
+              "A class can implement multiple interfaces but typically extend only one abstract class",
+              "There is no difference",
+            ],
+            correctIndex: 2,
+          },
+          {
+            text: "Composition over inheritance is generally preferred because:",
+            options: [
+              "It always runs faster",
+              "It creates tighter coupling between classes",
+              "It avoids fragile hierarchies and lets behavior be assembled from independent parts",
+              "It removes the need for interfaces",
+            ],
+            correctIndex: 2,
+          },
+          {
+            text: 'In SOLID principles, what does the "S" (Single Responsibility Principle) state?',
+            options: [
+              "A class should have only one reason to change",
+              "A class should implement only one interface",
+              "A class should have only one public method",
+              "A class should never be subclassed",
+            ],
+            correctIndex: 0,
+          },
+        ],
+      },
+    ],
+  },
+  {
+    slug: "networks-core-concepts",
+    title: "Computer networks — core concepts",
+    topic: "Computer networks",
+    kind: "TOPIC_QUIZ",
+    order: 4,
+    sections: [
+      {
+        name: "Core concepts",
+        durationMinutes: 15,
+        questions: [
+          {
+            text: "Which OSI layer is responsible for routing packets between different networks?",
+            options: ["Data Link", "Network", "Transport", "Session"],
+            correctIndex: 1,
+          },
+          {
+            text: "TCP provides which guarantee that UDP does not?",
+            options: [
+              "Lower latency",
+              "Multicast support",
+              "Reliable, ordered delivery",
+              "Smaller header size",
+            ],
+            correctIndex: 2,
+          },
+          {
+            text: "What does DNS primarily do?",
+            options: [
+              "Encrypts network traffic",
+              "Translates domain names into IP addresses",
+              "Assigns MAC addresses to devices",
+              "Routes packets between autonomous systems",
+            ],
+            correctIndex: 1,
+          },
+          {
+            text: "In the TCP three-way handshake, what is the correct order?",
+            options: ["ACK, SYN, SYN-ACK", "SYN, SYN-ACK, ACK", "SYN-ACK, SYN, ACK", "ACK, ACK, SYN"],
+            correctIndex: 1,
+          },
+          {
+            text: "HTTPS achieves confidentiality primarily through:",
+            options: [
+              "Compressing the payload",
+              "TLS encryption of the connection",
+              "Using a different port than HTTP",
+              "Caching responses",
+            ],
+            correctIndex: 1,
+          },
+          {
+            text: "What is the purpose of subnetting?",
+            options: [
+              "To increase the physical distance a network can span",
+              "To divide a larger network into smaller, manageable segments and reduce broadcast traffic",
+              "To convert IP addresses into MAC addresses",
+              "To provide encryption for a LAN",
+            ],
+            correctIndex: 1,
+          },
+        ],
+      },
+    ],
+  },
+  {
+    slug: "tcs-digital-pattern",
+    title: "TCS Digital pattern",
+    topic: "Aptitude — full paper",
+    kind: "APTITUDE_PAPER",
+    order: 1,
+    sections: [
+      {
+        name: "Quantitative",
+        durationMinutes: 20,
+        questions: [
+          {
+            text: "A shopkeeper marks up an item by 25% and then gives a discount of 20% on the marked price. What is the overall percentage change in price?",
+            options: ["5% profit", "5% loss", "No profit no loss", "10% loss"],
+            correctIndex: 2,
+          },
+          {
+            text: "The average of 5 consecutive even numbers is 24. What is the largest number?",
+            options: ["26", "28", "30", "24"],
+            correctIndex: 1,
+          },
+          {
+            text: "If the ratio of two numbers is 3:4 and their LCM is 180, what is their sum?",
+            options: ["90", "100", "105", "120"],
+            correctIndex: 2,
+          },
+          {
+            text: "A can complete a work in 12 days and B in 18 days. Working together, how many days will they take?",
+            options: ["6 days", "7.2 days", "8 days", "9 days"],
+            correctIndex: 1,
+          },
+          {
+            text: "A train 120 m long crosses a platform 180 m long in 20 seconds. What is the speed of the train in km/h?",
+            options: ["45 km/h", "50 km/h", "54 km/h", "60 km/h"],
+            correctIndex: 2,
+          },
+        ],
+      },
+      {
+        name: "Logical reasoning",
+        durationMinutes: 20,
+        questions: [
+          {
+            text: "Five students P, Q, R, S, T sit in a row facing north. Q is to the immediate right of P. R is at the extreme right end. Exactly one student sits between Q and R. S is to the immediate left of P. Who sits second from the left?",
+            options: ["S", "P", "Q", "T"],
+            correctIndex: 1,
+          },
+          {
+            text: "In a certain code, FRIEND is written as HTKGPF (each letter shifted 2 places forward in the alphabet). What is the code for CANDLE?",
+            options: ["ECPFNG", "EDPFNG", "ECPFMG", "ECQFNG"],
+            correctIndex: 0,
+          },
+          {
+            text: "Statement: All roses are flowers. Some flowers fade quickly. Conclusion I: Some roses fade quickly. Conclusion II: All flowers are roses. Which conclusion(s) logically follow?",
+            options: ["Only I follows", "Only II follows", "Both follow", "Neither follows"],
+            correctIndex: 3,
+          },
+          {
+            text: "Find the next number in the series: 2, 6, 12, 20, 30, ?",
+            options: ["36", "40", "42", "44"],
+            correctIndex: 2,
+          },
+          {
+            text: 'Pointing to a photograph, Ravi said, "She is the daughter of my grandfather\'s only son." How is the woman in the photograph related to Ravi?',
+            options: ["Sister", "Daughter", "Mother", "Cousin"],
+            correctIndex: 0,
+          },
+        ],
+      },
+      {
+        name: "Verbal ability",
+        durationMinutes: 20,
+        questions: [
+          {
+            text: 'Choose the word most nearly opposite in meaning to "CANDID":',
+            options: ["Honest", "Secretive", "Blunt", "Frank"],
+            correctIndex: 1,
+          },
+          {
+            text: "Choose the correctly spelled word:",
+            options: ["Occassion", "Occasion", "Ocassion", "Ocasion"],
+            correctIndex: 1,
+          },
+          {
+            text: 'Fill in the blank: "Despite the heavy rain, the match ____ as scheduled."',
+            options: ["went on", "went off", "went up", "went out"],
+            correctIndex: 0,
+          },
+          {
+            text: 'Identify the error in the sentence: "Each of the students have submitted their assignment."',
+            options: ["Each of the students", "have submitted", "their assignment", "No error"],
+            correctIndex: 1,
+          },
+          {
+            text: 'Choose the correct synonym for "METICULOUS":',
+            options: ["Careless", "Painstaking", "Hasty", "Vague"],
+            correctIndex: 1,
+          },
+        ],
+      },
+    ],
+  },
+];
+
+async function seedQuizzes() {
+  const LABELS = ["A", "B", "C", "D"];
+
+  for (const quizData of QUIZZES) {
+    const { sections, ...quizFields } = quizData;
+
+    const quiz = await prisma.quiz.upsert({
+      where: { slug: quizData.slug },
+      update: { title: quizFields.title, topic: quizFields.topic, order: quizFields.order },
+      create: quizFields,
+    });
+
+    for (const [sectionIndex, sectionData] of sections.entries()) {
+      const { questions, ...sectionFields } = sectionData;
+      const sectionId = `${quiz.id}-section-${sectionIndex}`;
+
+      const section = await prisma.quizSection.upsert({
+        where: { id: sectionId },
+        update: { ...sectionFields, order: sectionIndex + 1 },
+        create: { id: sectionId, quizId: quiz.id, order: sectionIndex + 1, ...sectionFields },
+      });
+
+      for (const [questionIndex, questionData] of questions.entries()) {
+        const { options, correctIndex, ...questionFields } = questionData;
+        const questionId = `${section.id}-q-${questionIndex}`;
+
+        const question = await prisma.question.upsert({
+          where: { id: questionId },
+          update: { ...questionFields, order: questionIndex + 1 },
+          create: {
+            id: questionId,
+            sectionId: section.id,
+            order: questionIndex + 1,
+            ...questionFields,
+          },
+        });
+
+        for (const [optionIndex, text] of options.entries()) {
+          const optionId = `${question.id}-opt-${optionIndex}`;
+          await prisma.questionOption.upsert({
+            where: { id: optionId },
+            update: { text, isCorrect: optionIndex === correctIndex },
+            create: {
+              id: optionId,
+              questionId: question.id,
+              order: optionIndex + 1,
+              label: LABELS[optionIndex],
+              text,
+              isCorrect: optionIndex === correctIndex,
+            },
+          });
+        }
+      }
+    }
+  }
+
+  console.log("Seeded quizzes:", QUIZZES.map((q) => q.slug).join(", "));
+}
+
 async function main() {
   for (const trackData of TRACKS) {
     const { lectures, videoId, notes, ...trackFields } = trackData;
@@ -207,6 +663,8 @@ async function main() {
   }
 
   console.log("Seeded tracks:", TRACKS.map((t) => t.slug).join(", "));
+
+  await seedQuizzes();
 }
 
 main()
