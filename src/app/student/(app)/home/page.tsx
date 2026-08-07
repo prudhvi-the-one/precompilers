@@ -89,14 +89,12 @@ export default async function HomePage() {
               </p>
             </div>
           </div>
-          <a
-            href={soonLiveClass.joinUrl}
-            target="_blank"
-            rel="noreferrer"
+          <Link
+            href={`/live/${soonLiveClass.id}`}
             className="shrink-0 rounded-lg bg-indigo-600 px-4 py-2 font-brand text-[13px] font-semibold text-white hover:bg-[#4338CA]"
           >
             Join class
-          </a>
+          </Link>
         </div>
       ) : null}
 

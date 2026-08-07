@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { meetsEntitlement } from "@/lib/entitlement";
 import TrackCoverPlaceholder from "@/components/learn/TrackCoverPlaceholder";
 import StartTrackButton from "@/components/learn/StartTrackButton";
+import DownloadAffordance from "@/components/learn/DownloadAffordance";
 
 const FILTERS = [
   { key: "all", label: "All" },
@@ -198,6 +199,7 @@ export default async function LearnPage({
                   <span className="flex-1 text-sm text-[#0F1020]">
                     {formatLectureOrder(lecture.order)} · {lecture.title}
                   </span>
+                  <DownloadAffordance />
                   <span className="text-xs text-[#9A9AAE]">
                     {lecture.durationMinutes} min
                   </span>
@@ -205,11 +207,9 @@ export default async function LearnPage({
               );
             })}
             {enrollment.batch?.liveClasses.map((liveClass) => (
-              <a
+              <Link
                 key={liveClass.id}
-                href={liveClass.joinUrl}
-                target="_blank"
-                rel="noreferrer"
+                href={`/live/${liveClass.id}`}
                 className="flex items-center gap-3 px-5 py-3.5 hover:bg-[#FBFBFD]"
               >
                 <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-[#DDDDE7] text-xs" />
@@ -219,7 +219,7 @@ export default async function LearnPage({
                 <span className="rounded-full bg-[#F1F0FE] px-2 py-0.5 font-mono text-[10px] text-indigo-600">
                   {formatClassChip(liveClass.scheduledAt)}
                 </span>
-              </a>
+              </Link>
             ))}
           </div>
         </div>
