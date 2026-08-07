@@ -50,3 +50,16 @@ export const profileUpdateSchema = z.object({
   branch: z.string().trim().max(100).optional(),
   gradYear: z.number().int().min(2000).max(2100).nullable().optional(),
 });
+
+export const onboardingSchema = z.object({
+  targetRole: z.enum([
+    "SOFTWARE_ENGINEER",
+    "DATA_ML_ENGINEER",
+    "FRONTEND_ENGINEER",
+    "CLOUD_DEVOPS",
+    "HIGHER_STUDIES",
+    "NOT_SURE",
+  ]),
+  gradYear: z.number().int().min(2000).max(2100).nullable().optional(),
+  weeklyHours: z.string().max(20).nullable().optional(),
+});

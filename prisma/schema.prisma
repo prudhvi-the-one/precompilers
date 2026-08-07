@@ -19,20 +19,40 @@ enum OtpPurpose {
   PASSWORD_RESET
 }
 
+enum Entitlement {
+  FREE
+  INDIVIDUAL
+  INSTITUTION
+}
+
+enum TargetRole {
+  SOFTWARE_ENGINEER
+  DATA_ML_ENGINEER
+  FRONTEND_ENGINEER
+  CLOUD_DEVOPS
+  HIGHER_STUDIES
+  NOT_SURE
+}
+
 model User {
-  id              String    @id @default(cuid())
-  email           String    @unique
+  id              String      @id @default(cuid())
+  email           String      @unique
   passwordHash    String
-  role            Role      @default(STUDENT)
+  role            Role        @default(STUDENT)
   name            String?
   college         String?
   branch          String?
   gradYear        Int?
+  weeklyHours     String?
+  targetRole      TargetRole?
+  entitlement     Entitlement @default(FREE)
   emailVerifiedAt DateTime?
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
 
-  otps Otp[]
+  otps            Otp[]
+  enrollment      Enrollment?
+  lectureProgress LectureProgress[]
 }
 
 model Otp {
@@ -47,4 +67,80 @@ model Otp {
   createdAt  DateTime   @default(now())
 
   @@index([userId, purpose])
+}
+
+model Track {
+  id                  String       @id @default(cuid())
+  slug                String       @unique
+  name                String
+  tagline             String
+  order               Int          @default(0)
+  requiredEntitlement Entitlement  @default(FREE)
+  relevantRoles       TargetRole[]
+
+  batches     Batch[]
+  lectures    Lecture[]
+  enrollments Enrollment[]
+}
+
+model Batch {
+  id       String   @id @default(cuid())
+  trackId  String
+  track    Track    @relation(fields: [trackId], references: [id], onDelete: Cascade)
+  name     String
+  startsAt DateTime
+
+  enrollments Enrollment[]
+  liveClasses LiveClass[]
+
+  @@index([trackId])
+}
+
+model Enrollment {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  trackId   String
+  track     Track    @relation(fields: [trackId], references: [id])
+  batchId   String?
+  batch     Batch?   @relation(fields: [batchId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+model Lecture {
+  id              String @id @default(cuid())
+  trackId         String
+  track           Track  @relation(fields: [trackId], references: [id], onDelete: Cascade)
+  order           Int    @default(0)
+  title           String
+  description     String
+  videoUrl        String
+  durationMinutes Int
+
+  progress LectureProgress[]
+
+  @@index([trackId])
+}
+
+model LectureProgress {
+  id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lectureId   String
+  lecture     Lecture   @relation(fields: [lectureId], references: [id], onDelete: Cascade)
+  completedAt DateTime?
+
+  @@unique([userId, lectureId])
+}
+
+model LiveClass {
+  id              String   @id @default(cuid())
+  batchId         String
+  batch           Batch    @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  title           String
+  scheduledAt     DateTime
+  durationMinutes Int
+  joinUrl         String
+
+  @@index([batchId])
 }

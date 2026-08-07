@@ -36,7 +36,7 @@ function VerifyForm() {
       return;
     }
 
-    router.push("/home");
+    router.push("/onboarding");
   }
 
   async function handleResend() {
