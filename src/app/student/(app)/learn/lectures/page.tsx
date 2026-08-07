@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
+import DownloadAffordance from "@/components/learn/DownloadAffordance";
 
 export default async function LecturesPage() {
   const user = await getCurrentUser();
@@ -61,6 +62,7 @@ export default async function LecturesPage() {
               <span className="flex-1 text-sm text-[#0F1020]">
                 {lecture.title}
               </span>
+              <DownloadAffordance />
               <span className="text-xs text-[#9A9AAE]">
                 {lecture.durationMinutes} min
               </span>

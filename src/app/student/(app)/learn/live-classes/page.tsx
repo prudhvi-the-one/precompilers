@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
@@ -56,14 +57,12 @@ export default async function LiveClassesPage() {
                   {liveClass.durationMinutes} min
                 </p>
               </div>
-              <a
-                href={liveClass.joinUrl}
-                target="_blank"
-                rel="noreferrer"
+              <Link
+                href={`/live/${liveClass.id}`}
                 className="shrink-0 rounded-lg bg-indigo-600 px-4 py-2 font-brand text-[13px] font-semibold text-white hover:bg-[#4338CA]"
               >
                 Join class
-              </a>
+              </Link>
             </div>
           ))}
         </div>

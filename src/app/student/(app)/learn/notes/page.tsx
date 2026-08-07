@@ -1,4 +1,18 @@
-export default function NotesPage() {
+import { redirect } from "next/navigation";
+import { getCurrentUser } from "@/lib/session";
+import { prisma } from "@/lib/prisma";
+
+export default async function NotesPage() {
+  const user = await getCurrentUser();
+  if (!user) {
+    redirect("/login");
+  }
+
+  const enrollment = await prisma.enrollment.findUnique({
+    where: { userId: user.id },
+    include: { track: { include: { notes: { orderBy: { order: "asc" } } } } },
+  });
+
   return (
     <div className="max-w-3xl space-y-4">
       <div>
@@ -6,12 +20,43 @@ export default function NotesPage() {
           Notes &amp; resources
         </h1>
         <p className="text-[14.5px] text-[#55556B]">
-          Downloadable notes per lecture are coming soon.
+          {enrollment
+            ? `Reference notes for ${enrollment.track.name}.`
+            : "Pick a track to see its notes here."}
         </p>
       </div>
-      <div className="rounded-xl border border-[#E6E6EF] bg-white p-6 text-center text-sm text-[#55556B]">
-        Coming soon.
-      </div>
+
+      {enrollment?.track.notes.length ? (
+        <div className="space-y-3">
+          {enrollment.track.notes.map((note) => (
+            <details
+              key={note.id}
+              className="group rounded-xl border border-[#E6E6EF] bg-white open:pb-5"
+            >
+              <summary className="cursor-pointer list-none px-5 py-4 font-brand text-[15px] font-bold text-[#0F1020] marker:content-none">
+                <span className="mr-2 inline-block text-[#9A9AAE] transition-transform group-open:rotate-90">
+                  ›
+                </span>
+                {note.title}
+              </summary>
+              <p className="px-5 text-sm whitespace-pre-line text-[#2A2A38]">
+                {note.content}
+              </p>
+            </details>
+          ))}
+        </div>
+      ) : (
+        <div className="rounded-xl border border-[#E6E6EF] bg-white p-6 text-center text-sm text-[#55556B]">
+          {enrollment
+            ? "No notes for this track yet."
+            : "Set your track to see its notes."}
+        </div>
+      )}
+
+      <p className="text-xs text-[#9A9AAE]">
+        Downloadable PDF export is coming soon — notes are viewable in-app for
+        now.
+      </p>
     </div>
   );
 }
