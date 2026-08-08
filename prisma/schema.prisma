@@ -43,6 +43,12 @@ enum QuestionType {
   SINGLE_CHOICE
 }
 
+enum HireVerdict {
+  NOT_YET
+  CLOSE
+  YES
+}
+
 model User {
   id              String      @id @default(cuid())
   email           String      @unique
@@ -63,6 +69,14 @@ model User {
   enrollment      Enrollment?
   lectureProgress LectureProgress[]
   quizAttempts    QuizAttempt[]
+  submissions       ProjectSubmission[]
+  reviewsGiven      PeerReview[]         @relation("ReviewsGiven")
+  mockRequests      MockRequest[]
+  mockFeedbackGiven MockFeedback[]       @relation("MockFeedbackGiven")
+  mockFeedbackRecv  MockFeedback[]       @relation("MockFeedbackReceived")
+  gdParticipations  GdParticipant[]
+  gdRatingsGiven    GdRating[]           @relation("GdRatingsGiven")
+  gdRatingsReceived GdRating[]           @relation("GdRatingsReceived")
 }
 
 model Otp {
@@ -267,4 +281,113 @@ model QuestionResponse {
   seen             Boolean         @default(false)
 
   @@unique([attemptId, questionId])
+}
+
+model Project {
+  id                  String      @id @default(cuid())
+  slug                String      @unique
+  title               String
+  brief               String
+  order               Int         @default(0)
+  requiredEntitlement Entitlement @default(FREE)
+
+  submissions ProjectSubmission[]
+}
+
+model ProjectSubmission {
+  id            String    @id @default(cuid())
+  projectId     String
+  project       Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  submissionUrl String
+  description   String
+  submittedAt   DateTime  @default(now())
+
+  reviews PeerReview[]
+
+  @@unique([projectId, userId])
+}
+
+model PeerReview {
+  id           String      @id @default(cuid())
+  submissionId String
+  submission   ProjectSubmission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  reviewerId   String
+  reviewer     User        @relation("ReviewsGiven", fields: [reviewerId], references: [id], onDelete: Cascade)
+  correctness  Int
+  efficiency   Int
+  readability  Int
+  wouldHire    HireVerdict
+  comment      String
+  submittedAt  DateTime    @default(now())
+
+  @@unique([submissionId, reviewerId])
+}
+
+model MockRequest {
+  id           String       @id @default(cuid())
+  userId       String
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt    DateTime     @default(now())
+  pairedWithId String?      @unique
+  pairedWith   MockRequest? @relation("MockPair", fields: [pairedWithId], references: [id])
+  pairOf       MockRequest? @relation("MockPair")
+  roomUrl      String?
+  scheduledAt  DateTime?
+
+  feedbackGiven   MockFeedback[] @relation("FeedbackByRequest")
+}
+
+model MockFeedback {
+  id            String      @id @default(cuid())
+  mockRequestId String
+  mockRequest   MockRequest @relation("FeedbackByRequest", fields: [mockRequestId], references: [id], onDelete: Cascade)
+  raterId       String
+  rater         User        @relation("MockFeedbackGiven", fields: [raterId], references: [id], onDelete: Cascade)
+  rateeId       String
+  ratee         User        @relation("MockFeedbackReceived", fields: [rateeId], references: [id], onDelete: Cascade)
+  score         Int
+  quote         String
+  createdAt     DateTime    @default(now())
+
+  @@unique([mockRequestId, raterId])
+}
+
+model GdSession {
+  id              String   @id @default(cuid())
+  topic           String
+  scheduledAt     DateTime
+  roomUrl         String
+  minParticipants Int      @default(5)
+
+  participants GdParticipant[]
+  ratings      GdRating[]
+}
+
+model GdParticipant {
+  id             String    @id @default(cuid())
+  sessionId      String
+  session        GdSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  userId         String
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  joinedAt       DateTime  @default(now())
+  speakingSeconds Int      @default(0)
+
+  @@unique([sessionId, userId])
+}
+
+model GdRating {
+  id        String    @id @default(cuid())
+  sessionId String
+  session   GdSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  raterId   String
+  rater     User      @relation("GdRatingsGiven", fields: [raterId], references: [id], onDelete: Cascade)
+  rateeId   String
+  ratee     User      @relation("GdRatingsReceived", fields: [rateeId], references: [id], onDelete: Cascade)
+  clarity   Int
+  content   Int
+  courtesy  Int
+
+  @@unique([sessionId, raterId, rateeId])
 }

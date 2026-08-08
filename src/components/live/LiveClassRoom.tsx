@@ -1,18 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-
-declare global {
-  interface Window {
-    JitsiMeetExternalAPI: new (
-      domain: string,
-      options: Record<string, unknown>
-    ) => {
-      executeCommand: (command: string, ...args: unknown[]) => void;
-      dispose: () => void;
-    };
-  }
-}
+import type { JitsiMeetExternalApiInstance } from "@/types/jitsi";
 
 export default function LiveClassRoom({
   roomUrl,
@@ -22,9 +11,7 @@ export default function LiveClassRoom({
   displayName: string;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const apiRef = useRef<InstanceType<typeof window.JitsiMeetExternalAPI> | null>(
-    null
-  );
+  const apiRef = useRef<JitsiMeetExternalApiInstance | null>(null);
   const [dataLight, setDataLight] = useState(false);
   const [status, setStatus] = useState<"loading" | "ready" | "error">(
     "loading"

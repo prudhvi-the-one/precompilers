@@ -580,6 +580,91 @@ async function seedQuizzes() {
   console.log("Seeded quizzes:", QUIZZES.map((q) => q.slug).join(", "));
 }
 
+const PROJECTS = [
+  {
+    slug: "ship-a-rest-api",
+    title: "Ship a REST API",
+    order: 1,
+    requiredEntitlement: "FREE" as const,
+    brief:
+      "Build and deploy a small REST API with real persistence — not an in-memory array. Pick a domain you can explain in one sentence (a task tracker, a URL shortener, a bookmarking service).\n\n" +
+      "Requirements:\n" +
+      "- At least 4 endpoints covering create/read/update/delete for one resource.\n" +
+      "- A real database behind it (Postgres, SQLite, whatever you're comfortable with) — no in-memory storage that resets on restart.\n" +
+      "- Basic input validation and sensible HTTP status codes (400 vs 404 vs 500 — reviewers will check this).\n" +
+      "- Deployed somewhere reachable (Render, Railway, Fly.io, a free-tier VM — anywhere public).\n" +
+      "- A short README explaining what it does and how to run it.\n\n" +
+      "Submit the deployed URL and your repo link. Reviewers will hit a couple of endpoints and read your code — this is exactly what 'talk me through a project you shipped' looks like in a real interview.",
+  },
+  {
+    slug: "build-a-portfolio-site",
+    title: "Build and deploy a portfolio site",
+    order: 2,
+    requiredEntitlement: "FREE" as const,
+    brief:
+      "A one-page site that a recruiter could open in 30 seconds and understand what you've built. This is the project most students skip and the one most placement cells ask for first.\n\n" +
+      "Requirements:\n" +
+      "- Your name, a one-line pitch, and 2-3 real projects with a link each (this REST API project counts as one).\n" +
+      "- Deployed on a real URL (Vercel, Netlify, GitHub Pages).\n" +
+      "- No lorem ipsum, no placeholder project cards — every link on the page has to actually work.\n\n" +
+      "Submit the live URL and your repo link.",
+  },
+];
+
+const GD_SESSIONS = [
+  {
+    topic: "Should AI-generated code be allowed in campus placements?",
+    daysFromNow: 2,
+    roomSlug: "gd-aicode-k7m2qx",
+  },
+  {
+    topic: "Is a 4-day work week good for engineering productivity?",
+    daysFromNow: 4,
+    roomSlug: "gd-4dayweek-p9vr3t",
+  },
+  {
+    topic: "Should DSA rounds be compulsory for placement eligibility?",
+    daysFromNow: 6,
+    roomSlug: "gd-dsarounds-j4wn8h",
+  },
+];
+
+async function seedPeerLoop() {
+  for (const projectData of PROJECTS) {
+    await prisma.project.upsert({
+      where: { slug: projectData.slug },
+      update: projectData,
+      create: projectData,
+    });
+  }
+
+  for (const [index, gd] of GD_SESSIONS.entries()) {
+    const id = `gd-session-seed-${index}`;
+    const scheduledAt = new Date();
+    scheduledAt.setDate(scheduledAt.getDate() + gd.daysFromNow);
+    scheduledAt.setHours(19, 0, 0, 0);
+
+    const roomUrl = `https://meet.jit.si/precompilers-${gd.roomSlug}`;
+    await prisma.gdSession.upsert({
+      where: { id },
+      update: { topic: gd.topic, scheduledAt, roomUrl },
+      create: {
+        id,
+        topic: gd.topic,
+        scheduledAt,
+        roomUrl,
+      },
+    });
+  }
+
+  console.log(
+    "Seeded projects:",
+    PROJECTS.map((p) => p.slug).join(", "),
+    "· GD sessions:",
+    GD_SESSIONS.length
+  );
+}
+
 async function main() {
   for (const trackData of TRACKS) {
     const { lectures, videoId, notes, ...trackFields } = trackData;
@@ -665,6 +750,7 @@ async function main() {
   console.log("Seeded tracks:", TRACKS.map((t) => t.slug).join(", "));
 
   await seedQuizzes();
+  await seedPeerLoop();
 }
 
 main()

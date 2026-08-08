@@ -95,13 +95,90 @@ async function computeIndustrySkills(userId: string): Promise<PillarResult> {
   };
 }
 
+async function computeProjects(userId: string): Promise<PillarResult> {
+  const submissions = await prisma.projectSubmission.findMany({
+    where: { userId },
+    include: { reviews: true },
+  });
+  const allReviews = submissions.flatMap((s) => s.reviews);
+  if (submissions.length === 0) {
+    return {
+      label: "Projects",
+      value: null,
+      provenance: null,
+      caption: "Not assessed yet",
+    };
+  }
+  if (allReviews.length === 0) {
+    return {
+      label: "Projects",
+      value: null,
+      provenance: "SELF-PACED",
+      caption: `${submissions.length} submitted, awaiting review`,
+    };
+  }
+
+  const perReviewAvg = allReviews.map(
+    (r) => (r.correctness + r.efficiency + r.readability) / 3
+  );
+  const value = Math.round(
+    (perReviewAvg.reduce((sum, v) => sum + v, 0) / perReviewAvg.length) * 20
+  );
+
+  return {
+    label: "Projects",
+    value,
+    provenance: "VERIFIED",
+    caption: `${submissions.length} shipped, ${allReviews.length} reviewed`,
+  };
+}
+
+async function computeInterviewPerformance(userId: string): Promise<PillarResult> {
+  const [mockFeedback, gdRatings] = await Promise.all([
+    prisma.mockFeedback.findMany({ where: { rateeId: userId } }),
+    prisma.gdRating.findMany({ where: { rateeId: userId } }),
+  ]);
+
+  const scores: number[] = [
+    ...mockFeedback.map((f) => f.score * 20),
+    ...gdRatings.map((r) => ((r.clarity + r.content + r.courtesy) / 3) * 20),
+  ];
+
+  if (scores.length === 0) {
+    return {
+      label: "Interview performance",
+      value: null,
+      provenance: null,
+      caption: "Not assessed yet",
+    };
+  }
+
+  const value = Math.round(scores.reduce((sum, s) => sum + s, 0) / scores.length);
+  const parts: string[] = [];
+  if (mockFeedback.length > 0) {
+    parts.push(`${mockFeedback.length} mock${mockFeedback.length === 1 ? "" : "s"}`);
+  }
+  if (gdRatings.length > 0) {
+    parts.push(`${gdRatings.length} GD rating${gdRatings.length === 1 ? "" : "s"}`);
+  }
+
+  return {
+    label: "Interview performance",
+    value,
+    provenance: "SELF-PACED",
+    caption: parts.join(", "),
+  };
+}
+
 export async function computeReadinessPillars(
   userId: string
 ): Promise<PillarResult[]> {
-  const [fundamentals, aptitude, industry] = await Promise.all([
+  const [fundamentals, aptitude, industry, projects, interview] = await Promise.all([
     computeFundamentals(userId),
     computeAptitude(userId),
     computeIndustrySkills(userId),
+    computeProjects(userId),
+    computeInterviewPerformance(userId),
   ]);
 
   return [
@@ -109,7 +186,7 @@ export async function computeReadinessPillars(
     aptitude,
     { label: "Problem solving", value: null, provenance: null, caption: "Not assessed yet" },
     industry,
-    { label: "Projects", value: null, provenance: null, caption: "Not assessed yet" },
-    { label: "Interview performance", value: null, provenance: null, caption: "Not assessed yet" },
+    projects,
+    interview,
   ];
 }
