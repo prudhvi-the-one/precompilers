@@ -19,11 +19,19 @@ const PRACTICE_SUB_ITEMS = [
   { label: "Coding problems", href: "/practice", soon: true },
 ];
 
+const PROVE_SUB_ITEMS = [
+  { label: "Projects", href: "/prove/projects" },
+  { label: "Review queue", href: "/prove/review-queue" },
+  { label: "Feedback received", href: "/prove/feedback-received" },
+  { label: "Mock interviews", href: "/prove/mocks" },
+  { label: "Group discussions", href: "/prove/group-discussions" },
+];
+
 const NAV_ITEMS = [
   { label: "Home", href: "/home", icon: Home },
   { label: "Learn", href: "/learn", icon: BookOpen, subItems: LEARN_SUB_ITEMS },
   { label: "Practice", href: "/practice", icon: Code2, subItems: PRACTICE_SUB_ITEMS },
-  { label: "Prove", href: "/prove", icon: Award, soon: true },
+  { label: "Prove", href: "/prove", icon: Award, subItems: PROVE_SUB_ITEMS },
   { label: "Career", href: "/career", icon: Briefcase, soon: true },
 ];
 
