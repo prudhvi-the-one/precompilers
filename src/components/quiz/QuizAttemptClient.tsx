@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
 type OptionView = { id: string; label: string; text: string };
@@ -65,6 +65,9 @@ export default function QuizAttemptClient({
   const [questionIndex, setQuestionIndex] = useState(0);
   const [cameraError, setCameraError] = useState<string | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const recordedChunksRef = useRef<Blob[]>([]);
 
   const activeSectionAttempt = sectionAttempts.find((sa) => !sa.submittedAt);
   const activeSection =
@@ -92,21 +95,79 @@ export default function QuizAttemptClient({
     }
   }, [remainingMs, activeSectionAttempt, submitting, ended]);
 
-  // Camera preview — proves the camera is on; no video is recorded or stored.
+  // Camera preview + recording — proves the camera is on and records an audit
+  // trail for a future mentor review. Lifecycle is independent of `ended` so
+  // the last seconds before a violation-triggered end are still captured;
+  // finalizeRecording() (below) is what actually tears the stream down.
   useEffect(() => {
-    if (!proctored || !isPaper || ended) return;
-    let stream: MediaStream | null = null;
+    if (!proctored || !isPaper) return;
+    let cancelled = false;
     navigator.mediaDevices
       .getUserMedia({ video: true })
-      .then((s) => {
-        stream = s;
-        if (videoRef.current) videoRef.current.srcObject = s;
+      .then((stream) => {
+        if (cancelled) {
+          stream.getTracks().forEach((track) => track.stop());
+          return;
+        }
+        streamRef.current = stream;
+        if (videoRef.current) videoRef.current.srcObject = stream;
+        try {
+          const recorder = new MediaRecorder(stream, {
+            mimeType: "video/webm;codecs=vp8",
+            videoBitsPerSecond: 250_000,
+          });
+          recorder.ondataavailable = (e) => {
+            if (e.data.size > 0) recordedChunksRef.current.push(e.data);
+          };
+          recorder.start(1000);
+          mediaRecorderRef.current = recorder;
+        } catch {
+          // MediaRecorder unsupported — camera preview still works, no recording.
+        }
       })
       .catch(() => setCameraError("Camera preview unavailable"));
     return () => {
-      stream?.getTracks().forEach((track) => track.stop());
+      cancelled = true;
+      if (mediaRecorderRef.current?.state !== "inactive") {
+        mediaRecorderRef.current?.stop();
+      }
+      streamRef.current?.getTracks().forEach((track) => track.stop());
     };
-  }, [proctored, isPaper, ended]);
+  }, [proctored, isPaper]);
+
+  const finalizeRecording = useCallback(() => {
+    const recorder = mediaRecorderRef.current;
+    if (!recorder || recorder.state === "inactive") {
+      streamRef.current?.getTracks().forEach((track) => track.stop());
+      return;
+    }
+    recorder.onstop = () => {
+      streamRef.current?.getTracks().forEach((track) => track.stop());
+      const chunks = recordedChunksRef.current;
+      if (chunks.length === 0) return;
+      const blob = new Blob(chunks, { type: "video/webm" });
+      fetch(`/api/attempts/${attemptId}/recording/start`, { method: "POST" })
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data: { uploadUrl: string; key: string } | null) => {
+          if (!data) return null;
+          return fetch(data.uploadUrl, {
+            method: "PUT",
+            headers: { "Content-Type": "video/webm" },
+            body: blob,
+          }).then((putRes) =>
+            putRes.ok
+              ? fetch(`/api/attempts/${attemptId}/recording/complete`, {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ key: data.key }),
+                })
+              : null
+          );
+        })
+        .catch(() => {});
+    };
+    recorder.stop();
+  }, [attemptId]);
 
   // Real tab-focus enforcement — leaving the tab twice ends the attempt.
   useEffect(() => {
@@ -118,6 +179,7 @@ export default function QuizAttemptClient({
           .then((data: { ended: boolean; violationCount: number }) => {
             setViolationCount(data.violationCount);
             if (data.ended) {
+              finalizeRecording();
               setEnded(true);
               setTimeout(() => {
                 router.push(resultsHref);
@@ -131,7 +193,7 @@ export default function QuizAttemptClient({
     document.addEventListener("visibilitychange", handleVisibilityChange);
     return () =>
       document.removeEventListener("visibilitychange", handleVisibilityChange);
-  }, [proctored, ended, attemptId, resultsHref, router]);
+  }, [proctored, ended, attemptId, resultsHref, router, finalizeRecording]);
 
   // Mark the current question seen (fire-and-forget, no re-render needed).
   const seenPinged = useRef<Set<string>>(new Set());
@@ -194,6 +256,7 @@ export default function QuizAttemptClient({
         attemptSubmitted: boolean;
       };
       if (data.attemptSubmitted) {
+        finalizeRecording();
         router.push(resultsHref);
         router.refresh();
         return;

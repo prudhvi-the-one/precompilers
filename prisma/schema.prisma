@@ -249,6 +249,7 @@ model QuizAttempt {
   score           Int?
   endedByViolation Boolean  @default(false)
   violationCount  Int       @default(0)
+  recordingKey    String?
 
   sectionAttempts   SectionAttempt[]
   questionResponses QuestionResponse[]
