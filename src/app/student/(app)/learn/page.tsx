@@ -21,7 +21,7 @@ function formatClassChip(date: Date): string {
   const time = date.toLocaleTimeString("en-GB", {
     hour: "2-digit",
     minute: "2-digit",
-    hour12: false,
+    hourCycle: "h23",
   });
   return `${day} ${time}`;
 }
