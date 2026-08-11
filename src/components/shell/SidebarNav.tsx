@@ -13,10 +13,11 @@ const LEARN_SUB_ITEMS = [
 ];
 
 const PRACTICE_SUB_ITEMS = [
+  { label: "Coding problems", href: "/practice/problems" },
   { label: "Quizzes", href: "/practice/quizzes" },
   { label: "Aptitude papers", href: "/practice/aptitude" },
-  { label: "History", href: "/practice/quizzes/history" },
-  { label: "Coding problems", href: "/practice", soon: true },
+  { label: "Quiz history", href: "/practice/quizzes/history" },
+  { label: "Submission history", href: "/practice/problems/history" },
 ];
 
 const PROVE_SUB_ITEMS = [

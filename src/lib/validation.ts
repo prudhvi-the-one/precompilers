@@ -96,3 +96,12 @@ export const gdRatingSchema = z.object({
   content: z.number().int().min(1).max(5),
   courtesy: z.number().int().min(1).max(5),
 });
+
+export const runSubmitSchema = z.object({
+  language: z.enum(["PYTHON3", "JAVASCRIPT", "JAVA", "CPP", "C"]),
+  sourceCode: z.string().min(1, "Write some code first").max(20000),
+});
+
+export const problemCommentSchema = z.object({
+  body: z.string().trim().min(1, "Comment can't be empty").max(2000),
+});

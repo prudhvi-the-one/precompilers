@@ -665,6 +665,276 @@ async function seedPeerLoop() {
   );
 }
 
+type TestCaseSeed = { input: string; expectedOutput: string; isSample: boolean };
+type ExampleSeed = { input: string; output: string; explanation?: string };
+type ProblemSeed = {
+  slug: string;
+  title: string;
+  difficulty: "EASY" | "MEDIUM" | "HARD";
+  category: string;
+  tags: string[];
+  companies: string[];
+  statement: string;
+  examples: ExampleSeed[];
+  constraints: string;
+  hints: string;
+  solutionExplanation: string;
+  order: number;
+  testCases: TestCaseSeed[];
+};
+
+const PROBLEMS: ProblemSeed[] = [
+  {
+    slug: "two-sum",
+    title: "Two Sum",
+    difficulty: "EASY",
+    category: "Arrays",
+    tags: ["Arrays", "Hash map"],
+    companies: ["Amazon", "Zoho"],
+    statement:
+      "Given an array of integers and a target value, print the 0-indexed positions of the two numbers that add up to the target, smaller index first. Exactly one valid pair exists.\n\n" +
+      "Input: first line n, second line n space-separated integers, third line the target.\n" +
+      "Output: the two indices, space-separated.",
+    examples: [
+      { input: "4\n2 7 11 15\n9", output: "0 1", explanation: "nums[0] + nums[1] = 2 + 7 = 9" },
+      { input: "3\n3 2 4\n6", output: "1 2", explanation: "nums[1] + nums[2] = 2 + 4 = 6" },
+    ],
+    constraints: "2 <= n <= 1000\n-10^6 <= nums[i], target <= 10^6",
+    hints: "A hash map from value to index lets you find the complement of the current number in one pass instead of checking every pair.",
+    solutionExplanation:
+      "Walk the array once. For each number, check if (target - number) was already seen; if so, you have your pair. Otherwise record the current number's index in a hash map. O(n) time, O(n) space.",
+    order: 1,
+    testCases: [
+      { input: "4\n2 7 11 15\n9", expectedOutput: "0 1", isSample: true },
+      { input: "3\n3 2 4\n6", expectedOutput: "1 2", isSample: true },
+      { input: "2\n3 3\n6", expectedOutput: "0 1", isSample: false },
+      { input: "5\n1 5 3 9 2\n11", expectedOutput: "3 4", isSample: false },
+    ],
+  },
+  {
+    slug: "longest-subarray-sum-k",
+    title: "Longest subarray with sum K",
+    difficulty: "MEDIUM",
+    category: "Arrays",
+    tags: ["Arrays & hashing", "Prefix sums"],
+    companies: ["Zoho", "TCS Digital"],
+    statement:
+      "Given an array of integers and an integer k, print the length of the longest subarray whose elements sum to exactly k. If no such subarray exists, print 0.\n\n" +
+      "Input: first line n and k space-separated, second line n space-separated integers.\n" +
+      "Output: the length.",
+    examples: [
+      {
+        input: "5 12\n1 2 3 7 5",
+        output: "3",
+        explanation: "[2, 3, 7] sums to 12 and has length 3",
+      },
+      {
+        input: "5 3\n1 -1 5 -2 3",
+        output: "4",
+        explanation: "[1, -1, 5, -2] sums to 3 and has length 4",
+      },
+    ],
+    constraints: "1 <= n <= 10^5\n-10^4 <= nums[i], k <= 10^4",
+    hints: "Track running prefix sums in a hash map: if (prefixSum - k) was seen at index j, the subarray from j+1 to the current index sums to k.",
+    solutionExplanation:
+      "Maintain a running prefix sum and a hash map from prefix-sum value to the earliest index it occurred at. At each index, if prefixSum - k has been seen before, the subarray between that earlier index and now sums to k — track the longest such span. O(n) time, O(n) space.",
+    order: 2,
+    testCases: [
+      { input: "5 12\n1 2 3 7 5", expectedOutput: "3", isSample: true },
+      { input: "5 3\n1 -1 5 -2 3", expectedOutput: "4", isSample: true },
+      { input: "4 1\n-2 -1 2 1", expectedOutput: "2", isSample: false },
+      { input: "6 15\n10 5 2 7 1 -10", expectedOutput: "6", isSample: false },
+    ],
+  },
+  {
+    slug: "valid-palindrome",
+    title: "Valid Palindrome",
+    difficulty: "EASY",
+    category: "Strings",
+    tags: ["Strings", "Two pointers"],
+    companies: ["Infosys"],
+    statement:
+      "Given a lowercase alphanumeric string, print \"true\" if it reads the same forwards and backwards, else \"false\".\n\n" +
+      "Input: one line — the string.\nOutput: true or false.",
+    examples: [
+      { input: "racecar", output: "true" },
+      { input: "hello", output: "false" },
+    ],
+    constraints: "1 <= length <= 10^5",
+    hints: "Two pointers, one from each end, moving inward — no need to build the reversed string.",
+    solutionExplanation:
+      "Compare characters from both ends moving toward the center; stop early on any mismatch. O(n) time, O(1) extra space.",
+    order: 3,
+    testCases: [
+      { input: "racecar", expectedOutput: "true", isSample: true },
+      { input: "hello", expectedOutput: "false", isSample: true },
+      { input: "a", expectedOutput: "true", isSample: false },
+      { input: "abcd", expectedOutput: "false", isSample: false },
+    ],
+  },
+  {
+    slug: "reverse-words-in-string",
+    title: "Reverse Words in a String",
+    difficulty: "EASY",
+    category: "Strings",
+    tags: ["Strings"],
+    companies: ["TCS Digital"],
+    statement:
+      "Given a sentence of words separated by single spaces (no leading/trailing spaces), print the words in reverse order, separated by single spaces.\n\n" +
+      "Input: one line — the sentence.\nOutput: the reversed-order sentence.",
+    examples: [
+      { input: "the sky is blue", output: "blue is sky the" },
+      { input: "hello world", output: "world hello" },
+    ],
+    constraints: "1 <= length <= 10^4",
+    hints: "Split on spaces, reverse the list of words, join back with single spaces.",
+    solutionExplanation: "Split the line into words, reverse the array, and join with single spaces.",
+    order: 4,
+    testCases: [
+      { input: "the sky is blue", expectedOutput: "blue is sky the", isSample: true },
+      { input: "hello world", expectedOutput: "world hello", isSample: true },
+      { input: "a", expectedOutput: "a", isSample: false },
+      { input: "coding is fun today", expectedOutput: "today fun is coding", isSample: false },
+    ],
+  },
+  {
+    slug: "maximum-subarray-sum",
+    title: "Maximum Subarray Sum",
+    difficulty: "MEDIUM",
+    category: "Arrays",
+    tags: ["Arrays", "Dynamic programming"],
+    companies: ["TCS Digital"],
+    statement:
+      "Given an array of integers (which may include negatives), print the maximum sum of any contiguous subarray. The array has at least one element.\n\n" +
+      "Input: first line n, second line n space-separated integers.\nOutput: the maximum sum.",
+    examples: [
+      {
+        input: "9\n-2 1 -3 4 -1 2 1 -5 4",
+        output: "6",
+        explanation: "[4, -1, 2, 1] sums to 6",
+      },
+      { input: "1\n1", output: "1" },
+    ],
+    constraints: "1 <= n <= 10^5",
+    hints: "Kadane's algorithm: track the best sum ending at the current position, resetting to 0 whenever it goes negative.",
+    solutionExplanation:
+      "Kadane's algorithm — keep a running sum that resets to the current element whenever it would go negative, tracking the best sum seen. O(n) time, O(1) space.",
+    order: 5,
+    testCases: [
+      { input: "9\n-2 1 -3 4 -1 2 1 -5 4", expectedOutput: "6", isSample: true },
+      { input: "1\n1", expectedOutput: "1", isSample: true },
+      { input: "5\n5 4 -1 7 8", expectedOutput: "23", isSample: false },
+      { input: "3\n-1 -2 -3", expectedOutput: "-1", isSample: false },
+    ],
+  },
+  {
+    slug: "climbing-stairs",
+    title: "Climbing Stairs",
+    difficulty: "EASY",
+    category: "Dynamic programming",
+    tags: ["Dynamic programming"],
+    companies: ["Amazon"],
+    statement:
+      "You're climbing a staircase of n steps. Each move you can climb 1 or 2 steps. Print the number of distinct ways to reach the top.\n\n" +
+      "Input: one line — n.\nOutput: the number of distinct ways.",
+    examples: [
+      { input: "2", output: "2", explanation: "1+1 or 2" },
+      { input: "3", output: "3", explanation: "1+1+1, 1+2, or 2+1" },
+    ],
+    constraints: "1 <= n <= 45",
+    hints: "The number of ways to reach step n is the sum of the ways to reach n-1 and n-2 — this is just Fibonacci.",
+    solutionExplanation:
+      "ways(n) = ways(n-1) + ways(n-2), with ways(1) = 1 and ways(2) = 2 — compute iteratively bottom-up. O(n) time, O(1) space.",
+    order: 6,
+    testCases: [
+      { input: "2", expectedOutput: "2", isSample: true },
+      { input: "3", expectedOutput: "3", isSample: true },
+      { input: "4", expectedOutput: "5", isSample: false },
+      { input: "5", expectedOutput: "8", isSample: false },
+    ],
+  },
+  {
+    slug: "merge-two-sorted-arrays",
+    title: "Merge Two Sorted Arrays",
+    difficulty: "MEDIUM",
+    category: "Arrays",
+    tags: ["Arrays", "Two pointers"],
+    companies: ["Zoho"],
+    statement:
+      "Given two arrays already sorted in ascending order, print them merged into a single sorted array.\n\n" +
+      "Input: first line n and m space-separated, second line n integers (array 1), third line m integers (array 2).\n" +
+      "Output: the merged sorted array, space-separated.",
+    examples: [
+      { input: "3 3\n1 3 5\n2 4 6", output: "1 2 3 4 5 6" },
+      { input: "4 1\n1 2 3 9\n5", output: "1 2 3 5 9" },
+    ],
+    constraints: "1 <= n, m <= 10^5",
+    hints: "Two pointers, one per array — always take the smaller of the two current elements.",
+    solutionExplanation:
+      "Standard merge step from merge sort: advance whichever pointer currently points at the smaller element, appending it to the result, until one array is exhausted, then append the rest of the other. O(n + m) time.",
+    order: 7,
+    testCases: [
+      { input: "3 3\n1 3 5\n2 4 6", expectedOutput: "1 2 3 4 5 6", isSample: true },
+      { input: "4 1\n1 2 3 9\n5", expectedOutput: "1 2 3 5 9", isSample: true },
+      { input: "1 1\n1\n2", expectedOutput: "1 2", isSample: false },
+      {
+        input: "5 4\n1 4 7 10 13\n2 3 8 12",
+        expectedOutput: "1 2 3 4 7 8 10 12 13",
+        isSample: false,
+      },
+    ],
+  },
+  {
+    slug: "count-set-bits",
+    title: "Count Set Bits",
+    difficulty: "EASY",
+    category: "Bit manipulation",
+    tags: ["Bit manipulation"],
+    companies: ["Infosys"],
+    statement:
+      "Given a non-negative integer n, print the number of 1s in its binary representation.\n\n" +
+      "Input: one line — n.\nOutput: the count of set bits.",
+    examples: [
+      { input: "5", output: "2", explanation: "5 is 101 in binary" },
+      { input: "7", output: "3", explanation: "7 is 111 in binary" },
+    ],
+    constraints: "0 <= n <= 2^31 - 1",
+    hints: "n & (n - 1) clears the lowest set bit — count how many times you can do that before n becomes 0.",
+    solutionExplanation:
+      "Repeatedly apply n = n & (n - 1), which clears the lowest set bit each time; count the iterations until n reaches 0. O(number of set bits) time.",
+    order: 8,
+    testCases: [
+      { input: "5", expectedOutput: "2", isSample: true },
+      { input: "7", expectedOutput: "3", isSample: true },
+      { input: "0", expectedOutput: "0", isSample: false },
+      { input: "255", expectedOutput: "8", isSample: false },
+    ],
+  },
+];
+
+async function seedProblems() {
+  for (const problemData of PROBLEMS) {
+    const { testCases, ...problemFields } = problemData;
+
+    const problem = await prisma.problem.upsert({
+      where: { slug: problemData.slug },
+      update: problemFields,
+      create: problemFields,
+    });
+
+    for (const [index, testCase] of testCases.entries()) {
+      const testCaseId = `${problem.id}-tc-${index}`;
+      await prisma.testCase.upsert({
+        where: { id: testCaseId },
+        update: { ...testCase, order: index + 1 },
+        create: { id: testCaseId, problemId: problem.id, order: index + 1, ...testCase },
+      });
+    }
+  }
+
+  console.log("Seeded problems:", PROBLEMS.map((p) => p.slug).join(", "));
+}
+
 async function main() {
   for (const trackData of TRACKS) {
     const { lectures, videoId, notes, ...trackFields } = trackData;
@@ -751,6 +1021,7 @@ async function main() {
 
   await seedQuizzes();
   await seedPeerLoop();
+  await seedProblems();
 }
 
 main()

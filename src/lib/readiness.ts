@@ -170,23 +170,46 @@ async function computeInterviewPerformance(userId: string): Promise<PillarResult
   };
 }
 
+async function computeProblemSolving(userId: string): Promise<PillarResult> {
+  const [totalProblems, submissions] = await Promise.all([
+    prisma.problem.count(),
+    prisma.submission.findMany({ where: { userId } }),
+  ]);
+
+  if (submissions.length === 0 || totalProblems === 0) {
+    return {
+      label: "Problem solving",
+      value: null,
+      provenance: null,
+      caption: "Not assessed yet",
+    };
+  }
+
+  const solvedCount = new Set(
+    submissions.filter((s) => s.verdict === "ACCEPTED").map((s) => s.problemId)
+  ).size;
+  const value = Math.round((solvedCount / totalProblems) * 100);
+
+  return {
+    label: "Problem solving",
+    value,
+    provenance: "SELF-PACED",
+    caption: `${solvedCount} of ${totalProblems} problems solved`,
+  };
+}
+
 export async function computeReadinessPillars(
   userId: string
 ): Promise<PillarResult[]> {
-  const [fundamentals, aptitude, industry, projects, interview] = await Promise.all([
-    computeFundamentals(userId),
-    computeAptitude(userId),
-    computeIndustrySkills(userId),
-    computeProjects(userId),
-    computeInterviewPerformance(userId),
-  ]);
+  const [fundamentals, aptitude, problemSolving, industry, projects, interview] =
+    await Promise.all([
+      computeFundamentals(userId),
+      computeAptitude(userId),
+      computeProblemSolving(userId),
+      computeIndustrySkills(userId),
+      computeProjects(userId),
+      computeInterviewPerformance(userId),
+    ]);
 
-  return [
-    fundamentals,
-    aptitude,
-    { label: "Problem solving", value: null, provenance: null, caption: "Not assessed yet" },
-    industry,
-    projects,
-    interview,
-  ];
+  return [fundamentals, aptitude, problemSolving, industry, projects, interview];
 }
