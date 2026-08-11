@@ -49,6 +49,19 @@ enum HireVerdict {
   YES
 }
 
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+enum SubmissionVerdict {
+  ACCEPTED
+  WRONG_ANSWER
+  RUNTIME_ERROR
+  COMPILE_ERROR
+}
+
 model User {
   id              String      @id @default(cuid())
   email           String      @unique
@@ -70,6 +83,8 @@ model User {
   lectureProgress LectureProgress[]
   quizAttempts    QuizAttempt[]
   submissions       ProjectSubmission[]
+  problemSubmissions Submission[]
+  problemComments    Comment[]
   reviewsGiven      PeerReview[]         @relation("ReviewsGiven")
   mockRequests      MockRequest[]
   mockFeedbackGiven MockFeedback[]       @relation("MockFeedbackGiven")
@@ -391,4 +406,67 @@ model GdRating {
   courtesy  Int
 
   @@unique([sessionId, raterId, rateeId])
+}
+
+model Problem {
+  id                  String      @id @default(cuid())
+  slug                String      @unique
+  title               String
+  difficulty          Difficulty
+  category            String
+  tags                String[]
+  companies           String[]
+  statement           String
+  examples            Json
+  constraints         String
+  hints               String
+  solutionExplanation String
+  requiredEntitlement Entitlement @default(FREE)
+  order               Int         @default(0)
+
+  testCases   TestCase[]
+  submissions Submission[]
+  comments    Comment[]
+}
+
+model TestCase {
+  id             String  @id @default(cuid())
+  problemId      String
+  problem        Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+  order          Int     @default(0)
+  input          String
+  expectedOutput String
+  isSample       Boolean @default(false)
+
+  @@index([problemId])
+}
+
+model Submission {
+  id          String            @id @default(cuid())
+  problemId   String
+  problem     Problem           @relation(fields: [problemId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  language    String
+  sourceCode  String
+  verdict     SubmissionVerdict
+  passedCount Int
+  totalCount  Int
+  runtimeMs   Int?
+  memoryKb    Int?
+  submittedAt DateTime          @default(now())
+
+  @@index([userId, problemId])
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  problemId String
+  problem   Problem  @relation(fields: [problemId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  body      String
+  createdAt DateTime @default(now())
+
+  @@index([problemId])
 }

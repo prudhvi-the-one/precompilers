@@ -9,9 +9,10 @@ export default async function PracticePage() {
     redirect("/login");
   }
 
-  const [quizCount, paperCount] = await Promise.all([
+  const [quizCount, paperCount, problemCount] = await Promise.all([
     prisma.quiz.count({ where: { kind: "TOPIC_QUIZ" } }),
     prisma.quiz.count({ where: { kind: "APTITUDE_PAPER" } }),
+    prisma.problem.count(),
   ]);
 
   return (
@@ -21,7 +22,7 @@ export default async function PracticePage() {
           Practice
         </h1>
         <p className="text-[14.5px] text-[#55556B]">
-          Quizzes, aptitude papers, and — soon — coding problems.
+          Coding problems, quizzes, and aptitude papers.
         </p>
       </div>
 
@@ -44,10 +45,15 @@ export default async function PracticePage() {
             {paperCount} full sectional paper{paperCount === 1 ? "" : "s"}, proctored or practice.
           </p>
         </Link>
-        <div className="rounded-xl border border-[#E6E6EF] bg-[#FBFBFD] p-5">
-          <h2 className="font-brand text-base font-bold text-[#9A9AAE]">Coding problems</h2>
-          <p className="mt-1 text-sm text-[#9A9AAE]">Coming soon.</p>
-        </div>
+        <Link
+          href="/practice/problems"
+          className="rounded-xl border border-[#E6E6EF] bg-white p-5 hover:bg-[#FBFBFD]"
+        >
+          <h2 className="font-brand text-base font-bold text-[#0F1020]">Coding problems</h2>
+          <p className="mt-1 text-sm text-[#55556B]">
+            {problemCount} problem{problemCount === 1 ? "" : "s"} across core topics.
+          </p>
+        </Link>
       </div>
     </div>
   );
