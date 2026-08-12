@@ -134,14 +134,20 @@ async function computeProjects(userId: string): Promise<PillarResult> {
 }
 
 async function computeInterviewPerformance(userId: string): Promise<PillarResult> {
-  const [mockFeedback, gdRatings] = await Promise.all([
+  const [mockFeedback, gdRatings, mentorScorecards] = await Promise.all([
     prisma.mockFeedback.findMany({ where: { rateeId: userId } }),
     prisma.gdRating.findMany({ where: { rateeId: userId } }),
+    prisma.mentorScorecard.findMany({
+      where: { session: { studentId: userId } },
+    }),
   ]);
 
   const scores: number[] = [
     ...mockFeedback.map((f) => f.score * 20),
     ...gdRatings.map((r) => ((r.clarity + r.content + r.courtesy) / 3) * 20),
+    ...mentorScorecards.map(
+      (s) => ((s.technical + s.communication + s.problemSolving + s.confidence) / 4) * 20
+    ),
   ];
 
   if (scores.length === 0) {
@@ -161,11 +167,16 @@ async function computeInterviewPerformance(userId: string): Promise<PillarResult
   if (gdRatings.length > 0) {
     parts.push(`${gdRatings.length} GD rating${gdRatings.length === 1 ? "" : "s"}`);
   }
+  if (mentorScorecards.length > 0) {
+    parts.push(
+      `${mentorScorecards.length} mentor scorecard${mentorScorecards.length === 1 ? "" : "s"}`
+    );
+  }
 
   return {
     label: "Interview performance",
     value,
-    provenance: "SELF-PACED",
+    provenance: mentorScorecards.length > 0 ? "VERIFIED" : "SELF-PACED",
     caption: parts.join(", "),
   };
 }

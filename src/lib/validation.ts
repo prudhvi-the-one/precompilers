@@ -105,3 +105,26 @@ export const runSubmitSchema = z.object({
 export const problemCommentSchema = z.object({
   body: z.string().trim().min(1, "Comment can't be empty").max(2000),
 });
+
+export const mentorAvailabilitySchema = z.object({
+  startsAt: z.string().datetime(),
+  durationMinutes: z.number().int().min(15).max(120).default(30),
+});
+
+export const mentorSessionBookSchema = z.object({
+  slotId: z.string().min(1),
+  kind: z.enum(["MOCK", "HR_ROUND", "COUNSELLING"]),
+});
+
+export const mentorScorecardSchema = z.object({
+  technical: z.number().int().min(1).max(5),
+  communication: z.number().int().min(1).max(5),
+  problemSolving: z.number().int().min(1).max(5),
+  confidence: z.number().int().min(1).max(5),
+  verdict: z.enum(["NOT_YET", "CLOSE", "YES"]),
+  writtenFeedback: z.string().trim().min(20, "Say a bit more — at least 20 characters").max(2000),
+});
+
+export const mentorSessionNotesSchema = z.object({
+  notes: z.string().trim().min(1, "Notes can't be empty").max(2000),
+});

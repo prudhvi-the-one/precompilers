@@ -1,4 +1,4 @@
-export default function MentorLayout({
+export default function MentorAuthLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;

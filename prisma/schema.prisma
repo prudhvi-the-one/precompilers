@@ -62,6 +62,18 @@ enum SubmissionVerdict {
   COMPILE_ERROR
 }
 
+enum MentorSessionKind {
+  MOCK
+  HR_ROUND
+  COUNSELLING
+}
+
+enum MentorSessionStatus {
+  BOOKED
+  COMPLETED
+  CANCELLED
+}
+
 model User {
   id              String      @id @default(cuid())
   email           String      @unique
@@ -85,6 +97,8 @@ model User {
   submissions       ProjectSubmission[]
   problemSubmissions Submission[]
   problemComments    Comment[]
+  mentorProfile           MentorProfile?
+  mentorSessionsAsStudent MentorSession[]
   reviewsGiven      PeerReview[]         @relation("ReviewsGiven")
   mockRequests      MockRequest[]
   mockFeedbackGiven MockFeedback[]       @relation("MockFeedbackGiven")
@@ -469,4 +483,60 @@ model Comment {
   createdAt DateTime @default(now())
 
   @@index([problemId])
+}
+
+model MentorProfile {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  specializations String[]
+  bio             String
+  capacityPerDay  Int      @default(10)
+
+  availability MentorAvailability[]
+  sessions     MentorSession[]
+}
+
+model MentorAvailability {
+  id              String        @id @default(cuid())
+  mentorId        String
+  mentor          MentorProfile @relation(fields: [mentorId], references: [id], onDelete: Cascade)
+  startsAt        DateTime
+  durationMinutes Int           @default(30)
+  isBooked        Boolean       @default(false)
+
+  session MentorSession?
+
+  @@index([mentorId, startsAt])
+}
+
+model MentorSession {
+  id        String              @id @default(cuid())
+  kind      MentorSessionKind
+  mentorId  String
+  mentor    MentorProfile       @relation(fields: [mentorId], references: [id], onDelete: Cascade)
+  studentId String
+  student   User                @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  slotId    String              @unique
+  slot      MentorAvailability  @relation(fields: [slotId], references: [id], onDelete: Cascade)
+  roomUrl   String?
+  status    MentorSessionStatus @default(BOOKED)
+  notes     String?
+
+  scorecard MentorScorecard?
+
+  @@index([studentId])
+}
+
+model MentorScorecard {
+  id              String        @id @default(cuid())
+  sessionId       String        @unique
+  session         MentorSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  technical       Int
+  communication   Int
+  problemSolving  Int
+  confidence      Int
+  verdict         HireVerdict
+  writtenFeedback String
+  submittedAt     DateTime      @default(now())
 }
