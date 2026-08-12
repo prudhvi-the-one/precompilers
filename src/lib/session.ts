@@ -76,3 +76,11 @@ export async function getCurrentUser(): Promise<User | null> {
   }
   return prisma.user.findUnique({ where: { id: session.userId } });
 }
+
+export async function requireRole(role: Role): Promise<User | null> {
+  const user = await getCurrentUser();
+  if (!user || user.role !== role) {
+    return null;
+  }
+  return user;
+}

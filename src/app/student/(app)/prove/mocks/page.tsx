@@ -3,9 +3,20 @@ import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import MockPoolStatus from "@/components/prove/MockPoolStatus";
+import BookMentorSlot from "@/components/prove/BookMentorSlot";
 
 function formatDate(date: Date): string {
   return date.toLocaleDateString("en-US", { day: "numeric", month: "short" });
+}
+
+function formatSlotTime(date: Date): string {
+  return date.toLocaleDateString("en-US", {
+    day: "numeric",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23",
+  });
 }
 
 export default async function MocksPage() {
@@ -26,6 +37,13 @@ export default async function MocksPage() {
     orderBy: { createdAt: "desc" },
   });
 
+  const openSlots = await prisma.mentorAvailability.findMany({
+    where: { isBooked: false, startsAt: { gte: new Date() } },
+    include: { mentor: { include: { user: true } } },
+    orderBy: { startsAt: "asc" },
+    take: 10,
+  });
+
   return (
     <div className="max-w-3xl space-y-4">
       <Link href="/prove" className="text-sm text-[#8A8AA0] hover:text-[#0F1020]">
@@ -36,28 +54,52 @@ export default async function MocksPage() {
           Mock interviews
         </h1>
         <p className="text-[14.5px] text-[#55556B]">
-          Mentor mocks arrive in Phase 7. Peer mocks are free and unlimited.
+          Book a real mentor, or pair with a peer — free and unlimited.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <div className="rounded-xl border border-[#E6E6EF] bg-[#FBFBFD] p-5">
-          <div className="flex items-center justify-between">
-            <h2 className="font-brand text-base font-bold text-[#9A9AAE]">With a mentor</h2>
-          </div>
-          <p className="mt-1 text-sm text-[#9A9AAE]">Coming in Phase 7.</p>
-        </div>
-        <div className="rounded-xl border border-[#DDD9FB] bg-[#FBFAFF] p-5">
-          <h2 className="font-brand text-base font-bold text-[#0F1020]">With a peer</h2>
-          <p className="mt-1 text-sm text-[#55556B]">
-            Paired with another student. You interview them, they interview you.
+      <div className="rounded-xl border border-[#E6E6EF] bg-white">
+        <div className="border-b border-[#EDEDF3] px-5 py-3.5">
+          <h2 className="font-brand text-base font-bold text-[#0F1020]">With a mentor</h2>
+          <p className="text-xs text-[#8A8AA0]">
+            Book a slot for a mock interview, HR round, or counselling — real
+            mentors, verified feedback.
           </p>
-          <div className="mt-3">
-            <MockPoolStatus
-              initialRequestId={active?.id ?? null}
-              initialPaired={Boolean(active?.pairedWithId)}
-            />
+        </div>
+        {openSlots.length ? (
+          <div className="divide-y divide-[#F2F2F7]">
+            {openSlots.map((slot) => (
+              <div key={slot.id} className="flex items-center justify-between gap-3 px-5 py-3.5">
+                <div>
+                  <p className="text-sm font-medium text-[#0F1020]">
+                    {slot.mentor.user.name ?? slot.mentor.user.email}
+                  </p>
+                  <p className="text-xs text-[#8A8AA0]">
+                    {formatSlotTime(slot.startsAt)} · {slot.durationMinutes} min
+                    {slot.mentor.specializations.length
+                      ? ` · ${slot.mentor.specializations.join(", ")}`
+                      : ""}
+                  </p>
+                </div>
+                <BookMentorSlot slotId={slot.id} />
+              </div>
+            ))}
           </div>
+        ) : (
+          <p className="px-5 py-4 text-sm text-[#8A8AA0]">No mentor slots open right now.</p>
+        )}
+      </div>
+
+      <div className="rounded-xl border border-[#DDD9FB] bg-[#FBFAFF] p-5">
+        <h2 className="font-brand text-base font-bold text-[#0F1020]">With a peer</h2>
+        <p className="mt-1 text-sm text-[#55556B]">
+          Paired with another student. You interview them, they interview you.
+        </p>
+        <div className="mt-3">
+          <MockPoolStatus
+            initialRequestId={active?.id ?? null}
+            initialPaired={Boolean(active?.pairedWithId)}
+          />
         </div>
       </div>
 

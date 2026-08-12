@@ -1,0 +1,48 @@
+import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+import { requireRole } from "@/lib/session";
+import { mentorScorecardSchema } from "@/lib/validation";
+
+export async function POST(
+  request: Request,
+  { params }: { params: Promise<{ sessionId: string }> }
+) {
+  const mentor = await requireRole("MENTOR");
+  if (!mentor) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const { sessionId } = await params;
+  const body = await request.json().catch(() => null);
+  const parsed = mentorScorecardSchema.safeParse(body);
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: parsed.error.issues[0]?.message ?? "Invalid submission" },
+      { status: 400 }
+    );
+  }
+
+  const mentorSession = await prisma.mentorSession.findUnique({
+    where: { id: sessionId },
+    include: { mentor: true },
+  });
+  if (!mentorSession || mentorSession.mentor.userId !== mentor.id) {
+    return NextResponse.json({ error: "Not found" }, { status: 404 });
+  }
+  if (mentorSession.kind === "COUNSELLING") {
+    return NextResponse.json(
+      { error: "Counselling sessions use notes, not a scorecard" },
+      { status: 400 }
+    );
+  }
+
+  await prisma.mentorScorecard.create({
+    data: { sessionId, ...parsed.data },
+  });
+  await prisma.mentorSession.update({
+    where: { id: sessionId },
+    data: { status: "COMPLETED" },
+  });
+
+  return NextResponse.json({ success: true });
+}

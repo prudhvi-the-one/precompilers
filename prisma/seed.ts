@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { createDailyRoom } from "@/lib/daily";
+import { hashPassword } from "@/lib/password";
 
 const prisma = new PrismaClient();
 
@@ -940,6 +941,81 @@ async function seedProblems() {
   console.log("Seeded problems:", PROBLEMS.map((p) => p.slug).join(", "));
 }
 
+type MentorSeed = {
+  email: string;
+  name: string;
+  specializations: string[];
+  bio: string;
+};
+
+const MENTORS: MentorSeed[] = [
+  {
+    email: "priya.mentor@precompilers.com",
+    name: "Priya Sharma",
+    specializations: ["Backend", "System Design"],
+    bio: "8 years at a product company, now mentoring backend engineers for interviews.",
+  },
+  {
+    email: "arjun.mentor@precompilers.com",
+    name: "Arjun Rao",
+    specializations: ["Data Structures & Algorithms", "Frontend"],
+    bio: "Ex-FAANG SDE, focuses on DSA and React interview prep.",
+  },
+];
+
+const MENTOR_SEED_PASSWORD = "MentorPass123!";
+
+async function seedMentors() {
+  const passwordHash = await hashPassword(MENTOR_SEED_PASSWORD);
+
+  for (const mentorData of MENTORS) {
+    const user = await prisma.user.upsert({
+      where: { email: mentorData.email },
+      update: { name: mentorData.name },
+      create: {
+        email: mentorData.email,
+        passwordHash,
+        role: "MENTOR",
+        name: mentorData.name,
+        emailVerifiedAt: new Date(),
+      },
+    });
+
+    const mentorProfile = await prisma.mentorProfile.upsert({
+      where: { userId: user.id },
+      update: { specializations: mentorData.specializations, bio: mentorData.bio },
+      create: {
+        userId: user.id,
+        specializations: mentorData.specializations,
+        bio: mentorData.bio,
+        capacityPerDay: 10,
+      },
+    });
+
+    for (let dayOffset = 1; dayOffset <= 3; dayOffset++) {
+      for (const hour of [11, 15, 17]) {
+        const startsAt = new Date();
+        startsAt.setDate(startsAt.getDate() + dayOffset);
+        startsAt.setHours(hour, 0, 0, 0);
+        const id = `${mentorProfile.id}-slot-${dayOffset}-${hour}`;
+
+        const existing = await prisma.mentorAvailability.findUnique({ where: { id } });
+        if (existing) continue;
+
+        await prisma.mentorAvailability.create({
+          data: { id, mentorId: mentorProfile.id, startsAt, durationMinutes: 30 },
+        });
+      }
+    }
+  }
+
+  console.log(
+    "Seeded mentors:",
+    MENTORS.map((m) => m.email).join(", "),
+    `(password: ${MENTOR_SEED_PASSWORD})`
+  );
+}
+
 async function main() {
   for (const trackData of TRACKS) {
     const { lectures, videoId, notes, ...trackFields } = trackData;
@@ -1032,6 +1108,7 @@ async function main() {
   await seedQuizzes();
   await seedPeerLoop();
   await seedProblems();
+  await seedMentors();
 }
 
 main()
