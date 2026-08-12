@@ -28,11 +28,15 @@ export default function GdRoomClient({
   topic,
   scheduledAt,
   minParticipants,
+  roomUrl,
+  displayName,
 }: {
   sessionId: string;
   topic: string;
   scheduledAt: string;
   minParticipants: number;
+  roomUrl: string;
+  displayName: string;
 }) {
   const router = useRouter();
   const [participants, setParticipants] = useState<Participant[]>([]);
@@ -144,16 +148,12 @@ export default function GdRoomClient({
         </div>
 
         <div className="w-[320px] shrink-0 space-y-4">
-          <div className="rounded-xl border border-dashed border-[#33344F] bg-[#151633] p-4">
-            <p className="text-sm font-semibold text-[#E4E4F0]">
-              Live audio &amp; video — coming soon
-            </p>
-            <p className="mt-1.5 text-xs text-[#7A7A96]">
-              We&apos;re finalizing the video vendor for peer-only rooms. For now,
-              coordinate the call yourselves (a group call app of your choice) and
-              use this page to see who&apos;s here and rate each other once you&apos;re
-              done.
-            </p>
+          <div className="aspect-[4/3] overflow-hidden rounded-xl border border-[#23243D] bg-black">
+            <iframe
+              src={`${roomUrl}?name=${encodeURIComponent(displayName)}`}
+              allow="camera; microphone; fullscreen; display-capture; autoplay"
+              className="h-full w-full border-0"
+            />
           </div>
 
           <div className="rounded-xl border border-[#23243D] bg-[#151633] p-4 text-xs text-[#7A7A96]">

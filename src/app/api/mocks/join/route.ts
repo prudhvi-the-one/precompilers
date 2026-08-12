@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/session";
+import { createDailyRoom } from "@/lib/daily";
 
 export async function POST() {
   const session = await getSession();
@@ -8,37 +9,33 @@ export async function POST() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  let claimed: { requestId: string; paired: boolean; waitingId: string | null };
   try {
-    const result = await prisma.$transaction(async (tx) => {
+    claimed = await prisma.$transaction(async (tx) => {
       const waiting = await tx.mockRequest.findFirst({
         where: { pairedWithId: null, userId: { not: session.userId } },
         orderBy: { createdAt: "asc" },
       });
 
-      if (waiting) {
-        const mine = await tx.mockRequest.create({
-          data: { userId: session.userId },
-        });
-        const roomUrl = `https://meet.jit.si/precompilers-mock-${mine.id}`;
-        const scheduledAt = new Date();
-        await tx.mockRequest.update({
-          where: { id: mine.id },
-          data: { pairedWithId: waiting.id, roomUrl, scheduledAt },
-        });
-        await tx.mockRequest.update({
-          where: { id: waiting.id },
-          data: { pairedWithId: mine.id, roomUrl, scheduledAt },
-        });
-        return { requestId: mine.id, paired: true };
-      }
-
       const mine = await tx.mockRequest.create({
         data: { userId: session.userId },
       });
-      return { requestId: mine.id, paired: false };
-    });
 
-    return NextResponse.json(result);
+      if (!waiting) {
+        return { requestId: mine.id, paired: false, waitingId: null };
+      }
+
+      const scheduledAt = new Date();
+      await tx.mockRequest.update({
+        where: { id: mine.id },
+        data: { pairedWithId: waiting.id, scheduledAt },
+      });
+      await tx.mockRequest.update({
+        where: { id: waiting.id },
+        data: { pairedWithId: mine.id, scheduledAt },
+      });
+      return { requestId: mine.id, paired: true, waitingId: waiting.id };
+    });
   } catch {
     // Lost a race to another simultaneous join — fall back to waiting alone.
     const mine = await prisma.mockRequest.create({
@@ -46,4 +43,23 @@ export async function POST() {
     });
     return NextResponse.json({ requestId: mine.id, paired: false });
   }
+
+  if (claimed.paired) {
+    try {
+      const { url: roomUrl } = await createDailyRoom(
+        `precompilers-mock-${claimed.requestId}`
+      );
+      await prisma.mockRequest.updateMany({
+        where: { id: { in: [claimed.requestId, claimed.waitingId as string] } },
+        data: { roomUrl },
+      });
+    } catch {
+      return NextResponse.json(
+        { error: "Video room temporarily unavailable. Try again in a moment." },
+        { status: 503 }
+      );
+    }
+  }
+
+  return NextResponse.json({ requestId: claimed.requestId, paired: claimed.paired });
 }

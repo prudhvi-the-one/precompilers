@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { createDailyRoom } from "@/lib/daily";
 
 const prisma = new PrismaClient();
 
@@ -644,7 +645,11 @@ async function seedPeerLoop() {
     scheduledAt.setDate(scheduledAt.getDate() + gd.daysFromNow);
     scheduledAt.setHours(19, 0, 0, 0);
 
-    const roomUrl = `https://meet.jit.si/precompilers-${gd.roomSlug}`;
+    const existing = await prisma.gdSession.findUnique({ where: { id } });
+    const roomUrl = existing?.roomUrl.includes("daily.co")
+      ? existing.roomUrl
+      : (await createDailyRoom(`precompilers-${gd.roomSlug}`)).url;
+
     await prisma.gdSession.upsert({
       where: { id },
       update: { topic: gd.topic, scheduledAt, roomUrl },
@@ -999,6 +1004,7 @@ async function main() {
       const scheduledAt = new Date();
       scheduledAt.setDate(scheduledAt.getDate() + 3);
       scheduledAt.setHours(18, 0, 0, 0);
+      const { url: joinUrl } = await createDailyRoom(`precompilers-${track.slug}`);
 
       await prisma.liveClass.create({
         data: {
@@ -1006,13 +1012,17 @@ async function main() {
           title: `${track.name} — live Q&A`,
           scheduledAt,
           durationMinutes: 60,
-          joinUrl: `https://meet.jit.si/precompilers-${track.slug}`,
+          joinUrl,
         },
       });
-    } else if (existingLiveClass.joinUrl.includes("meet.google.com")) {
+    } else if (
+      existingLiveClass.joinUrl.includes("meet.google.com") ||
+      existingLiveClass.joinUrl.includes("meet.jit.si")
+    ) {
+      const { url: joinUrl } = await createDailyRoom(`precompilers-${track.slug}`);
       await prisma.liveClass.update({
         where: { id: existingLiveClass.id },
-        data: { joinUrl: `https://meet.jit.si/precompilers-${track.slug}` },
+        data: { joinUrl },
       });
     }
   }

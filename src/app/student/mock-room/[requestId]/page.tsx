@@ -48,18 +48,28 @@ export default async function MockRoomPage({
         </Link>
       </header>
 
-      <div className="flex flex-1 items-center justify-center p-6">
-        <div className="max-w-sm rounded-xl border border-dashed border-[#33344F] bg-[#151633] p-8 text-center">
-          <p className="text-sm font-semibold text-[#E4E4F0]">
-            You&apos;re paired with {mockRequest.pairedWith.user.name ?? "your partner"}
-          </p>
-          <p className="mt-2 text-sm text-[#7A7A96]">
-            Live in-app video is coming soon — we&apos;re finalizing the video
-            vendor for peer-only rooms. For now, connect however works for you
-            both, run the mock, then come back here to leave feedback.
-          </p>
+      {mockRequest.roomUrl ? (
+        <div className="relative flex-1 bg-black">
+          <iframe
+            src={`${mockRequest.roomUrl}?name=${encodeURIComponent(user.name ?? user.email)}`}
+            allow="camera; microphone; fullscreen; display-capture; autoplay"
+            className="absolute inset-0 h-full w-full border-0"
+          />
         </div>
-      </div>
+      ) : (
+        <div className="flex flex-1 items-center justify-center p-6">
+          <div className="max-w-sm rounded-xl border border-dashed border-[#33344F] bg-[#151633] p-8 text-center">
+            <p className="text-sm font-semibold text-[#E4E4F0]">
+              You&apos;re paired with {mockRequest.pairedWith.user.name ?? "your partner"}
+            </p>
+            <p className="mt-2 text-sm text-[#7A7A96]">
+              The video room is still being set up — refresh in a moment. If
+              this keeps happening, run the mock however works for you both
+              and come back here to leave feedback.
+            </p>
+          </div>
+        </div>
+      )}
     </>
   );
 }
