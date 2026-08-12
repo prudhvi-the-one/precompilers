@@ -25,6 +25,8 @@ export default async function GdRoomPage({
       topic={gdSession.topic}
       scheduledAt={gdSession.scheduledAt.toISOString()}
       minParticipants={gdSession.minParticipants}
+      roomUrl={gdSession.roomUrl}
+      displayName={user.name ?? user.email}
     />
   );
 }
