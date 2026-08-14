@@ -48,7 +48,14 @@ export function proxy(request: NextRequest) {
   }
 
   const targetPath = pathname === "/" ? `/${portal}` : `/${portal}${pathname}`;
-  const response = NextResponse.rewrite(new URL(targetPath, request.url));
+  const targetUrl = new URL(targetPath, request.url);
+  // `new URL(path, base)` drops the base's query string entirely when `path`
+  // is absolute — forward it explicitly, minus the proxy-internal `?portal=`
+  // override, which isn't meant for the destination page.
+  const forwardedParams = new URLSearchParams(searchParams);
+  forwardedParams.delete("portal");
+  targetUrl.search = forwardedParams.toString();
+  const response = NextResponse.rewrite(targetUrl);
 
   // Persist the ?portal= override in a cookie so it survives client-side
   // navigation on Vercel preview URLs, which have no real subdomains yet.

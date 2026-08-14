@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { requireRole } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import CreateBatchForm from "@/components/admin/CreateBatchForm";
+import CreateLiveClassForm from "@/components/admin/CreateLiveClassForm";
 
 function formatDate(date: Date): string {
   return date.toLocaleDateString("en-US", { day: "numeric", month: "short", year: "numeric" });
@@ -44,6 +45,15 @@ export default async function BatchesPage() {
           institutions={institutions.map((i) => ({ id: i.id, name: i.name }))}
         />
       </section>
+
+      {batches.length ? (
+        <section className="rounded-xl border border-gray-200 bg-white p-5">
+          <h2 className="mb-3 font-brand text-base font-bold text-gray-900">
+            Schedule live class
+          </h2>
+          <CreateLiveClassForm batches={batches.map((b) => ({ id: b.id, name: b.name }))} />
+        </section>
+      ) : null}
 
       <section className="rounded-xl border border-gray-200 bg-white">
         <div className="border-b border-gray-100 px-5 py-4">

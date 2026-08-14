@@ -108,6 +108,7 @@ model User {
   otps            Otp[]
   enrollment      Enrollment?
   lectureProgress LectureProgress[]
+  liveClassAttendances LiveClassAttendance[]
   quizAttempts    QuizAttempt[]
   submissions       ProjectSubmission[]
   problemSubmissions Submission[]
@@ -233,7 +234,20 @@ model LiveClass {
   durationMinutes Int
   joinUrl         String
 
+  attendances LiveClassAttendance[]
+
   @@index([batchId])
+}
+
+model LiveClassAttendance {
+  id          String    @id @default(cuid())
+  liveClassId String
+  liveClass   LiveClass @relation(fields: [liveClassId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  joinedAt    DateTime  @default(now())
+
+  @@unique([liveClassId, userId])
 }
 
 model Quiz {
