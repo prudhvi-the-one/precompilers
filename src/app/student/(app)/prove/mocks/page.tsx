@@ -37,12 +37,28 @@ export default async function MocksPage() {
     orderBy: { createdAt: "desc" },
   });
 
-  const openSlots = await prisma.mentorAvailability.findMany({
+  const candidateSlots = await prisma.mentorAvailability.findMany({
     where: { isBooked: false, startsAt: { gte: new Date() } },
     include: { mentor: { include: { user: true } } },
     orderBy: { startsAt: "asc" },
-    take: 10,
+    take: 50,
   });
+
+  const preferredMentorIds = user.institutionId
+    ? new Set(
+        (
+          await prisma.institutionPreferredMentor.findMany({
+            where: { institutionId: user.institutionId },
+            select: { mentorId: true },
+          })
+        ).map((p) => p.mentorId)
+      )
+    : new Set<string>();
+
+  const openSlots = [
+    ...candidateSlots.filter((s) => preferredMentorIds.has(s.mentorId)),
+    ...candidateSlots.filter((s) => !preferredMentorIds.has(s.mentorId)),
+  ].slice(0, 10);
 
   return (
     <div className="max-w-3xl space-y-4">
@@ -73,6 +89,11 @@ export default async function MocksPage() {
                 <div>
                   <p className="text-sm font-medium text-[#0F1020]">
                     {slot.mentor.user.name ?? slot.mentor.user.email}
+                    {preferredMentorIds.has(slot.mentorId) ? (
+                      <span className="ml-2 rounded-full bg-[#F1F0FE] px-2 py-0.5 text-[10px] font-semibold text-indigo-600">
+                        Preferred by your college
+                      </span>
+                    ) : null}
                   </p>
                   <p className="text-xs text-[#8A8AA0]">
                     {formatSlotTime(slot.startsAt)} · {slot.durationMinutes} min

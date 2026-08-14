@@ -10,11 +10,13 @@ const ADMIN_NAV = [
   { label: "Batches", href: "/batches" },
   { label: "Content", href: "/content" },
   { label: "Content Review", href: "/content-review" },
+  { label: "Drives", href: "/drives" },
 ];
 
 const INSTITUTION_ADMIN_NAV = [
   { label: "Cohort", href: "/cohort" },
   { label: "Faculty", href: "/faculty" },
+  { label: "Mentors", href: "/mentors" },
 ];
 
 export default async function AdminAppLayout({

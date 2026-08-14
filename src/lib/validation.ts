@@ -168,6 +168,21 @@ export const liveClassSchema = z.object({
   durationMinutes: z.number().int().min(15).max(240),
 });
 
+export const preferredMentorSchema = z.object({
+  mentorId: z.string().min(1),
+  preferred: z.boolean(),
+});
+
+export const driveSchema = z.object({
+  companyName: z.string().trim().min(1, "Company name is required").max(150),
+  roleTitle: z.string().trim().min(1, "Role is required").max(150),
+  driveDate: z.string().datetime(),
+  applyDeadline: z.string().datetime().optional(),
+  applyUrl: z.string().trim().url("Enter a valid URL").optional(),
+  location: z.string().trim().max(150).optional(),
+  description: z.string().trim().max(3000).default(""),
+});
+
 export const rejectContentSchema = z.object({
   reason: z
     .string()
