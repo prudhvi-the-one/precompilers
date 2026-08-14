@@ -17,7 +17,7 @@ export async function POST(
     where: { id: quizId },
     include: { sections: { orderBy: { order: "asc" } } },
   });
-  if (!quiz) {
+  if (!quiz || quiz.status !== "PUBLISHED") {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
   if (!meetsEntitlement(user.entitlement, quiz.requiredEntitlement)) {

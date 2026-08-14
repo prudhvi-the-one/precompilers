@@ -128,3 +128,204 @@ export const mentorScorecardSchema = z.object({
 export const mentorSessionNotesSchema = z.object({
   notes: z.string().trim().min(1, "Notes can't be empty").max(2000),
 });
+
+export const trackSchema = z.object({
+  name: z.string().trim().min(1, "Name is required").max(150),
+  tagline: z.string().trim().min(1, "Tagline is required").max(300),
+  requiredEntitlement: z.enum(["FREE", "INDIVIDUAL", "INSTITUTION"]).default("FREE"),
+  relevantRoles: z
+    .array(
+      z.enum([
+        "SOFTWARE_ENGINEER",
+        "DATA_ML_ENGINEER",
+        "FRONTEND_ENGINEER",
+        "CLOUD_DEVOPS",
+        "HIGHER_STUDIES",
+        "NOT_SURE",
+      ])
+    )
+    .default([]),
+});
+
+export const lectureSchema = z.object({
+  trackId: z.string().min(1),
+  title: z.string().trim().min(1, "Title is required").max(200),
+  description: z.string().trim().max(2000).default(""),
+  videoUrl: z.string().trim().url("Enter a valid video URL"),
+  durationMinutes: z.number().int().min(1).max(600),
+});
+
+export const noteSchema = z.object({
+  trackId: z.string().min(1),
+  title: z.string().trim().min(1, "Title is required").max(200),
+  content: z.string().trim().min(1, "Content can't be empty").max(20000),
+});
+
+export const rejectContentSchema = z.object({
+  reason: z
+    .string()
+    .trim()
+    .min(10, "Give the mentor at least a short reason (10+ characters)")
+    .max(1000),
+});
+
+const quizOptionSchema = z.object({
+  label: z.string().trim().max(5),
+  text: z.string().trim().max(500),
+  isCorrect: z.boolean(),
+});
+
+const quizQuestionSchema = z.object({
+  text: z.string().trim().max(2000),
+  marks: z.number().int().min(1).max(20),
+  order: z.number().int().min(0),
+  options: z.array(quizOptionSchema).max(4),
+});
+
+const quizSectionSchema = z.object({
+  name: z.string().trim().max(150),
+  durationMinutes: z.number().int().min(1).max(180),
+  order: z.number().int().min(0),
+  questions: z.array(quizQuestionSchema).max(50),
+});
+
+export const quizAuthorSchema = z
+  .object({
+    title: z.string().trim().min(1, "Title is required").max(200),
+    topic: z.string().trim().min(1, "Topic is required").max(100),
+    kind: z.enum(["TOPIC_QUIZ", "APTITUDE_PAPER"]),
+    requiredEntitlement: z.enum(["FREE", "INDIVIDUAL", "INSTITUTION"]).default("FREE"),
+    order: z.number().int().min(0).default(0),
+    submit: z.boolean(),
+    sections: z.array(quizSectionSchema).max(20),
+  })
+  .superRefine((data, ctx) => {
+    if (!data.submit) {
+      return;
+    }
+    if (data.sections.length === 0) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["sections"],
+        message: "Add at least one section before submitting for review",
+      });
+    }
+    data.sections.forEach((section, sIndex) => {
+      if (!section.name.trim()) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["sections", sIndex, "name"],
+          message: "Section name is required",
+        });
+      }
+      if (section.questions.length === 0) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["sections", sIndex, "questions"],
+          message: "Add at least one question to each section",
+        });
+      }
+      section.questions.forEach((question, qIndex) => {
+        if (!question.text.trim()) {
+          ctx.addIssue({
+            code: "custom",
+            path: ["sections", sIndex, "questions", qIndex, "text"],
+            message: "Question text is required",
+          });
+        }
+        if (question.options.length !== 4) {
+          ctx.addIssue({
+            code: "custom",
+            path: ["sections", sIndex, "questions", qIndex, "options"],
+            message: "Each question needs exactly 4 options",
+          });
+        } else {
+          if (question.options.some((o) => !o.text.trim())) {
+            ctx.addIssue({
+              code: "custom",
+              path: ["sections", sIndex, "questions", qIndex, "options"],
+              message: "All 4 options must have text",
+            });
+          }
+          if (question.options.filter((o) => o.isCorrect).length !== 1) {
+            ctx.addIssue({
+              code: "custom",
+              path: ["sections", sIndex, "questions", qIndex, "options"],
+              message: "Exactly one option must be marked correct",
+            });
+          }
+        }
+      });
+    });
+  });
+
+const problemExampleSchema = z.object({
+  input: z.string().trim().max(2000),
+  output: z.string().trim().max(2000),
+  explanation: z.string().trim().max(1000).default(""),
+});
+
+const problemTestCaseSchema = z.object({
+  input: z.string().max(5000),
+  expectedOutput: z.string().max(5000),
+  isSample: z.boolean().default(false),
+});
+
+export const problemAuthorSchema = z
+  .object({
+    title: z.string().trim().min(1, "Title is required").max(200),
+    difficulty: z.enum(["EASY", "MEDIUM", "HARD"]),
+    category: z.string().trim().max(100),
+    tags: z.array(z.string().trim().min(1).max(30)).max(20).default([]),
+    companies: z.array(z.string().trim().min(1).max(50)).max(20).default([]),
+    statement: z.string().trim().max(10000),
+    examples: z.array(problemExampleSchema).max(10).default([]),
+    constraints: z.string().trim().max(2000).default(""),
+    hints: z.string().trim().max(2000).default(""),
+    solutionExplanation: z.string().trim().max(5000).default(""),
+    requiredEntitlement: z.enum(["FREE", "INDIVIDUAL", "INSTITUTION"]).default("FREE"),
+    order: z.number().int().min(0).default(0),
+    submit: z.boolean(),
+    testCases: z.array(problemTestCaseSchema).max(50).default([]),
+  })
+  .superRefine((data, ctx) => {
+    if (!data.submit) {
+      return;
+    }
+    if (!data.statement.trim()) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["statement"],
+        message: "Problem statement is required before submitting for review",
+      });
+    }
+    if (!data.category.trim()) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["category"],
+        message: "Category is required before submitting for review",
+      });
+    }
+    if (data.testCases.length === 0) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["testCases"],
+        message: "Add at least one test case before submitting for review",
+      });
+    } else {
+      if (!data.testCases.some((t) => t.isSample)) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["testCases"],
+          message: "At least one test case must be marked as a visible sample",
+        });
+      }
+      if (data.testCases.some((t) => !t.input.trim() || !t.expectedOutput.trim())) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["testCases"],
+          message: "Every test case needs both input and expected output",
+        });
+      }
+    }
+  });

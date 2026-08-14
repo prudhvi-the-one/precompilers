@@ -12,7 +12,7 @@ export default async function AptitudePapersPage() {
   }
 
   const papers = await prisma.quiz.findMany({
-    where: { kind: "APTITUDE_PAPER" },
+    where: { kind: "APTITUDE_PAPER", status: "PUBLISHED" },
     orderBy: { order: "asc" },
     include: { sections: { include: { questions: true } } },
   });

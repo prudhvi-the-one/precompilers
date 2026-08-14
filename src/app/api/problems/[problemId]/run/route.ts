@@ -27,7 +27,7 @@ export async function POST(
     where: { id: problemId },
     include: { testCases: { where: { isSample: true } } },
   });
-  if (!problem) {
+  if (!problem || problem.status !== "PUBLISHED") {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 

@@ -8,6 +8,8 @@ const ADMIN_NAV = [
   { label: "Users", href: "/users" },
   { label: "Institutions", href: "/institutions" },
   { label: "Batches", href: "/batches" },
+  { label: "Content", href: "/content" },
+  { label: "Content Review", href: "/content-review" },
 ];
 
 const INSTITUTION_ADMIN_NAV = [

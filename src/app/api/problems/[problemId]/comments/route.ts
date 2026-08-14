@@ -23,7 +23,7 @@ export async function POST(
   }
 
   const problem = await prisma.problem.findUnique({ where: { id: problemId } });
-  if (!problem) {
+  if (!problem || problem.status !== "PUBLISHED") {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
 
