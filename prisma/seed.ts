@@ -1109,6 +1109,26 @@ async function main() {
   await seedPeerLoop();
   await seedProblems();
   await seedMentors();
+  await seedSuperAdmin();
+}
+
+const SUPER_ADMIN_EMAIL = "super.admin@precompilers.com";
+const SUPER_ADMIN_PASSWORD = "SuperAdmin123!";
+
+async function seedSuperAdmin() {
+  const passwordHash = await hashPassword(SUPER_ADMIN_PASSWORD);
+  await prisma.user.upsert({
+    where: { email: SUPER_ADMIN_EMAIL },
+    update: {},
+    create: {
+      email: SUPER_ADMIN_EMAIL,
+      passwordHash,
+      role: "SUPER_ADMIN",
+      name: "Super Admin",
+      emailVerifiedAt: new Date(),
+    },
+  });
+  console.log("Seeded super admin:", SUPER_ADMIN_EMAIL, `(password: ${SUPER_ADMIN_PASSWORD})`);
 }
 
 main()

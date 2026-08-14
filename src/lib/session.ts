@@ -77,10 +77,11 @@ export async function getCurrentUser(): Promise<User | null> {
   return prisma.user.findUnique({ where: { id: session.userId } });
 }
 
-export async function requireRole(role: Role): Promise<User | null> {
+export async function requireRole(role: Role | Role[]): Promise<User | null> {
   const user = await getCurrentUser();
-  if (!user || user.role !== role) {
+  if (!user) {
     return null;
   }
-  return user;
+  const allowed = Array.isArray(role) ? role.includes(user.role) : user.role === role;
+  return allowed ? user : null;
 }

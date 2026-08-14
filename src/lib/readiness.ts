@@ -85,6 +85,16 @@ async function computeIndustrySkills(userId: string): Promise<PillarResult> {
       completedAt: { not: null },
     },
   });
+
+  if (completed === 0) {
+    return {
+      label: "Industry skills",
+      value: null,
+      provenance: null,
+      caption: "Not started yet",
+    };
+  }
+
   const value = Math.round((completed / enrollment.track.lectures.length) * 100);
 
   return {
@@ -223,4 +233,13 @@ export async function computeReadinessPillars(
     ]);
 
   return [fundamentals, aptitude, problemSolving, industry, projects, interview];
+}
+
+export async function computeOverallReadiness(userId: string): Promise<number | null> {
+  const pillars = await computeReadinessPillars(userId);
+  const scored = pillars.filter((p) => p.value !== null);
+  if (scored.length === 0) {
+    return null;
+  }
+  return Math.round(scored.reduce((sum, p) => sum + (p.value as number), 0) / scored.length);
 }

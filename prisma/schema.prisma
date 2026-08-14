@@ -10,8 +10,11 @@ datasource db {
 
 enum Role {
   STUDENT
-  ADMIN
   MENTOR
+  FACULTY
+  INSTITUTION_ADMIN
+  ADMIN
+  SUPER_ADMIN
 }
 
 enum OtpPurpose {
@@ -90,6 +93,11 @@ model User {
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
 
+  institutionId  String?
+  institution    Institution? @relation(fields: [institutionId], references: [id])
+  facultyBatchId String?
+  facultyBatch   Batch?       @relation("BatchFaculty", fields: [facultyBatchId], references: [id])
+
   otps            Otp[]
   enrollment      Enrollment?
   lectureProgress LectureProgress[]
@@ -106,6 +114,8 @@ model User {
   gdParticipations  GdParticipant[]
   gdRatingsGiven    GdRating[]           @relation("GdRatingsGiven")
   gdRatingsReceived GdRating[]           @relation("GdRatingsReceived")
+
+  @@index([institutionId, role])
 }
 
 model Otp {
@@ -155,10 +165,15 @@ model Batch {
   name     String
   startsAt DateTime
 
+  institutionId String?
+  institution   Institution? @relation(fields: [institutionId], references: [id])
+
   enrollments Enrollment[]
   liveClasses LiveClass[]
+  faculty     User[]       @relation("BatchFaculty")
 
   @@index([trackId])
+  @@index([institutionId])
 }
 
 model Enrollment {
@@ -539,4 +554,16 @@ model MentorScorecard {
   verdict         HireVerdict
   writtenFeedback String
   submittedAt     DateTime      @default(now())
+}
+
+model Institution {
+  id        String    @id @default(cuid())
+  name      String
+  seatCount Int
+  renewsAt  DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  users   User[]
+  batches Batch[]
 }
