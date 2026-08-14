@@ -3,21 +3,28 @@
 import { useState } from "react";
 
 export default function LiveClassRoom({
+  liveClassId,
   roomUrl,
   displayName,
 }: {
+  liveClassId: string;
   roomUrl: string;
   displayName: string;
 }) {
   const [loaded, setLoaded] = useState(false);
   const src = `${roomUrl}?name=${encodeURIComponent(displayName)}`;
 
+  function handleLoad() {
+    setLoaded(true);
+    fetch(`/api/live-classes/${liveClassId}/attend`, { method: "POST" }).catch(() => {});
+  }
+
   return (
     <div className="flex flex-1 flex-col">
       <div className="relative flex-1 bg-black">
         <iframe
           src={src}
-          onLoad={() => setLoaded(true)}
+          onLoad={handleLoad}
           allow="camera; microphone; fullscreen; display-capture; autoplay"
           className="absolute inset-0 h-full w-full border-0"
         />

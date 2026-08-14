@@ -53,7 +53,11 @@ export default async function LiveClassPage({
         </Link>
       </header>
 
-      <LiveClassRoom roomUrl={liveClass.joinUrl} displayName={user.name ?? user.email} />
+      <LiveClassRoom
+        liveClassId={liveClass.id}
+        roomUrl={liveClass.joinUrl}
+        displayName={user.name ?? user.email}
+      />
     </>
   );
 }

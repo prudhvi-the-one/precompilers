@@ -161,6 +161,13 @@ export const noteSchema = z.object({
   content: z.string().trim().min(1, "Content can't be empty").max(20000),
 });
 
+export const liveClassSchema = z.object({
+  batchId: z.string().min(1).optional(),
+  title: z.string().trim().min(1, "Title is required").max(200),
+  scheduledAt: z.string().datetime(),
+  durationMinutes: z.number().int().min(15).max(240),
+});
+
 export const rejectContentSchema = z.object({
   reason: z
     .string()
