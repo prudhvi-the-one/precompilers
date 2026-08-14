@@ -2,8 +2,16 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, BookOpen, Code2, Award, Briefcase } from "lucide-react";
+import { Home, BookOpen, Code2, Award, Briefcase, type LucideIcon } from "lucide-react";
 import ReadinessWidget from "@/components/shell/ReadinessWidget";
+
+type NavItem = {
+  label: string;
+  href: string;
+  icon: LucideIcon;
+  subItems?: { label: string; href: string }[];
+  soon?: boolean;
+};
 
 const LEARN_SUB_ITEMS = [
   { label: "Skill tracks", href: "/learn" },
@@ -28,12 +36,12 @@ const PROVE_SUB_ITEMS = [
   { label: "Group discussions", href: "/prove/group-discussions" },
 ];
 
-const NAV_ITEMS = [
+const NAV_ITEMS: NavItem[] = [
   { label: "Home", href: "/home", icon: Home },
   { label: "Learn", href: "/learn", icon: BookOpen, subItems: LEARN_SUB_ITEMS },
   { label: "Practice", href: "/practice", icon: Code2, subItems: PRACTICE_SUB_ITEMS },
   { label: "Prove", href: "/prove", icon: Award, subItems: PROVE_SUB_ITEMS },
-  { label: "Career", href: "/career", icon: Briefcase, soon: true },
+  { label: "Career", href: "/career", icon: Briefcase },
 ];
 
 export default function SidebarNav() {

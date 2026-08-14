@@ -561,8 +561,20 @@ model MentorProfile {
   bio             String
   capacityPerDay  Int      @default(10)
 
-  availability MentorAvailability[]
-  sessions     MentorSession[]
+  availability            MentorAvailability[]
+  sessions                MentorSession[]
+  preferredByInstitutions InstitutionPreferredMentor[]
+}
+
+model InstitutionPreferredMentor {
+  id            String        @id @default(cuid())
+  institutionId String
+  institution   Institution   @relation(fields: [institutionId], references: [id], onDelete: Cascade)
+  mentorId      String
+  mentor        MentorProfile @relation(fields: [mentorId], references: [id], onDelete: Cascade)
+  createdAt     DateTime      @default(now())
+
+  @@unique([institutionId, mentorId])
 }
 
 model MentorAvailability {
@@ -619,4 +631,18 @@ model Institution {
 
   users   User[]
   batches Batch[]
+  preferredMentors InstitutionPreferredMentor[]
+}
+
+model Drive {
+  id            String    @id @default(cuid())
+  companyName   String
+  roleTitle     String
+  driveDate     DateTime
+  applyDeadline DateTime?
+  applyUrl      String?
+  location      String?
+  description   String
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 }
