@@ -22,6 +22,9 @@ export default async function MentorAppLayout({
           <Link href="/recordings" className="text-sm font-medium text-gray-600 hover:text-gray-900">
             Recordings
           </Link>
+          <Link href="/content" className="text-sm font-medium text-gray-600 hover:text-gray-900">
+            My Content
+          </Link>
         </div>
         <div className="flex items-center gap-3 text-sm text-gray-600">
           <span>{mentor.name ?? mentor.email}</span>

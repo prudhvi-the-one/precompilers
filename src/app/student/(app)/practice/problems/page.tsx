@@ -29,7 +29,7 @@ export default async function ProblemsPage({
   const { filter = "all" } = await searchParams;
 
   const [allProblems, acceptedSubmissions] = await Promise.all([
-    prisma.problem.findMany({ orderBy: { order: "asc" } }),
+    prisma.problem.findMany({ where: { status: "PUBLISHED" }, orderBy: { order: "asc" } }),
     prisma.submission.findMany({
       where: { userId: user.id, verdict: "ACCEPTED" },
       select: { problemId: true },

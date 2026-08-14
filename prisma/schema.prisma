@@ -77,6 +77,13 @@ enum MentorSessionStatus {
   CANCELLED
 }
 
+enum ContentStatus {
+  DRAFT
+  PENDING_REVIEW
+  PUBLISHED
+  REJECTED
+}
+
 model User {
   id              String      @id @default(cuid())
   email           String      @unique
@@ -107,6 +114,10 @@ model User {
   problemComments    Comment[]
   mentorProfile           MentorProfile?
   mentorSessionsAsStudent MentorSession[]
+  authoredQuizzes   Quiz[]               @relation("QuizAuthor")
+  reviewedQuizzes   Quiz[]               @relation("QuizReviewer")
+  authoredProblems  Problem[]            @relation("ProblemAuthor")
+  reviewedProblems  Problem[]            @relation("ProblemReviewer")
   reviewsGiven      PeerReview[]         @relation("ReviewsGiven")
   mockRequests      MockRequest[]
   mockFeedbackGiven MockFeedback[]       @relation("MockFeedbackGiven")
@@ -234,8 +245,22 @@ model Quiz {
   requiredEntitlement Entitlement @default(FREE)
   order               Int         @default(0)
 
+  status          ContentStatus @default(PUBLISHED)
+  authorId        String?
+  author          User?         @relation("QuizAuthor", fields: [authorId], references: [id], onDelete: SetNull)
+  reviewedById    String?
+  reviewedBy      User?         @relation("QuizReviewer", fields: [reviewedById], references: [id], onDelete: SetNull)
+  submittedAt     DateTime?
+  reviewedAt      DateTime?
+  rejectionReason String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
   sections QuizSection[]
   attempts QuizAttempt[]
+
+  @@index([status])
+  @@index([authorId])
 }
 
 model QuizSection {
@@ -453,9 +478,23 @@ model Problem {
   requiredEntitlement Entitlement @default(FREE)
   order               Int         @default(0)
 
+  status          ContentStatus @default(PUBLISHED)
+  authorId        String?
+  author          User?         @relation("ProblemAuthor", fields: [authorId], references: [id], onDelete: SetNull)
+  reviewedById    String?
+  reviewedBy      User?         @relation("ProblemReviewer", fields: [reviewedById], references: [id], onDelete: SetNull)
+  submittedAt     DateTime?
+  reviewedAt      DateTime?
+  rejectionReason String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
   testCases   TestCase[]
   submissions Submission[]
   comments    Comment[]
+
+  @@index([status])
+  @@index([authorId])
 }
 
 model TestCase {

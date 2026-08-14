@@ -25,7 +25,7 @@ export default async function ProblemDetailPage({
       },
     },
   });
-  if (!problem) {
+  if (!problem || problem.status !== "PUBLISHED") {
     notFound();
   }
 

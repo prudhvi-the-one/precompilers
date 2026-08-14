@@ -12,7 +12,7 @@ export default async function QuizzesPage() {
   }
 
   const quizzes = await prisma.quiz.findMany({
-    where: { kind: "TOPIC_QUIZ" },
+    where: { kind: "TOPIC_QUIZ", status: "PUBLISHED" },
     orderBy: { order: "asc" },
     include: { sections: { include: { questions: true } } },
   });
