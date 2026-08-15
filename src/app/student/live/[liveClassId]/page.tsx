@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect, notFound } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
+import { requireTierAccess } from "@/lib/tier";
 import { prisma } from "@/lib/prisma";
 import LiveClassRoom from "@/components/live/LiveClassRoom";
 
@@ -13,6 +14,7 @@ export default async function LiveClassPage({
   if (!user) {
     redirect("/login");
   }
+  await requireTierAccess(user, "LIVE");
 
   const { liveClassId } = await params;
 

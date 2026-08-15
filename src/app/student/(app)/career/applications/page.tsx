@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
+import { requireTierAccess } from "@/lib/tier";
 import { prisma } from "@/lib/prisma";
 import ApplicationForm from "@/components/career/ApplicationForm";
 import ApplicationStatusSelect from "@/components/career/ApplicationStatusSelect";
@@ -31,6 +32,7 @@ export default async function ApplicationsPage({
   if (!user) {
     redirect("/login");
   }
+  await requireTierAccess(user, "CAREER");
 
   const { filter = "all" } = await searchParams;
 

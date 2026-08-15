@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
+import { requireTierAccess } from "@/lib/tier";
 import { prisma } from "@/lib/prisma";
 import { meetsEntitlement } from "@/lib/entitlement";
 import StartAptitudePaperButtons from "@/components/quiz/StartAptitudePaperButtons";
@@ -10,6 +11,7 @@ export default async function AptitudePapersPage() {
   if (!user) {
     redirect("/login");
   }
+  await requireTierAccess(user, "PRACTICE");
 
   const papers = await prisma.quiz.findMany({
     where: { kind: "APTITUDE_PAPER", status: "PUBLISHED" },

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
+import { requireTierAccess } from "@/lib/tier";
 import { prisma } from "@/lib/prisma";
 import MockPoolStatus from "@/components/prove/MockPoolStatus";
 import BookMentorSlot from "@/components/prove/BookMentorSlot";
@@ -24,6 +25,7 @@ export default async function MocksPage() {
   if (!user) {
     redirect("/login");
   }
+  await requireTierAccess(user, "PROVE");
 
   const myRequests = await prisma.mockRequest.findMany({
     where: { userId: user.id },

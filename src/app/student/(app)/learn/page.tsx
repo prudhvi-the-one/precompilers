@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
+import { requireTierAccess } from "@/lib/tier";
 import { prisma } from "@/lib/prisma";
 import { meetsEntitlement } from "@/lib/entitlement";
 import TrackCoverPlaceholder from "@/components/learn/TrackCoverPlaceholder";
@@ -35,6 +36,7 @@ export default async function LearnPage({
   if (!user) {
     redirect("/login");
   }
+  await requireTierAccess(user, "LEARN");
 
   const { filter = "all" } = await searchParams;
 

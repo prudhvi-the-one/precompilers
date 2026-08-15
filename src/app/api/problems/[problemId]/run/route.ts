@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { getSession } from "@/lib/session";
 import { runSubmitSchema } from "@/lib/validation";
 import { runSample } from "@/lib/judge";
+import { hasTierAccess } from "@/lib/tier";
 
 export async function POST(
   request: Request,
@@ -11,6 +12,14 @@ export async function POST(
   const session = await getSession();
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const user = await prisma.user.findUnique({ where: { id: session.userId } });
+  if (!user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  if (!(await hasTierAccess(user, "PRACTICE"))) {
+    return NextResponse.json({ error: "Upgrade required" }, { status: 403 });
   }
 
   const { problemId } = await params;

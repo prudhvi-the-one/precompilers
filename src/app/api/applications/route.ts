@@ -3,11 +3,15 @@ import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/session";
 import { applicationSchema } from "@/lib/validation";
 import { parseBody } from "@/lib/api";
+import { hasTierAccess } from "@/lib/tier";
 
 export async function POST(request: Request) {
   const user = await getCurrentUser();
   if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  if (!(await hasTierAccess(user, "CAREER"))) {
+    return NextResponse.json({ error: "Upgrade required" }, { status: 403 });
   }
 
   const parsed = await parseBody(request, applicationSchema);

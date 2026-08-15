@@ -5,6 +5,7 @@ const links = [
   { href: "#gap", label: "The gap" },
   { href: "#how-we-close-it", label: "How it works" },
   { href: "#tracks", label: "Tracks" },
+  { href: "#pricing", label: "Pricing" },
   { href: "#colleges", label: "For colleges" },
 ];
 

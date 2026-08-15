@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
+import { requireTierAccess } from "@/lib/tier";
 import { prisma } from "@/lib/prisma";
 import CompanyQuestionFilterSelect from "@/components/career/CompanyQuestionFilterSelect";
 
@@ -20,6 +21,7 @@ export default async function CompanyQuestionsPage({
   if (!user) {
     redirect("/login");
   }
+  await requireTierAccess(user, "CAREER");
 
   const { category = "all", company = "all" } = await searchParams;
 

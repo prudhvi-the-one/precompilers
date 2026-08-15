@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect, notFound } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
+import { requireTierAccess } from "@/lib/tier";
 import { prisma } from "@/lib/prisma";
 import { meetsEntitlement } from "@/lib/entitlement";
 import MarkCompleteButton from "@/components/learn/MarkCompleteButton";
@@ -14,6 +15,7 @@ export default async function LectureDetailPage({
   if (!user) {
     redirect("/login");
   }
+  await requireTierAccess(user, "LEARN");
 
   const { lectureId } = await params;
 

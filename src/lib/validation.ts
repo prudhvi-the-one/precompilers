@@ -38,6 +38,17 @@ export const resendOtpSchema = z.object({
   purpose: z.enum(["EMAIL_VERIFY", "PASSWORD_RESET"]),
 });
 
+export const subscriptionCheckoutSchema = z.object({
+  tier: z.enum(["PRACTICE", "LEARN", "FULL_ACCESS"]),
+  billingCycle: z.enum(["MONTHLY", "ANNUAL"]),
+});
+
+export const subscriptionVerifySchema = z.object({
+  razorpay_order_id: z.string().min(1),
+  razorpay_payment_id: z.string().min(1),
+  razorpay_signature: z.string().min(1),
+});
+
 export const forgotPasswordSchema = z.object({
   email,
 });

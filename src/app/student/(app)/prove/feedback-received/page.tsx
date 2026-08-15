@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
+import { requireTierAccess } from "@/lib/tier";
 import { prisma } from "@/lib/prisma";
 
 const HIRE_LABEL: Record<string, string> = {
@@ -14,6 +15,7 @@ export default async function FeedbackReceivedPage() {
   if (!user) {
     redirect("/login");
   }
+  await requireTierAccess(user, "PROVE");
 
   const submissions = await prisma.projectSubmission.findMany({
     where: { userId: user.id },
