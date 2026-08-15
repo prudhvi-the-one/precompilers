@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
+import { isPhoneLoginEnabled } from "@/lib/featureFlags";
 import LoginForm from "./LoginForm";
 
 export default async function LoginPage() {
@@ -8,5 +9,5 @@ export default async function LoginPage() {
     redirect("/home");
   }
 
-  return <LoginForm />;
+  return <LoginForm phoneLoginEnabled={isPhoneLoginEnabled()} />;
 }
