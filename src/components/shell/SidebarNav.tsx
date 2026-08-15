@@ -39,6 +39,7 @@ const PROVE_SUB_ITEMS = [
 const CAREER_SUB_ITEMS = [
   { label: "Drives", href: "/career" },
   { label: "My report", href: "/career/report" },
+  { label: "Resume", href: "/career/resume" },
 ];
 
 const NAV_ITEMS: NavItem[] = [

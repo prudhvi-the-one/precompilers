@@ -108,6 +108,7 @@ model User {
 
   otps            Otp[]
   enrollment      Enrollment?
+  resume          Resume?
   lectureProgress LectureProgress[]
   liveClassAttendances LiveClassAttendance[]
   quizAttempts    QuizAttempt[]
@@ -646,4 +647,67 @@ model Drive {
   description   String
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+}
+
+model Resume {
+  id           String   @id @default(cuid())
+  userId       String   @unique
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fullName     String
+  email        String
+  phone        String?
+  location     String?
+  linkedinUrl  String?
+  githubUrl    String?
+  portfolioUrl String?
+  summary      String?
+  skills       String[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  education  ResumeEducation[]
+  experience ResumeExperience[]
+  projects   ResumeProject[]
+}
+
+model ResumeEducation {
+  id           String  @id @default(cuid())
+  resumeId     String
+  resume       Resume  @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+  order        Int     @default(0)
+  institution  String
+  degree       String
+  fieldOfStudy String?
+  startYear    Int?
+  endYear      Int?
+  gpa          String?
+
+  @@index([resumeId])
+}
+
+model ResumeExperience {
+  id          String  @id @default(cuid())
+  resumeId    String
+  resume      Resume  @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+  order       Int     @default(0)
+  company     String
+  role        String
+  startDate   String
+  endDate     String?
+  description String
+
+  @@index([resumeId])
+}
+
+model ResumeProject {
+  id          String  @id @default(cuid())
+  resumeId    String
+  resume      Resume  @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+  order       Int     @default(0)
+  title       String
+  techStack   String?
+  link        String?
+  description String
+
+  @@index([resumeId])
 }
