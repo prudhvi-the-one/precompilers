@@ -173,6 +173,10 @@ export const preferredMentorSchema = z.object({
   preferred: z.boolean(),
 });
 
+export const reportShareSchema = z.object({
+  enabled: z.boolean(),
+});
+
 export const driveSchema = z.object({
   companyName: z.string().trim().min(1, "Company name is required").max(150),
   roleTitle: z.string().trim().min(1, "Role is required").max(150),
