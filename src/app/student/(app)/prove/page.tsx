@@ -1,8 +1,24 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { FolderKanban, ClipboardCheck, Mic, Users } from "lucide-react";
 import { getCurrentUser } from "@/lib/session";
 import { requireTierAccess } from "@/lib/tier";
 import { prisma } from "@/lib/prisma";
+
+function isLive(scheduledAt: Date | null | undefined): boolean {
+  if (!scheduledAt) return false;
+  const minutesFromNow = (scheduledAt.getTime() - Date.now()) / 60000;
+  return minutesFromNow >= -30 && minutesFromNow <= 60;
+}
+
+function LiveDot() {
+  return (
+    <span className="relative ml-1.5 inline-flex h-2 w-2 shrink-0">
+      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-error opacity-75" />
+      <span className="relative inline-flex h-2 w-2 rounded-full bg-error" />
+    </span>
+  );
+}
 
 export default async function ProvePage() {
   const user = await getCurrentUser();
@@ -46,7 +62,8 @@ export default async function ProvePage() {
           href="/prove/projects"
           className="rounded-xl border border-line bg-surface p-5 hover:bg-surface-sunk"
         >
-          <h2 className="font-brand text-base font-bold text-ink">Project briefs</h2>
+          <FolderKanban className="h-5 w-5 text-indigo-600" strokeWidth={1.75} />
+          <h2 className="mt-3 font-brand text-base font-bold text-ink">Project briefs</h2>
           <p className="mt-1 text-sm text-ink-muted">
             {mySubmissionCount > 0
               ? `${mySubmissionCount} submitted`
@@ -57,7 +74,8 @@ export default async function ProvePage() {
           href="/prove/review-queue"
           className="rounded-xl border border-line bg-surface p-5 hover:bg-surface-sunk"
         >
-          <h2 className="font-brand text-base font-bold text-ink">Review queue</h2>
+          <ClipboardCheck className="h-5 w-5 text-indigo-600" strokeWidth={1.75} />
+          <h2 className="mt-3 font-brand text-base font-bold text-ink">Review queue</h2>
           <p className="mt-1 text-sm text-ink-muted">
             {pendingReviewCount > 0
               ? `${pendingReviewCount} awaiting review`
@@ -68,7 +86,11 @@ export default async function ProvePage() {
           href="/prove/mocks"
           className="rounded-xl border border-line bg-surface p-5 hover:bg-surface-sunk"
         >
-          <h2 className="font-brand text-base font-bold text-ink">Mock interviews</h2>
+          <Mic className="h-5 w-5 text-indigo-600" strokeWidth={1.75} />
+          <h2 className="mt-3 flex items-center font-brand text-base font-bold text-ink">
+            Mock interviews
+            {isLive(myMockRequest?.scheduledAt) ? <LiveDot /> : null}
+          </h2>
           <p className="mt-1 text-sm text-ink-muted">
             {myMockRequest
               ? "You have a paired mock"
@@ -79,7 +101,11 @@ export default async function ProvePage() {
           href="/prove/group-discussions"
           className="rounded-xl border border-line bg-surface p-5 hover:bg-surface-sunk"
         >
-          <h2 className="font-brand text-base font-bold text-ink">Group discussions</h2>
+          <Users className="h-5 w-5 text-indigo-600" strokeWidth={1.75} />
+          <h2 className="mt-3 flex items-center font-brand text-base font-bold text-ink">
+            Group discussions
+            {isLive(upcomingGd?.scheduledAt) ? <LiveDot /> : null}
+          </h2>
           <p className="mt-1 text-sm text-ink-muted">
             {upcomingGd
               ? `Next: "${upcomingGd.topic}"`

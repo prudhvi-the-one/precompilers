@@ -7,7 +7,7 @@ export default function ReadinessWidget({ score }: { score: number | null }) {
     <div className="mt-auto rounded-[11px] border border-line bg-surface p-4 text-center">
       <div
         className="mx-auto flex h-22 w-22 items-center justify-center rounded-full"
-        style={{ background: `conic-gradient(#4F46E5 0 ${pct}%, #EDEDF3 ${pct}% 100%)` }}
+        style={{ background: `conic-gradient(var(--accent) 0 ${pct}%, var(--line-soft) ${pct}% 100%)` }}
       >
         <div className="flex h-17 w-17 items-center justify-center rounded-full bg-surface">
           <span className="font-brand text-2xl font-extrabold text-ink">

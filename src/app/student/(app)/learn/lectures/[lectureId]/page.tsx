@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { redirect, notFound } from "next/navigation";
+import { Lock } from "lucide-react";
 import { getCurrentUser } from "@/lib/session";
 import { requireTierAccess } from "@/lib/tier";
 import { prisma } from "@/lib/prisma";
@@ -68,8 +69,9 @@ export default async function LectureDetailPage({
         </>
       ) : (
         <div className="rounded-xl border border-line bg-surface p-8 text-center">
-          <p className="text-sm font-medium text-ink">
-            🔒 This lesson needs a plan upgrade.
+          <p className="flex items-center justify-center gap-1.5 text-sm font-medium text-ink">
+            <Lock className="h-4 w-4" strokeWidth={2} />
+            This lesson needs a plan upgrade.
           </p>
           <p className="mt-1 text-sm text-ink-faint">
             The first lesson in every track is free to preview — this one

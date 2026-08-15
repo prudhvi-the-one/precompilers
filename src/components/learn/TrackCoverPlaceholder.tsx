@@ -1,16 +1,28 @@
-export default function TrackCoverPlaceholder({ label }: { label: string }) {
+import { Code2, Database, Cloud, Server, Globe, BookOpen } from "lucide-react";
+import { avatarColor } from "@/lib/avatar";
+
+const ICONS = [Code2, Database, Cloud, Server, Globe, BookOpen];
+
+export default function TrackCoverPlaceholder({
+  trackId,
+  label,
+}: {
+  trackId: string;
+  label: string;
+}) {
+  let hash = 0;
+  for (let i = 0; i < trackId.length; i++) {
+    hash = (hash * 31 + trackId.charCodeAt(i)) >>> 0;
+  }
+  const Icon = ICONS[hash % ICONS.length];
+  const color = avatarColor(trackId);
+
   return (
     <div
-      className="flex h-30 items-center justify-center rounded-lg border border-line"
-      style={{
-        backgroundColor: "#FAFAFC",
-        backgroundImage:
-          "repeating-linear-gradient(135deg, rgba(15,16,32,0.05) 0px, rgba(15,16,32,0.05) 1px, transparent 1px, transparent 10px)",
-      }}
+      className="flex h-30 items-center justify-center rounded-lg"
+      style={{ backgroundColor: `${color}1A` }}
     >
-      <span className="font-mono text-[10px] tracking-[0.05em] text-ink-faintest uppercase">
-        Track cover — {label}
-      </span>
+      <Icon className="h-9 w-9" style={{ color }} strokeWidth={1.75} aria-label={label} />
     </div>
   );
 }

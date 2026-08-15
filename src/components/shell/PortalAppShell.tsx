@@ -5,17 +5,28 @@ import { Menu } from "lucide-react";
 import Logo from "@/components/Logo";
 import LogoutButton from "@/components/auth/LogoutButton";
 import ThemeToggle from "@/components/shell/ThemeToggle";
-import PortalSidebarNav, { type PortalNavItem } from "@/components/shell/PortalSidebarNav";
+import PortalSidebarNav from "@/components/shell/PortalSidebarNav";
+import { MENTOR_NAV, ADMIN_NAV, INSTITUTION_ADMIN_NAV } from "@/components/shell/portalNavItems";
+
+export type PortalNavKey = "mentor" | "admin" | "institution-admin" | "none";
+
+const NAV_BY_KEY = {
+  mentor: MENTOR_NAV,
+  admin: ADMIN_NAV,
+  "institution-admin": INSTITUTION_ADMIN_NAV,
+  none: [],
+};
 
 export default function PortalAppShell({
-  navItems,
+  navKey,
   userLabel,
   children,
 }: {
-  navItems: PortalNavItem[];
+  navKey: PortalNavKey;
   userLabel: string;
   children: React.ReactNode;
 }) {
+  const navItems = NAV_BY_KEY[navKey];
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   return (
