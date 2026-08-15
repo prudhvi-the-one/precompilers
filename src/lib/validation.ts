@@ -177,6 +177,45 @@ export const reportShareSchema = z.object({
   enabled: z.boolean(),
 });
 
+const resumeEducationSchema = z.object({
+  institution: z.string().trim().min(1, "Institution is required").max(150),
+  degree: z.string().trim().min(1, "Degree is required").max(150),
+  fieldOfStudy: z.string().trim().max(150).nullable().optional(),
+  startYear: z.number().int().min(1980).max(2100).nullable().optional(),
+  endYear: z.number().int().min(1980).max(2100).nullable().optional(),
+  gpa: z.string().trim().max(20).nullable().optional(),
+});
+
+const resumeExperienceSchema = z.object({
+  company: z.string().trim().min(1, "Company is required").max(150),
+  role: z.string().trim().min(1, "Role is required").max(150),
+  startDate: z.string().trim().min(1, "Start date is required").max(50),
+  endDate: z.string().trim().max(50).nullable().optional(),
+  description: z.string().trim().max(2000).default(""),
+});
+
+const resumeProjectSchema = z.object({
+  title: z.string().trim().min(1, "Title is required").max(150),
+  techStack: z.string().trim().max(200).nullable().optional(),
+  link: z.string().trim().url("Enter a valid URL").nullable().optional(),
+  description: z.string().trim().max(2000).default(""),
+});
+
+export const resumeSchema = z.object({
+  fullName: z.string().trim().min(1, "Name is required").max(150),
+  email: z.string().trim().email("Enter a valid email"),
+  phone: z.string().trim().max(30).nullable().optional(),
+  location: z.string().trim().max(150).nullable().optional(),
+  linkedinUrl: z.string().trim().url("Enter a valid URL").nullable().optional(),
+  githubUrl: z.string().trim().url("Enter a valid URL").nullable().optional(),
+  portfolioUrl: z.string().trim().url("Enter a valid URL").nullable().optional(),
+  summary: z.string().trim().max(1000).nullable().optional(),
+  skills: z.array(z.string().trim().min(1).max(40)).max(40).default([]),
+  education: z.array(resumeEducationSchema).max(10).default([]),
+  experience: z.array(resumeExperienceSchema).max(15).default([]),
+  projects: z.array(resumeProjectSchema).max(15).default([]),
+});
+
 export const driveSchema = z.object({
   companyName: z.string().trim().min(1, "Company name is required").max(150),
   roleTitle: z.string().trim().min(1, "Role is required").max(150),
