@@ -17,7 +17,13 @@ function initials(name: string | null, email: string): string {
   return email[0]?.toUpperCase() ?? "?";
 }
 
-export default function Topbar({ user }: { user: User }) {
+export default function Topbar({
+  user,
+  currentStreak,
+}: {
+  user: User;
+  currentStreak: number;
+}) {
   return (
     <header className="flex h-15 items-center border-b border-[#EDEDF3] bg-white px-6">
       <div className="w-54 shrink-0">
@@ -43,7 +49,7 @@ export default function Topbar({ user }: { user: User }) {
 
         <span className="flex items-center gap-1 rounded-full bg-[#FEF6E7] px-2.5 py-1 font-mono text-[12.5px] text-[#B45309]">
           <Flame className="h-3.5 w-3.5" />
-          0-day streak
+          {currentStreak}-day streak
         </span>
 
         <Link href="/profile" className="flex items-center gap-2">

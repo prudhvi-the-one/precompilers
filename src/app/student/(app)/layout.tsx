@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
 import { computeOverallReadiness } from "@/lib/readiness";
+import { computeCurrentStreak } from "@/lib/streak";
 import AppShell from "@/components/shell/AppShell";
 
 export default async function AppLayout({
@@ -13,10 +14,13 @@ export default async function AppLayout({
     redirect("/login");
   }
 
-  const overallReadiness = await computeOverallReadiness(user.id);
+  const [overallReadiness, currentStreak] = await Promise.all([
+    computeOverallReadiness(user.id),
+    computeCurrentStreak(user.id),
+  ]);
 
   return (
-    <AppShell user={user} overallReadiness={overallReadiness}>
+    <AppShell user={user} overallReadiness={overallReadiness} currentStreak={currentStreak}>
       {children}
     </AppShell>
   );
