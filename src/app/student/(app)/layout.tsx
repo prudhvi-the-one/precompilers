@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
+import { computeOverallReadiness } from "@/lib/readiness";
 import AppShell from "@/components/shell/AppShell";
 
 export default async function AppLayout({
@@ -12,5 +13,11 @@ export default async function AppLayout({
     redirect("/login");
   }
 
-  return <AppShell user={user}>{children}</AppShell>;
+  const overallReadiness = await computeOverallReadiness(user.id);
+
+  return (
+    <AppShell user={user} overallReadiness={overallReadiness}>
+      {children}
+    </AppShell>
+  );
 }

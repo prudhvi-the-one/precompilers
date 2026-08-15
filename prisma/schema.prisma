@@ -97,6 +97,7 @@ model User {
   targetRole      TargetRole?
   entitlement     Entitlement @default(FREE)
   emailVerifiedAt DateTime?
+  reportShareToken String?    @unique
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
 

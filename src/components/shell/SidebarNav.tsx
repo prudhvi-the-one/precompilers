@@ -36,15 +36,24 @@ const PROVE_SUB_ITEMS = [
   { label: "Group discussions", href: "/prove/group-discussions" },
 ];
 
+const CAREER_SUB_ITEMS = [
+  { label: "Drives", href: "/career" },
+  { label: "My report", href: "/career/report" },
+];
+
 const NAV_ITEMS: NavItem[] = [
   { label: "Home", href: "/home", icon: Home },
   { label: "Learn", href: "/learn", icon: BookOpen, subItems: LEARN_SUB_ITEMS },
   { label: "Practice", href: "/practice", icon: Code2, subItems: PRACTICE_SUB_ITEMS },
   { label: "Prove", href: "/prove", icon: Award, subItems: PROVE_SUB_ITEMS },
-  { label: "Career", href: "/career", icon: Briefcase },
+  { label: "Career", href: "/career", icon: Briefcase, subItems: CAREER_SUB_ITEMS },
 ];
 
-export default function SidebarNav() {
+export default function SidebarNav({
+  overallReadiness,
+}: {
+  overallReadiness: number | null;
+}) {
   const pathname = usePathname();
 
   return (
@@ -132,7 +141,7 @@ export default function SidebarNav() {
         })}
       </div>
 
-      <ReadinessWidget />
+      <ReadinessWidget score={overallReadiness} />
     </nav>
   );
 }
