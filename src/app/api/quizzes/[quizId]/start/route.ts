@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/session";
 import { meetsEntitlement } from "@/lib/entitlement";
+import { hasTierAccess } from "@/lib/tier";
 
 export async function POST(
   request: Request,
@@ -10,6 +11,9 @@ export async function POST(
   const user = await getCurrentUser();
   if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  if (!(await hasTierAccess(user, "PRACTICE"))) {
+    return NextResponse.json({ error: "Upgrade required" }, { status: 403 });
   }
 
   const { quizId } = await params;

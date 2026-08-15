@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
+import { requireTierAccess } from "@/lib/tier";
 import { prisma } from "@/lib/prisma";
 import ResumeBuilderForm from "@/components/career/ResumeBuilderForm";
 
@@ -8,6 +9,7 @@ export default async function ResumePage() {
   if (!user) {
     redirect("/login");
   }
+  await requireTierAccess(user, "CAREER");
 
   const [resume, submissions] = await Promise.all([
     prisma.resume.findUnique({

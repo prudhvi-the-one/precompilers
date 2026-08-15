@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
+import { requireTierAccess } from "@/lib/tier";
 import { prisma } from "@/lib/prisma";
 import LogApplicationButton from "@/components/career/LogApplicationButton";
 
@@ -35,6 +36,7 @@ export default async function CareerPage() {
   if (!user) {
     redirect("/login");
   }
+  await requireTierAccess(user, "CAREER");
 
   const now = new Date();
   const [allDrives, applications] = await Promise.all([

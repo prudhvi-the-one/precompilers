@@ -2,11 +2,15 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/session";
 import { resumeSchema } from "@/lib/validation";
+import { hasTierAccess } from "@/lib/tier";
 
 export async function POST(request: Request) {
   const user = await getCurrentUser();
   if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  if (!(await hasTierAccess(user, "CAREER"))) {
+    return NextResponse.json({ error: "Upgrade required" }, { status: 403 });
   }
 
   const body = await request.json().catch(() => null);

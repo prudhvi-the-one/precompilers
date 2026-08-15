@@ -1,5 +1,6 @@
 import { redirect, notFound } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
+import { requireTierAccess } from "@/lib/tier";
 import { prisma } from "@/lib/prisma";
 import MockFeedbackForm from "@/components/prove/MockFeedbackForm";
 
@@ -12,6 +13,7 @@ export default async function MockFeedbackPage({
   if (!user) {
     redirect("/login");
   }
+  await requireTierAccess(user, "PROVE");
 
   const { requestId } = await params;
   const mockRequest = await prisma.mockRequest.findUnique({

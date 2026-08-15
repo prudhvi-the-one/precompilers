@@ -29,6 +29,23 @@ enum Entitlement {
   INSTITUTION
 }
 
+enum SubscriptionTier {
+  PRACTICE
+  LEARN
+  FULL_ACCESS
+}
+
+enum BillingCycle {
+  MONTHLY
+  ANNUAL
+}
+
+enum SubscriptionStatus {
+  CREATED
+  ACTIVE
+  FAILED
+}
+
 enum TargetRole {
   SOFTWARE_ENGINEER
   DATA_ML_ENGINEER
@@ -143,6 +160,7 @@ model User {
   gdRatingsReceived GdRating[]           @relation("GdRatingsReceived")
   applications      Application[]
   notifications     Notification[]
+  subscriptions     Subscription[]
 
   @@index([institutionId, role])
 }
@@ -664,6 +682,24 @@ model Drive {
   updatedAt     DateTime  @updatedAt
 
   applications Application[]
+}
+
+model Subscription {
+  id                String             @id @default(cuid())
+  userId            String
+  user              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tier              SubscriptionTier
+  billingCycle      BillingCycle
+  amountPaise       Int
+  status            SubscriptionStatus @default(CREATED)
+  razorpayOrderId   String             @unique
+  razorpayPaymentId String?
+  startsAt          DateTime?
+  expiresAt         DateTime?
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+
+  @@index([userId, status])
 }
 
 model Resume {

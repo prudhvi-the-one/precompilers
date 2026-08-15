@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect, notFound } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
+import { requireTierAccess } from "@/lib/tier";
 import { prisma } from "@/lib/prisma";
 
 export default async function MockRoomPage({
@@ -12,6 +13,7 @@ export default async function MockRoomPage({
   if (!user) {
     redirect("/login");
   }
+  await requireTierAccess(user, "PROVE");
 
   const { requestId } = await params;
 

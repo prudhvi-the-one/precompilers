@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
+import { requireTierAccess } from "@/lib/tier";
 import { prisma } from "@/lib/prisma";
 
 const VERDICT_STYLE: Record<string, string> = {
@@ -25,6 +26,7 @@ export default async function ProblemSubmissionHistoryPage() {
   if (!user) {
     redirect("/login");
   }
+  await requireTierAccess(user, "PRACTICE");
 
   const submissions = await prisma.submission.findMany({
     where: { userId: user.id },

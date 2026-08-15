@@ -4,6 +4,7 @@ import { getCurrentUser } from "@/lib/session";
 import { applicationStatusSchema } from "@/lib/validation";
 import { parseBody } from "@/lib/api";
 import { notifyUser } from "@/lib/notifications";
+import { hasTierAccess } from "@/lib/tier";
 
 const STATUS_LABEL: Record<string, string> = {
   APPLIED: "Applied",
@@ -20,6 +21,9 @@ export async function PATCH(
   const user = await getCurrentUser();
   if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  if (!(await hasTierAccess(user, "CAREER"))) {
+    return NextResponse.json({ error: "Upgrade required" }, { status: 403 });
   }
 
   const { id } = await params;

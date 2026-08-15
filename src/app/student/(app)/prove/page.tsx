@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
+import { requireTierAccess } from "@/lib/tier";
 import { prisma } from "@/lib/prisma";
 
 export default async function ProvePage() {
@@ -8,6 +9,7 @@ export default async function ProvePage() {
   if (!user) {
     redirect("/login");
   }
+  await requireTierAccess(user, "PROVE");
 
   const [pendingReviewCount, mySubmissionCount, upcomingGd, myMockRequest] =
     await Promise.all([

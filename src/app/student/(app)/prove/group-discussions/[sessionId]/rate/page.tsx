@@ -1,5 +1,6 @@
 import { redirect, notFound } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
+import { requireTierAccess } from "@/lib/tier";
 import { prisma } from "@/lib/prisma";
 import GdRatingForm from "@/components/prove/GdRatingForm";
 
@@ -12,6 +13,7 @@ export default async function GdRatePage({
   if (!user) {
     redirect("/login");
   }
+  await requireTierAccess(user, "PROVE");
 
   const { sessionId } = await params;
   const gdSession = await prisma.gdSession.findUnique({

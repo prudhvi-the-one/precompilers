@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
+import { requireTierAccess } from "@/lib/tier";
 import { prisma } from "@/lib/prisma";
 import { meetsEntitlement } from "@/lib/entitlement";
 import SubmitProjectForm from "@/components/prove/SubmitProjectForm";
@@ -10,6 +11,7 @@ export default async function ProjectsPage() {
   if (!user) {
     redirect("/login");
   }
+  await requireTierAccess(user, "PROVE");
 
   const projects = await prisma.project.findMany({
     orderBy: { order: "asc" },

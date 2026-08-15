@@ -4,23 +4,27 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Home, BookOpen, Code2, Award, Briefcase, type LucideIcon } from "lucide-react";
 import ReadinessWidget from "@/components/shell/ReadinessWidget";
+import type { Section } from "@/lib/tier";
+
+type SubItem = { label: string; href: string; section?: Section };
 
 type NavItem = {
   label: string;
   href: string;
   icon: LucideIcon;
-  subItems?: { label: string; href: string }[];
+  section?: Section;
+  subItems?: SubItem[];
   soon?: boolean;
 };
 
-const LEARN_SUB_ITEMS = [
+const LEARN_SUB_ITEMS: SubItem[] = [
   { label: "Skill tracks", href: "/learn" },
   { label: "Lectures", href: "/learn/lectures" },
-  { label: "Live classes", href: "/learn/live-classes" },
+  { label: "Live classes", href: "/learn/live-classes", section: "LIVE" },
   { label: "Notes & resources", href: "/learn/notes" },
 ];
 
-const PRACTICE_SUB_ITEMS = [
+const PRACTICE_SUB_ITEMS: SubItem[] = [
   { label: "Coding problems", href: "/practice/problems" },
   { label: "Quizzes", href: "/practice/quizzes" },
   { label: "Aptitude papers", href: "/practice/aptitude" },
@@ -28,7 +32,7 @@ const PRACTICE_SUB_ITEMS = [
   { label: "Submission history", href: "/practice/problems/history" },
 ];
 
-const PROVE_SUB_ITEMS = [
+const PROVE_SUB_ITEMS: SubItem[] = [
   { label: "Projects", href: "/prove/projects" },
   { label: "Review queue", href: "/prove/review-queue" },
   { label: "Feedback received", href: "/prove/feedback-received" },
@@ -36,7 +40,7 @@ const PROVE_SUB_ITEMS = [
   { label: "Group discussions", href: "/prove/group-discussions" },
 ];
 
-const CAREER_SUB_ITEMS = [
+const CAREER_SUB_ITEMS: SubItem[] = [
   { label: "Drives", href: "/career" },
   { label: "Applications", href: "/career/applications" },
   { label: "My report", href: "/career/report" },
@@ -46,16 +50,18 @@ const CAREER_SUB_ITEMS = [
 
 const NAV_ITEMS: NavItem[] = [
   { label: "Home", href: "/home", icon: Home },
-  { label: "Learn", href: "/learn", icon: BookOpen, subItems: LEARN_SUB_ITEMS },
-  { label: "Practice", href: "/practice", icon: Code2, subItems: PRACTICE_SUB_ITEMS },
-  { label: "Prove", href: "/prove", icon: Award, subItems: PROVE_SUB_ITEMS },
-  { label: "Career", href: "/career", icon: Briefcase, subItems: CAREER_SUB_ITEMS },
+  { label: "Learn", href: "/learn", icon: BookOpen, section: "LEARN", subItems: LEARN_SUB_ITEMS },
+  { label: "Practice", href: "/practice", icon: Code2, section: "PRACTICE", subItems: PRACTICE_SUB_ITEMS },
+  { label: "Prove", href: "/prove", icon: Award, section: "PROVE", subItems: PROVE_SUB_ITEMS },
+  { label: "Career", href: "/career", icon: Briefcase, section: "CAREER", subItems: CAREER_SUB_ITEMS },
 ];
 
 export default function SidebarNav({
   overallReadiness,
+  unlockedSections,
 }: {
   overallReadiness: number | null;
+  unlockedSections: Section[];
 }) {
   const pathname = usePathname();
 
@@ -68,13 +74,12 @@ export default function SidebarNav({
               ? pathname === item.href
               : pathname === item.href || pathname.startsWith(`${item.href}/`);
           const Icon = item.icon;
+          const locked = item.section ? !unlockedSections.includes(item.section) : false;
 
-          if (item.soon) {
-            return (
-              <span
-                key={item.href}
-                className="flex cursor-default items-center gap-2.75 rounded-[9px] px-3 py-2.5 text-sm text-[#9A9AAE]"
-              >
+          if (item.soon || locked) {
+            const badge = item.soon ? "Soon" : "Upgrade";
+            const content = (
+              <>
                 <Icon
                   className="h-4 w-4 shrink-0"
                   strokeWidth={1.5}
@@ -82,8 +87,27 @@ export default function SidebarNav({
                 />
                 {item.label}
                 <span className="ml-auto rounded-full bg-[#F2F2F7] px-2 py-0.5 font-mono text-[10px] text-[#9A9AAE]">
-                  Soon
+                  {badge}
                 </span>
+              </>
+            );
+            if (locked) {
+              return (
+                <Link
+                  key={item.href}
+                  href="/upgrade"
+                  className="flex items-center gap-2.75 rounded-[9px] px-3 py-2.5 text-sm text-[#9A9AAE] hover:bg-[#F4F4F8]"
+                >
+                  {content}
+                </Link>
+              );
+            }
+            return (
+              <span
+                key={item.href}
+                className="flex cursor-default items-center gap-2.75 rounded-[9px] px-3 py-2.5 text-sm text-[#9A9AAE]"
+              >
+                {content}
               </span>
             );
           }
@@ -109,17 +133,21 @@ export default function SidebarNav({
               {active && item.subItems ? (
                 <div className="mt-1 flex flex-col gap-2.25 pl-9.75">
                   {item.subItems.map((sub) => {
-                    if ("soon" in sub && sub.soon) {
+                    const subLocked = sub.section
+                      ? !unlockedSections.includes(sub.section)
+                      : false;
+                    if (subLocked) {
                       return (
-                        <span
+                        <Link
                           key={sub.label}
-                          className="flex cursor-default items-center gap-1.5 text-[13.5px] text-[#B8B8C7]"
+                          href="/upgrade"
+                          className="flex items-center gap-1.5 text-[13.5px] text-[#B8B8C7] hover:text-[#9A9AAE]"
                         >
                           {sub.label}
                           <span className="rounded-full bg-[#F2F2F7] px-1.5 py-0.5 font-mono text-[9px] text-[#9A9AAE]">
-                            Soon
+                            Upgrade
                           </span>
-                        </span>
+                        </Link>
                       );
                     }
                     const subActive = pathname === sub.href;

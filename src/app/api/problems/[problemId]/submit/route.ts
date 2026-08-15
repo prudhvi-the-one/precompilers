@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/session";
 import { runSubmitSchema } from "@/lib/validation";
 import { meetsEntitlement } from "@/lib/entitlement";
+import { hasTierAccess } from "@/lib/tier";
 import { submitSolution } from "@/lib/judge";
 
 export async function POST(
@@ -12,6 +13,9 @@ export async function POST(
   const user = await getCurrentUser();
   if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  if (!(await hasTierAccess(user, "PRACTICE"))) {
+    return NextResponse.json({ error: "Upgrade required" }, { status: 403 });
   }
 
   const { problemId } = await params;

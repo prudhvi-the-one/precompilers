@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
+import { requireTierAccess } from "@/lib/tier";
 import { prisma } from "@/lib/prisma";
 import PeerReviewForm from "@/components/prove/PeerReviewForm";
 
@@ -13,6 +14,7 @@ export default async function ReviewQueuePage() {
   if (!user) {
     redirect("/login");
   }
+  await requireTierAccess(user, "PROVE");
 
   const candidates = await prisma.projectSubmission.findMany({
     where: {

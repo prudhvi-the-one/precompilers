@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
+import { requireTierAccess } from "@/lib/tier";
 import { computeReadinessPillars, computeOverallReadiness } from "@/lib/readiness";
 import ReadinessPillarGrid from "@/components/career/ReadinessPillarGrid";
 import ShareReportControls from "@/components/career/ShareReportControls";
@@ -18,6 +19,7 @@ export default async function MyReportPage() {
   if (!user) {
     redirect("/login");
   }
+  await requireTierAccess(user, "CAREER");
 
   const [pillars, overall] = await Promise.all([
     computeReadinessPillars(user.id),

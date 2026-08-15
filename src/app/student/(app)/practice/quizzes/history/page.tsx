@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
+import { requireTierAccess } from "@/lib/tier";
 import { prisma } from "@/lib/prisma";
 
 function formatDate(date: Date): string {
@@ -18,6 +19,7 @@ export default async function QuizHistoryPage() {
   if (!user) {
     redirect("/login");
   }
+  await requireTierAccess(user, "PRACTICE");
 
   const attempts = await prisma.quizAttempt.findMany({
     where: { userId: user.id, submittedAt: { not: null } },

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
+import { requireTierAccess } from "@/lib/tier";
 import { prisma } from "@/lib/prisma";
 import DownloadAffordance from "@/components/learn/DownloadAffordance";
 
@@ -9,6 +10,7 @@ export default async function LecturesPage() {
   if (!user) {
     redirect("/login");
   }
+  await requireTierAccess(user, "LEARN");
 
   const enrollment = await prisma.enrollment.findUnique({
     where: { userId: user.id },
