@@ -9,6 +9,10 @@ const password = z
     message: `Password must be at least 8 characters and include a letter, a number, and a special character (${PASSWORD_SPECIAL_CHARS})`,
   });
 const otpCode = z.string().regex(/^\d{6}$/, "Code must be 6 digits");
+const phoneNumber = z
+  .string()
+  .trim()
+  .regex(/^\+?[1-9]\d{7,14}$/, "Enter a valid phone number with country code");
 
 export const registerSchema = z.object({
   email,
@@ -44,12 +48,21 @@ export const resetPasswordSchema = z.object({
   newPassword: password,
 });
 
+export const phoneLoginRequestSchema = z.object({
+  phoneNumber,
+});
+
+export const phoneLoginVerifySchema = z.object({
+  phoneNumber,
+  code: otpCode,
+});
+
 export const profileUpdateSchema = z.object({
   name: z.string().trim().max(100).optional(),
   college: z.string().trim().max(150).optional(),
   branch: z.string().trim().max(100).optional(),
   gradYear: z.number().int().min(2000).max(2100).nullable().optional(),
-  phoneNumber: z.string().trim().max(20).nullable().optional(),
+  phoneNumber: phoneNumber.nullable().optional(),
   whatsappOptIn: z.boolean().optional(),
 });
 
