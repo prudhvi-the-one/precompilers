@@ -37,10 +37,10 @@ export default async function ResumePage() {
   return (
     <div className="max-w-3xl space-y-4">
       <div>
-        <h1 className="font-brand text-[25px] font-bold tracking-[-0.02em] text-[#0F1020]">
+        <h1 className="font-brand text-[25px] font-bold tracking-[-0.02em] text-ink">
           Resume
         </h1>
-        <p className="text-[14.5px] text-[#55556B]">
+        <p className="text-[14.5px] text-ink-muted">
           Build a clean, one-page resume from your real work — no upload needed.
         </p>
       </div>

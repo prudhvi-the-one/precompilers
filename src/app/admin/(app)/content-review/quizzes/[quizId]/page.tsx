@@ -37,10 +37,10 @@ export default async function ReviewQuizPage({
   return (
     <div className="mx-auto max-w-3xl space-y-6">
       <div>
-        <h1 className="font-brand text-[25px] font-bold tracking-[-0.02em] text-gray-900">
+        <h1 className="font-brand text-[25px] font-bold tracking-[-0.02em] text-ink">
           {quiz.title}
         </h1>
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-ink-faint">
           {quiz.topic} · {quiz.kind === "TOPIC_QUIZ" ? "Topic quiz" : "Aptitude paper"} · by{" "}
           {quiz.author?.name ?? quiz.author?.email ?? "Unknown mentor"}
         </p>
@@ -48,20 +48,20 @@ export default async function ReviewQuizPage({
 
       <div className="space-y-4">
         {quiz.sections.map((section) => (
-          <div key={section.id} className="rounded-xl border border-gray-200 bg-white p-4 space-y-3">
-            <p className="text-sm font-semibold text-gray-900">
+          <div key={section.id} className="rounded-xl border border-line bg-surface p-4 space-y-3">
+            <p className="text-sm font-semibold text-ink">
               {section.name} · {section.durationMinutes} min
             </p>
             <div className="space-y-3">
               {section.questions.map((question) => (
-                <div key={question.id} className="rounded-lg bg-gray-50 p-3">
-                  <p className="text-sm text-gray-900">{question.text}</p>
+                <div key={question.id} className="rounded-lg bg-surface-sunk p-3">
+                  <p className="text-sm text-ink">{question.text}</p>
                   <ul className="mt-2 space-y-1">
                     {question.options.map((option) => (
                       <li
                         key={option.id}
                         className={`text-xs ${
-                          option.isCorrect ? "font-semibold text-green-700" : "text-gray-600"
+                          option.isCorrect ? "font-semibold text-green-700" : "text-ink-muted"
                         }`}
                       >
                         {option.label}. {option.text} {option.isCorrect ? "✓" : ""}

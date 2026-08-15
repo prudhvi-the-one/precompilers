@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import AuthCard from "@/components/auth/AuthCard";
 
 const inputClass =
-  "w-full rounded-md border border-gray-300 px-3 py-2 text-center text-lg tracking-widest focus:border-gray-500 focus:outline-none";
+  "w-full rounded-md border border-line px-3 py-2 text-center text-lg tracking-widest focus:border-ink-faint focus:outline-none";
 
 function VerifyForm() {
   const router = useRouter();
@@ -76,11 +76,11 @@ function VerifyForm() {
           onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
         />
         {error ? <p className="text-sm text-red-600">{error}</p> : null}
-        {info ? <p className="text-sm text-gray-500">{info}</p> : null}
+        {info ? <p className="text-sm text-ink-faint">{info}</p> : null}
         <button
           type="submit"
           disabled={loading || code.length !== 6}
-          className="w-full rounded-md bg-black py-2 text-sm font-medium text-white disabled:opacity-50"
+          className="w-full rounded-md bg-ink py-2 text-sm font-medium text-surface disabled:opacity-50"
         >
           {loading ? "Verifying…" : "Verify"}
         </button>
@@ -88,7 +88,7 @@ function VerifyForm() {
       <button
         onClick={handleResend}
         disabled={resending}
-        className="w-full text-center text-sm text-gray-500 underline disabled:opacity-50"
+        className="w-full text-center text-sm text-ink-faint underline disabled:opacity-50"
       >
         {resending ? "Sending…" : "Resend code"}
       </button>

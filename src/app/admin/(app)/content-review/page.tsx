@@ -67,34 +67,34 @@ export default async function ContentReviewPage() {
   return (
     <div className="mx-auto max-w-3xl space-y-6">
       <div>
-        <h1 className="font-brand text-[25px] font-bold tracking-[-0.02em] text-gray-900">
+        <h1 className="font-brand text-[25px] font-bold tracking-[-0.02em] text-ink">
           Content review
         </h1>
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-ink-faint">
           Mentor-authored quizzes and problems awaiting approval before they go live.
         </p>
       </div>
 
-      <div className="rounded-xl border border-gray-200 bg-white">
+      <div className="rounded-xl border border-line bg-surface">
         {items.length ? (
-          <div className="divide-y divide-gray-100">
+          <div className="divide-y divide-line-soft">
             {items.map((item) => (
               <div key={`${item.type}-${item.id}`} className="flex items-center justify-between gap-3 px-5 py-3.5">
                 <div>
-                  <p className="text-sm font-medium text-gray-900">
+                  <p className="text-sm font-medium text-ink">
                     <span className="mr-2 rounded-full bg-indigo-50 px-2 py-0.5 text-xs font-semibold text-indigo-600">
                       {item.type}
                     </span>
                     {item.title}
                   </p>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-ink-faint">
                     {item.author?.name ?? item.author?.email ?? "Unknown mentor"} · submitted{" "}
                     {formatDate(item.submittedAt)}
                   </p>
                 </div>
                 <Link
                   href={item.href}
-                  className="rounded-md bg-black px-3 py-1.5 text-xs font-semibold text-white"
+                  className="rounded-md bg-ink px-3 py-1.5 text-xs font-semibold text-surface"
                 >
                   Review
                 </Link>
@@ -102,7 +102,7 @@ export default async function ContentReviewPage() {
             ))}
           </div>
         ) : (
-          <p className="px-5 py-6 text-sm text-gray-500">Nothing waiting for review.</p>
+          <p className="px-5 py-6 text-sm text-ink-faint">Nothing waiting for review.</p>
         )}
       </div>
     </div>

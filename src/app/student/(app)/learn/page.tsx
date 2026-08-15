@@ -82,10 +82,10 @@ export default async function LearnPage({
     <div className="max-w-5xl space-y-8">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="font-brand text-[25px] font-bold tracking-[-0.02em] text-[#0F1020]">
+          <h1 className="font-brand text-[25px] font-bold tracking-[-0.02em] text-ink">
             Skill tracks
           </h1>
-          <p className="text-[14.5px] text-[#55556B]">
+          <p className="text-[14.5px] text-ink-muted">
             Built from what job posts ask for, not from the syllabus.
           </p>
         </div>
@@ -96,8 +96,8 @@ export default async function LearnPage({
               href={f.key === "all" ? "/learn" : `/learn?filter=${f.key}`}
               className={`rounded-full px-3.5 py-1.5 text-[13px] font-medium ${
                 filter === f.key
-                  ? "bg-[#0F1020] text-white"
-                  : "border border-[#E6E6EF] text-[#2A2A38] hover:bg-white"
+                  ? "bg-ink text-surface"
+                  : "border border-line text-ink-secondary hover:bg-surface"
               }`}
             >
               {f.label}
@@ -118,36 +118,36 @@ export default async function LearnPage({
           return (
             <div
               key={track.id}
-              className="rounded-xl border border-[#E6E6EF] bg-white p-4"
+              className="rounded-xl border border-line bg-surface p-4"
             >
               <TrackCoverPlaceholder label={track.name.toUpperCase()} />
 
               <div className="mt-3 flex items-center gap-2 text-xs">
                 {isEnrolled ? (
-                  <span className="rounded-full bg-[#F1F0FE] px-2.5 py-0.5 font-medium text-indigo-600">
+                  <span className="rounded-full bg-accent-soft px-2.5 py-0.5 font-medium text-indigo-600">
                     In progress
                   </span>
                 ) : locked ? (
-                  <span className="rounded-full bg-[#F2F2F7] px-2.5 py-0.5 font-medium text-[#8A8AA0]">
+                  <span className="rounded-full bg-line-soft px-2.5 py-0.5 font-medium text-ink-faint">
                     🔒 {track.requiredEntitlement === "INSTITUTION" ? "Institution" : "Plan"}
                   </span>
                 ) : (
-                  <span className="rounded-full bg-[#E7F7F0] px-2.5 py-0.5 font-medium text-[#059669]">
+                  <span className="rounded-full bg-success-soft px-2.5 py-0.5 font-medium text-success">
                     Free
                   </span>
                 )}
-                <span className="text-[#9A9AAE]">{total} lessons</span>
+                <span className="text-ink-faintest">{total} lessons</span>
               </div>
 
-              <h2 className="mt-2 font-brand text-base font-bold text-[#0F1020]">
+              <h2 className="mt-2 font-brand text-base font-bold text-ink">
                 {track.name}
               </h2>
-              <p className="mt-1 text-sm text-[#55556B]">{track.tagline}</p>
+              <p className="mt-1 text-sm text-ink-muted">{track.tagline}</p>
 
               <div className="mt-3">
                 {isEnrolled ? (
                   <>
-                    <div className="h-1.5 rounded-full bg-[#EDEDF3]">
+                    <div className="h-1.5 rounded-full bg-line-soft">
                       <div
                         className="h-full rounded-full bg-indigo-600"
                         style={{
@@ -155,12 +155,12 @@ export default async function LearnPage({
                         }}
                       />
                     </div>
-                    <p className="mt-1.5 text-xs text-[#8A8AA0]">
+                    <p className="mt-1.5 text-xs text-ink-faint">
                       {completedIds.size} of {total} lessons
                     </p>
                   </>
                 ) : locked ? (
-                  <p className="text-xs text-[#8A8AA0]">
+                  <p className="text-xs text-ink-faint">
                     Preview the first lesson free, or unlock the rest with a
                     plan.
                   </p>
@@ -174,35 +174,35 @@ export default async function LearnPage({
       </div>
 
       {enrollment ? (
-        <div className="rounded-xl border border-[#E6E6EF] bg-white">
-          <div className="flex items-center justify-between border-b border-[#EDEDF3] px-5 py-4">
-            <h2 className="font-brand text-base font-bold text-[#0F1020]">
+        <div className="rounded-xl border border-line bg-surface">
+          <div className="flex items-center justify-between border-b border-line-soft px-5 py-4">
+            <h2 className="font-brand text-base font-bold text-ink">
               Continue — {enrollment.track.name}
             </h2>
           </div>
-          <div className="divide-y divide-[#F2F2F7]">
+          <div className="divide-y divide-line-soft">
             {enrollment.track.lectures.map((lecture) => {
               const completed = completedIds.has(lecture.id);
               return (
                 <Link
                   key={lecture.id}
                   href={`/learn/lectures/${lecture.id}`}
-                  className="flex items-center gap-3 px-5 py-3.5 hover:bg-[#FBFBFD]"
+                  className="flex items-center gap-3 px-5 py-3.5 hover:bg-surface-sunk"
                 >
                   <span
                     className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-xs ${
                       completed
-                        ? "bg-[#E7F7F0] text-[#059669]"
+                        ? "bg-success-soft text-success"
                         : "border border-[#DDDDE7]"
                     }`}
                   >
                     {completed ? "✓" : ""}
                   </span>
-                  <span className="flex-1 text-sm text-[#0F1020]">
+                  <span className="flex-1 text-sm text-ink">
                     {formatLectureOrder(lecture.order)} · {lecture.title}
                   </span>
                   <DownloadAffordance />
-                  <span className="text-xs text-[#9A9AAE]">
+                  <span className="text-xs text-ink-faintest">
                     {lecture.durationMinutes} min
                   </span>
                 </Link>
@@ -212,13 +212,13 @@ export default async function LearnPage({
               <Link
                 key={liveClass.id}
                 href={`/live/${liveClass.id}`}
-                className="flex items-center gap-3 px-5 py-3.5 hover:bg-[#FBFBFD]"
+                className="flex items-center gap-3 px-5 py-3.5 hover:bg-surface-sunk"
               >
                 <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-[#DDDDE7] text-xs" />
-                <span className="flex-1 text-sm text-[#0F1020]">
+                <span className="flex-1 text-sm text-ink">
                   Live class — {liveClass.title}
                 </span>
-                <span className="rounded-full bg-[#F1F0FE] px-2 py-0.5 font-mono text-[10px] text-indigo-600">
+                <span className="rounded-full bg-accent-soft px-2 py-0.5 font-mono text-[10px] text-indigo-600">
                   {formatClassChip(liveClass.scheduledAt)}
                 </span>
               </Link>
@@ -226,8 +226,8 @@ export default async function LearnPage({
           </div>
         </div>
       ) : (
-        <div className="rounded-xl border border-[#E6E6EF] bg-white p-6 text-center">
-          <p className="text-sm text-[#55556B]">
+        <div className="rounded-xl border border-line bg-surface p-6 text-center">
+          <p className="text-sm text-ink-muted">
             You haven&apos;t started a track yet.
           </p>
           <Link

@@ -43,9 +43,9 @@ export default function ShareReportControls({
   }
 
   return (
-    <div className="rounded-xl border border-[#E6E6EF] bg-white p-5">
-      <h2 className="font-brand text-base font-bold text-[#0F1020]">Share your report</h2>
-      <p className="mt-1 text-sm text-[#55556B]">
+    <div className="rounded-xl border border-line bg-surface p-5">
+      <h2 className="font-brand text-base font-bold text-ink">Share your report</h2>
+      <p className="mt-1 text-sm text-ink-muted">
         Anyone with the link can view a live, read-only version of this report — no login
         required. Good for a recruiter or your placement cell.
       </p>
@@ -56,12 +56,12 @@ export default function ShareReportControls({
             <input
               readOnly
               value={shareUrl ?? ""}
-              className="flex-1 rounded-md border border-[#E6E6EF] bg-[#FBFBFD] px-3 py-2 text-sm text-[#55556B]"
+              className="flex-1 rounded-md border border-line bg-surface-sunk px-3 py-2 text-sm text-ink-muted"
             />
             <button
               type="button"
               onClick={copyLink}
-              className="rounded-md bg-[#0F1020] px-3 py-2 text-sm font-semibold text-white"
+              className="rounded-md bg-ink px-3 py-2 text-sm font-semibold text-surface"
             >
               {copied ? "Copied!" : "Copy link"}
             </button>
@@ -80,7 +80,7 @@ export default function ShareReportControls({
           type="button"
           onClick={() => toggle(true)}
           disabled={submitting}
-          className="mt-3 rounded-md bg-[#0F1020] px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
+          className="mt-3 rounded-md bg-ink px-4 py-2 text-sm font-semibold text-surface disabled:opacity-50"
         >
           {submitting ? "Enabling…" : "Enable sharing"}
         </button>

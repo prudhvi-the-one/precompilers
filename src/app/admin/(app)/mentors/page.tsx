@@ -24,25 +24,25 @@ export default async function MentorsPage() {
   return (
     <div className="mx-auto max-w-3xl space-y-6">
       <div>
-        <h1 className="font-brand text-[25px] font-bold tracking-[-0.02em] text-gray-900">
+        <h1 className="font-brand text-[25px] font-bold tracking-[-0.02em] text-ink">
           Mentors
         </h1>
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-ink-faint">
           Mark preferred mentors — their open slots show first to your students when booking, but
           every mentor stays bookable by everyone.
         </p>
       </div>
 
-      <div className="rounded-xl border border-gray-200 bg-white">
+      <div className="rounded-xl border border-line bg-surface">
         {mentors.length ? (
-          <div className="divide-y divide-gray-100">
+          <div className="divide-y divide-line-soft">
             {mentors.map((mentor) => (
               <div key={mentor.id} className="flex items-center justify-between gap-3 px-5 py-3.5">
                 <div>
-                  <p className="text-sm font-medium text-gray-900">
+                  <p className="text-sm font-medium text-ink">
                     {mentor.user.name ?? mentor.user.email}
                   </p>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-ink-faint">
                     {mentor.bio}
                     {mentor.specializations.length
                       ? ` · ${mentor.specializations.join(", ")}`
@@ -57,7 +57,7 @@ export default async function MentorsPage() {
             ))}
           </div>
         ) : (
-          <p className="px-5 py-6 text-sm text-gray-500">No mentors yet.</p>
+          <p className="px-5 py-6 text-sm text-ink-faint">No mentors yet.</p>
         )}
       </div>
     </div>

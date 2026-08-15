@@ -26,7 +26,7 @@ export default async function EditCompanyQuestionPage({
 
   return (
     <div className="mx-auto max-w-3xl space-y-6">
-      <h1 className="font-brand text-[25px] font-bold tracking-[-0.02em] text-gray-900">
+      <h1 className="font-brand text-[25px] font-bold tracking-[-0.02em] text-ink">
         Edit company question
       </h1>
       {companyQuestion.status === "REJECTED" && companyQuestion.rejectionReason ? (

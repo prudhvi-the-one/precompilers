@@ -4,7 +4,7 @@ function RuleIcon({ satisfied }: { satisfied: boolean }) {
   return (
     <span
       className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-full text-[10px] leading-none ${
-        satisfied ? "bg-green-600 text-white" : "bg-gray-200 text-transparent"
+        satisfied ? "bg-green-600 text-white" : "bg-line-soft text-transparent"
       }`}
     >
       ✓
@@ -26,7 +26,7 @@ export default function PasswordStrength({ password }: { password: string }) {
 
   return (
     <div className="space-y-2">
-      <div className="h-1.5 w-full overflow-hidden rounded-full bg-gray-200">
+      <div className="h-1.5 w-full overflow-hidden rounded-full bg-line-soft">
         <div
           className={`h-full rounded-full transition-all ${strengthColor}`}
           style={{ width: `${strengthPercent}%` }}
@@ -39,7 +39,7 @@ export default function PasswordStrength({ password }: { password: string }) {
             <li
               key={rule.key}
               className={`flex items-center gap-2 text-xs ${
-                satisfied ? "text-green-700" : "text-gray-500"
+                satisfied ? "text-green-700" : "text-ink-faint"
               }`}
             >
               <RuleIcon satisfied={satisfied} />

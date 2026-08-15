@@ -5,10 +5,10 @@ import { requireTierAccess } from "@/lib/tier";
 import { prisma } from "@/lib/prisma";
 
 const VERDICT_STYLE: Record<string, string> = {
-  ACCEPTED: "bg-[#E7F7F0] text-[#059669]",
-  WRONG_ANSWER: "bg-[#FDEBEC] text-[#DC2626]",
-  RUNTIME_ERROR: "bg-[#FDEBEC] text-[#DC2626]",
-  COMPILE_ERROR: "bg-[#F2F2F7] text-[#8A8AA0]",
+  ACCEPTED: "bg-success-soft text-success",
+  WRONG_ANSWER: "bg-error-soft text-error",
+  RUNTIME_ERROR: "bg-error-soft text-error",
+  COMPILE_ERROR: "bg-line-soft text-ink-faint",
 };
 
 function formatDate(date: Date): string {
@@ -37,27 +37,27 @@ export default async function ProblemSubmissionHistoryPage() {
   return (
     <div className="max-w-3xl space-y-4">
       <div>
-        <h1 className="font-brand text-[25px] font-bold tracking-[-0.02em] text-[#0F1020]">
+        <h1 className="font-brand text-[25px] font-bold tracking-[-0.02em] text-ink">
           Submission history
         </h1>
-        <p className="text-[14.5px] text-[#55556B]">
+        <p className="text-[14.5px] text-ink-muted">
           Every problem you&apos;ve submitted a solution for.
         </p>
       </div>
 
       {submissions.length ? (
-        <div className="divide-y divide-[#F2F2F7] rounded-xl border border-[#E6E6EF] bg-white">
+        <div className="divide-y divide-line-soft rounded-xl border border-line bg-surface">
           {submissions.map((submission) => (
             <Link
               key={submission.id}
               href={`/practice/problems/${submission.problemId}`}
-              className="flex items-center justify-between gap-3 px-5 py-3.5 hover:bg-[#FBFBFD]"
+              className="flex items-center justify-between gap-3 px-5 py-3.5 hover:bg-surface-sunk"
             >
               <div>
-                <p className="text-sm font-medium text-[#0F1020]">
+                <p className="text-sm font-medium text-ink">
                   {submission.problem.title}
                 </p>
-                <p className="text-xs text-[#8A8AA0]">
+                <p className="text-xs text-ink-faint">
                   {formatDate(submission.submittedAt)} · {submission.language} ·{" "}
                   {submission.passedCount}/{submission.totalCount} passed
                 </p>
@@ -71,7 +71,7 @@ export default async function ProblemSubmissionHistoryPage() {
           ))}
         </div>
       ) : (
-        <div className="rounded-xl border border-[#E6E6EF] bg-white p-6 text-center text-sm text-[#55556B]">
+        <div className="rounded-xl border border-line bg-surface p-6 text-center text-sm text-ink-muted">
           No submissions yet.{" "}
           <Link href="/practice/problems" className="font-semibold text-indigo-600 hover:underline">
             Solve your first problem

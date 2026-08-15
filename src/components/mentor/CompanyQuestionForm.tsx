@@ -67,20 +67,20 @@ export default function CompanyQuestionForm({
     <div className="space-y-6">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
-          <label className="text-sm font-medium text-gray-900">Company name</label>
+          <label className="text-sm font-medium text-ink">Company name</label>
           <input
             value={companyName}
             onChange={(e) => setCompanyName(e.target.value)}
-            className="mt-1.5 w-full rounded-md border border-gray-300 p-2.5 text-sm focus:border-black focus:outline-none"
+            className="mt-1.5 w-full rounded-md border border-line p-2.5 text-sm focus:border-black focus:outline-none"
             placeholder="e.g. TCS"
           />
         </div>
         <div>
-          <label className="text-sm font-medium text-gray-900">Category</label>
+          <label className="text-sm font-medium text-ink">Category</label>
           <select
             value={category}
             onChange={(e) => setCategory(e.target.value as typeof category)}
-            className="mt-1.5 w-full rounded-md border border-gray-300 p-2.5 text-sm focus:border-black focus:outline-none"
+            className="mt-1.5 w-full rounded-md border border-line p-2.5 text-sm focus:border-black focus:outline-none"
           >
             <option value="BEHAVIORAL">Behavioral</option>
             <option value="TECHNICAL">Technical</option>
@@ -90,23 +90,23 @@ export default function CompanyQuestionForm({
       </div>
 
       <div>
-        <label className="text-sm font-medium text-gray-900">Question</label>
+        <label className="text-sm font-medium text-ink">Question</label>
         <textarea
           value={question}
           onChange={(e) => setQuestion(e.target.value)}
           rows={3}
-          className="mt-1.5 w-full rounded-md border border-gray-300 p-2.5 text-sm focus:border-black focus:outline-none"
+          className="mt-1.5 w-full rounded-md border border-line p-2.5 text-sm focus:border-black focus:outline-none"
           placeholder="e.g. Tell me about a time you handled conflict in a team."
         />
       </div>
 
       <div>
-        <label className="text-sm font-medium text-gray-900">Guidance</label>
+        <label className="text-sm font-medium text-ink">Guidance</label>
         <textarea
           value={guidance}
           onChange={(e) => setGuidance(e.target.value)}
           rows={5}
-          className="mt-1.5 w-full rounded-md border border-gray-300 p-2.5 text-sm focus:border-black focus:outline-none"
+          className="mt-1.5 w-full rounded-md border border-line p-2.5 text-sm focus:border-black focus:outline-none"
           placeholder="How should a student approach answering this?"
         />
       </div>
@@ -119,7 +119,7 @@ export default function CompanyQuestionForm({
             type="button"
             onClick={() => handleSave(false)}
             disabled={submitting || companyName.trim().length === 0}
-            className="rounded-md border border-gray-300 px-4 py-2.5 text-sm font-semibold text-gray-700 disabled:opacity-50"
+            className="rounded-md border border-line px-4 py-2.5 text-sm font-semibold text-ink-secondary disabled:opacity-50"
           >
             Save as draft
           </button>
@@ -128,7 +128,7 @@ export default function CompanyQuestionForm({
           type="button"
           onClick={() => handleSave(true)}
           disabled={submitting || !canSubmitForReview}
-          className="flex-1 rounded-md bg-black px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-50"
+          className="flex-1 rounded-md bg-ink px-4 py-2.5 text-sm font-semibold text-surface disabled:opacity-50"
         >
           {submitting
             ? variant === "admin"

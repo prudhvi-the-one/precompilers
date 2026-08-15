@@ -29,27 +29,27 @@ export default async function RecordingsPage() {
   return (
     <div className="mx-auto max-w-3xl space-y-8">
       <div>
-        <h1 className="font-brand text-[25px] font-bold tracking-[-0.02em] text-gray-900">
+        <h1 className="font-brand text-[25px] font-bold tracking-[-0.02em] text-ink">
           Proctoring recordings
         </h1>
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-ink-faint">
           Any mentor can review any recording — flagged attempts sort first.
         </p>
       </div>
 
-      <section className="rounded-xl border border-gray-200 bg-white">
+      <section className="rounded-xl border border-line bg-surface">
         {attempts.length ? (
-          <div className="divide-y divide-gray-100">
+          <div className="divide-y divide-line-soft">
             {attempts.map((attempt) => (
               <div
                 key={attempt.id}
                 className="flex items-center justify-between gap-3 px-5 py-3.5"
               >
                 <div>
-                  <p className="text-sm font-medium text-gray-900">
+                  <p className="text-sm font-medium text-ink">
                     {attempt.user.name ?? attempt.user.email} · {attempt.quiz.title}
                   </p>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-ink-faint">
                     {formatDate(attempt.submittedAt)}
                     {attempt.score !== null ? ` · ${attempt.score}%` : ""}
                   </p>
@@ -59,14 +59,14 @@ export default async function RecordingsPage() {
                     className={
                       attempt.endedByViolation
                         ? "rounded-full bg-red-50 px-2.5 py-0.5 text-xs font-semibold text-red-700"
-                        : "rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-semibold text-gray-500"
+                        : "rounded-full bg-line-soft px-2.5 py-0.5 text-xs font-semibold text-ink-faint"
                     }
                   >
                     {attempt.endedByViolation ? "Flagged" : "Clean"}
                   </span>
                   <Link
                     href={`/recordings/${attempt.id}`}
-                    className="rounded-md bg-black px-3 py-1.5 text-xs font-semibold text-white"
+                    className="rounded-md bg-ink px-3 py-1.5 text-xs font-semibold text-surface"
                   >
                     Review
                   </Link>
@@ -75,7 +75,7 @@ export default async function RecordingsPage() {
             ))}
           </div>
         ) : (
-          <p className="px-5 py-6 text-sm text-gray-500">No recordings yet.</p>
+          <p className="px-5 py-6 text-sm text-ink-faint">No recordings yet.</p>
         )}
       </section>
     </div>

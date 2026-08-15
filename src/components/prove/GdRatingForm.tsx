@@ -51,7 +51,7 @@ export default function GdRatingForm({
 
   if (peers.length === 0) {
     return (
-      <p className="text-sm text-[#8A8AA0]">
+      <p className="text-sm text-ink-faint">
         No other participants stayed long enough to rate.
       </p>
     );
@@ -60,12 +60,12 @@ export default function GdRatingForm({
   return (
     <div className="space-y-4">
       {peers.map((p) => (
-        <div key={p.userId} className="rounded-xl border border-[#E6E6EF] bg-white p-4">
-          <p className="text-sm font-semibold text-[#0F1020]">{p.displayName}</p>
+        <div key={p.userId} className="rounded-xl border border-line bg-surface p-4">
+          <p className="text-sm font-semibold text-ink">{p.displayName}</p>
           <div className="mt-2 space-y-2">
             {DIMENSIONS.map((d) => (
               <div key={d.key} className="flex items-center gap-3">
-                <span className="w-16 text-xs text-[#55556B]">{d.label}</span>
+                <span className="w-16 text-xs text-ink-muted">{d.label}</span>
                 <div className="flex flex-1 gap-1">
                   {[1, 2, 3, 4, 5].map((n) => (
                     <button
@@ -73,7 +73,7 @@ export default function GdRatingForm({
                       type="button"
                       onClick={() => setScore(p.userId, d.key, n)}
                       className={`h-2 flex-1 rounded-full ${
-                        n <= ratings[p.userId][d.key] ? "bg-indigo-600" : "bg-[#EDEDF3]"
+                        n <= ratings[p.userId][d.key] ? "bg-indigo-600" : "bg-line-soft"
                       }`}
                       aria-label={`${d.label} ${n} out of 5 for ${p.displayName}`}
                     />
@@ -88,7 +88,7 @@ export default function GdRatingForm({
         type="button"
         onClick={handleSubmit}
         disabled={!canSubmit || submitting}
-        className="w-full rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#4338CA] disabled:opacity-50"
+        className="w-full rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-accent-hover disabled:opacity-50"
       >
         {submitting ? "Submitting…" : "Submit ratings"}
       </button>

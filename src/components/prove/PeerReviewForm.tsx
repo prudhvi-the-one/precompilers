@@ -52,14 +52,14 @@ export default function PeerReviewForm({ submissionId }: { submissionId: string 
 
   if (result) {
     return (
-      <div className="rounded-xl border border-[#E6E6EF] bg-white p-6 text-center">
-        <p className="text-sm font-medium text-[#0F1020]">
+      <div className="rounded-xl border border-line bg-surface p-6 text-center">
+        <p className="text-sm font-medium text-ink">
           Review submitted — this was {result}&apos;s submission.
         </p>
         <button
           type="button"
           onClick={() => router.refresh()}
-          className="mt-3 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-[#4338CA]"
+          className="mt-3 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-accent-hover"
         >
           Review the next one
         </button>
@@ -70,15 +70,15 @@ export default function PeerReviewForm({ submissionId }: { submissionId: string 
   return (
     <div className="space-y-5">
       <div>
-        <h3 className="font-brand text-base font-bold text-[#0F1020]">Your review</h3>
-        <p className="text-xs text-[#8A8AA0]">Score each dimension, then leave one thing they should change.</p>
+        <h3 className="font-brand text-base font-bold text-ink">Your review</h3>
+        <p className="text-xs text-ink-faint">Score each dimension, then leave one thing they should change.</p>
       </div>
 
       {DIMENSIONS.map((d) => (
         <div key={d.key}>
           <div className="flex items-center justify-between text-sm">
-            <span className="font-medium text-[#0F1020]">{d.label}</span>
-            <span className="text-xs text-[#8A8AA0]">
+            <span className="font-medium text-ink">{d.label}</span>
+            <span className="text-xs text-ink-faint">
               {scores[d.key] || "–"} / 5
             </span>
           </div>
@@ -89,7 +89,7 @@ export default function PeerReviewForm({ submissionId }: { submissionId: string 
                 type="button"
                 onClick={() => setScores((s) => ({ ...s, [d.key]: n }))}
                 className={`h-2 flex-1 rounded-full ${
-                  n <= scores[d.key] ? "bg-indigo-600" : "bg-[#EDEDF3]"
+                  n <= scores[d.key] ? "bg-indigo-600" : "bg-line-soft"
                 }`}
                 aria-label={`${d.label} ${n} out of 5`}
               />
@@ -99,7 +99,7 @@ export default function PeerReviewForm({ submissionId }: { submissionId: string 
       ))}
 
       <div>
-        <p className="text-sm font-medium text-[#0F1020]">Would you hire on this?</p>
+        <p className="text-sm font-medium text-ink">Would you hire on this?</p>
         <div className="mt-1.5 grid grid-cols-3 gap-2">
           {HIRE_OPTIONS.map((opt) => (
             <button
@@ -109,7 +109,7 @@ export default function PeerReviewForm({ submissionId }: { submissionId: string 
               className={`rounded-lg border px-3 py-2 text-sm font-medium ${
                 wouldHire === opt.value
                   ? "border-indigo-600 bg-[#F6F5FF] text-indigo-600"
-                  : "border-[#E6E6EF] text-[#55556B] hover:bg-[#FBFBFD]"
+                  : "border-line text-ink-muted hover:bg-surface-sunk"
               }`}
             >
               {opt.label}
@@ -119,27 +119,27 @@ export default function PeerReviewForm({ submissionId }: { submissionId: string 
       </div>
 
       <div>
-        <p className="text-sm font-medium text-[#0F1020]">One thing to change</p>
+        <p className="text-sm font-medium text-ink">One thing to change</p>
         <textarea
           value={comment}
           onChange={(e) => setComment(e.target.value)}
           rows={4}
-          className="mt-1.5 w-full rounded-lg border border-[#E6E6EF] p-3 text-sm text-[#0F1020] focus:border-indigo-600 focus:outline-none"
+          className="mt-1.5 w-full rounded-lg border border-line p-3 text-sm text-ink focus:border-indigo-600 focus:outline-none"
           placeholder="Be specific — what would actually make this better?"
         />
-        <p className="mt-1 text-xs text-[#9A9AAE]">
+        <p className="mt-1 text-xs text-ink-faintest">
           {comment.trim().length}/40 characters minimum. Reviews are rated by the
           author — low-effort reviews stop being assigned.
         </p>
       </div>
 
-      {error ? <p className="text-sm text-[#DB2777]">{error}</p> : null}
+      {error ? <p className="text-sm text-pillar-pink">{error}</p> : null}
 
       <button
         type="button"
         onClick={handleSubmit}
         disabled={!canSubmit || submitting}
-        className="w-full rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#4338CA] disabled:opacity-50"
+        className="w-full rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-accent-hover disabled:opacity-50"
       >
         {submitting ? "Submitting…" : "Submit review"}
       </button>

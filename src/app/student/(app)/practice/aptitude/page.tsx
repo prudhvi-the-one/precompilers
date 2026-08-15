@@ -40,10 +40,10 @@ export default async function AptitudePapersPage() {
     <div className="max-w-3xl space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="font-brand text-[25px] font-bold tracking-[-0.02em] text-[#0F1020]">
+          <h1 className="font-brand text-[25px] font-bold tracking-[-0.02em] text-ink">
             Aptitude papers
           </h1>
-          <p className="text-[14.5px] text-[#55556B]">
+          <p className="text-[14.5px] text-ink-muted">
             Sectional, timed papers patterned after real company tests.
           </p>
         </div>
@@ -67,22 +67,22 @@ export default async function AptitudePapersPage() {
           return (
             <div
               key={paper.id}
-              className="flex items-center justify-between gap-4 rounded-xl border border-[#E6E6EF] bg-white p-5"
+              className="flex items-center justify-between gap-4 rounded-xl border border-line bg-surface p-5"
             >
               <div>
-                <p className="text-sm font-medium text-[#0F1020]">{paper.title}</p>
-                <p className="mt-0.5 text-xs text-[#8A8AA0]">
+                <p className="text-sm font-medium text-ink">{paper.title}</p>
+                <p className="mt-0.5 text-xs text-ink-faint">
                   {paper.sections.map((s) => s.name).join(" · ")} · {totalQuestions} questions
                 </p>
                 {best ? (
-                  <p className="mt-1 text-xs text-[#8A8AA0]">
+                  <p className="mt-1 text-xs text-ink-faint">
                     Best score {best.score}%
                     {best.verified ? (
-                      <span className="ml-1.5 rounded-full bg-[#E7F7F0] px-2 py-0.5 font-semibold text-[#059669]">
+                      <span className="ml-1.5 rounded-full bg-success-soft px-2 py-0.5 font-semibold text-success">
                         VERIFIED
                       </span>
                     ) : (
-                      <span className="ml-1.5 rounded-full bg-[#F2F2F7] px-2 py-0.5 font-semibold text-[#8A8AA0]">
+                      <span className="ml-1.5 rounded-full bg-line-soft px-2 py-0.5 font-semibold text-ink-faint">
                         SELF-PACED
                       </span>
                     )}
@@ -90,7 +90,7 @@ export default async function AptitudePapersPage() {
                 ) : null}
               </div>
               {locked ? (
-                <span className="text-xs text-[#8A8AA0]">Unlock with a plan</span>
+                <span className="text-xs text-ink-faint">Unlock with a plan</span>
               ) : (
                 <StartAptitudePaperButtons paperId={paper.id} />
               )}

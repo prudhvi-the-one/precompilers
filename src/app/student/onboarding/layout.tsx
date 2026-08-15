@@ -7,10 +7,10 @@ export default function OnboardingLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="flex min-h-screen flex-1 flex-col bg-[#FBFBFD]">
-      <header className="flex h-15 items-center justify-between border-b border-[#EDEDF3] bg-white px-6">
+    <div className="flex min-h-screen flex-1 flex-col bg-surface-sunk">
+      <header className="flex h-15 items-center justify-between border-b border-line-soft bg-surface px-6">
         <Logo />
-        <Link href="/home" className="text-sm text-[#8A8AA0] hover:text-[#0F1020]">
+        <Link href="/home" className="text-sm text-ink-faint hover:text-ink">
           Skip for now
         </Link>
       </header>

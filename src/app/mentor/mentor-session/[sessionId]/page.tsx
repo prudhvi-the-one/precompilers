@@ -42,7 +42,7 @@ export default async function MentorMentorSessionPage({
         </div>
         <Link
           href={`/sessions/${mentorSession.id}/wrap-up`}
-          className="rounded-lg bg-[#EF4444] px-4 py-2 text-sm font-semibold text-white hover:bg-[#DC2626]"
+          className="rounded-lg bg-error px-4 py-2 text-sm font-semibold text-white hover:bg-error"
         >
           End &amp; submit {mentorSession.kind === "COUNSELLING" ? "notes" : "scorecard"}
         </Link>

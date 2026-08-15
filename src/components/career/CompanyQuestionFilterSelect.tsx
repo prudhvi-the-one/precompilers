@@ -27,7 +27,7 @@ export default function CompanyQuestionFilterSelect({
     <select
       value={selected}
       onChange={(e) => handleChange(e.target.value)}
-      className="rounded-full border border-[#E6E6EF] bg-white px-3.5 py-1.5 text-[13px] font-medium text-[#2A2A38]"
+      className="rounded-full border border-line bg-surface px-3.5 py-1.5 text-[13px] font-medium text-ink-secondary"
     >
       <option value="all">All companies</option>
       {companies.map((c) => (

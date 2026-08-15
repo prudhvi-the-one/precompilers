@@ -52,41 +52,41 @@ export default async function AttemptResultsPage({
 
   return (
     <div className="max-w-3xl space-y-5">
-      <Link href={isPaper ? "/practice/aptitude" : "/practice/quizzes"} className="text-sm text-[#8A8AA0] hover:text-[#0F1020]">
+      <Link href={isPaper ? "/practice/aptitude" : "/practice/quizzes"} className="text-sm text-ink-faint hover:text-ink">
         ← {isPaper ? "Aptitude papers" : "Topic quizzes"}
       </Link>
 
-      <div className="rounded-xl border border-[#E6E6EF] bg-white p-6">
+      <div className="rounded-xl border border-line bg-surface p-6">
         <div className="flex items-center gap-2">
-          <p className="font-brand text-lg font-bold text-[#0F1020]">{attempt.quiz.title}</p>
+          <p className="font-brand text-lg font-bold text-ink">{attempt.quiz.title}</p>
           {isPaper ? (
             verified ? (
-              <span className="rounded-full bg-[#E7F7F0] px-2.5 py-0.5 text-xs font-semibold text-[#059669]">
+              <span className="rounded-full bg-success-soft px-2.5 py-0.5 text-xs font-semibold text-success">
                 VERIFIED
               </span>
             ) : (
-              <span className="rounded-full bg-[#F2F2F7] px-2.5 py-0.5 text-xs font-semibold text-[#8A8AA0]">
+              <span className="rounded-full bg-line-soft px-2.5 py-0.5 text-xs font-semibold text-ink-faint">
                 SELF-PACED
               </span>
             )
           ) : null}
         </div>
         {attempt.endedByViolation ? (
-          <p className="mt-1 text-xs text-[#DB2777]">
+          <p className="mt-1 text-xs text-pillar-pink">
             Ended early — you left the tab twice during a proctored attempt.
           </p>
         ) : null}
-        <p className="mt-3 font-brand text-4xl font-extrabold text-[#0F1020]">
+        <p className="mt-3 font-brand text-4xl font-extrabold text-ink">
           {attempt.score}
-          <span className="text-base font-medium text-[#9A9AAE]"> / 100</span>
+          <span className="text-base font-medium text-ink-faintest"> / 100</span>
         </p>
 
         {attempt.sectionAttempts.length > 1 ? (
           <div className="mt-4 grid grid-cols-3 gap-3">
             {attempt.sectionAttempts.map((sa) => (
-              <div key={sa.id} className="rounded-lg border border-[#E6E6EF] p-3">
-                <p className="text-xs text-[#8A8AA0]">{sa.section.name}</p>
-                <p className="mt-1 font-brand text-xl font-bold text-[#0F1020]">{sa.score}%</p>
+              <div key={sa.id} className="rounded-lg border border-line p-3">
+                <p className="text-xs text-ink-faint">{sa.section.name}</p>
+                <p className="mt-1 font-brand text-xl font-bold text-ink">{sa.score}%</p>
               </div>
             ))}
           </div>
@@ -102,11 +102,11 @@ export default async function AttemptResultsPage({
       </div>
 
       {sections.map((section) => (
-        <div key={section.id} className="rounded-xl border border-[#E6E6EF] bg-white">
-          <div className="border-b border-[#EDEDF3] px-5 py-3.5">
-            <h2 className="font-brand text-sm font-bold text-[#0F1020]">{section.name}</h2>
+        <div key={section.id} className="rounded-xl border border-line bg-surface">
+          <div className="border-b border-line-soft px-5 py-3.5">
+            <h2 className="font-brand text-sm font-bold text-ink">{section.name}</h2>
           </div>
-          <div className="divide-y divide-[#F2F2F7]">
+          <div className="divide-y divide-line-soft">
             {section.questions.map((question, index) => {
               const response = responseByQuestion.get(question.id);
               const correctOption = question.options.find((o) => o.isCorrect);
@@ -117,24 +117,24 @@ export default async function AttemptResultsPage({
                     <span
                       className={
                         isCorrect
-                          ? "mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#E7F7F0] text-xs text-[#059669]"
-                          : "mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#FFF0F6] text-xs text-[#DB2777]"
+                          ? "mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-success-soft text-xs text-success"
+                          : "mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#FFF0F6] text-xs text-pillar-pink"
                       }
                     >
                       {isCorrect ? "✓" : "✗"}
                     </span>
                     <div className="flex-1">
-                      <p className="text-sm font-medium text-[#0F1020]">
+                      <p className="text-sm font-medium text-ink">
                         {index + 1}. {question.text}
                       </p>
-                      <p className="mt-1 text-xs text-[#8A8AA0]">
+                      <p className="mt-1 text-xs text-ink-faint">
                         Your answer:{" "}
                         {response?.selectedOption
                           ? `${response.selectedOption.label}. ${response.selectedOption.text}`
                           : "Not answered"}
                       </p>
                       {!isCorrect && correctOption ? (
-                        <p className="mt-0.5 text-xs text-[#059669]">
+                        <p className="mt-0.5 text-xs text-success">
                           Correct answer: {correctOption.label}. {correctOption.text}
                         </p>
                       ) : null}

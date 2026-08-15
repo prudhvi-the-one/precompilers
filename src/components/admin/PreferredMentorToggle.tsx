@@ -32,7 +32,7 @@ export default function PreferredMentorToggle({
   }
 
   return (
-    <label className="flex items-center gap-2 text-sm text-gray-700">
+    <label className="flex items-center gap-2 text-sm text-ink-secondary">
       <input type="checkbox" checked={preferred} disabled={submitting} onChange={toggle} />
       Preferred
     </label>

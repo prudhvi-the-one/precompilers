@@ -26,23 +26,23 @@ export default async function ReviewCompanyQuestionPage({
   return (
     <div className="mx-auto max-w-3xl space-y-6">
       <div>
-        <h1 className="font-brand text-[25px] font-bold tracking-[-0.02em] text-gray-900">
+        <h1 className="font-brand text-[25px] font-bold tracking-[-0.02em] text-ink">
           {companyQuestion.companyName}
         </h1>
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-ink-faint">
           {companyQuestion.category} · by{" "}
           {companyQuestion.author?.name ?? companyQuestion.author?.email ?? "Unknown mentor"}
         </p>
       </div>
 
-      <div className="space-y-3 rounded-xl border border-gray-200 bg-white p-4">
+      <div className="space-y-3 rounded-xl border border-line bg-surface p-4">
         <div>
-          <p className="text-xs font-semibold uppercase text-gray-500">Question</p>
-          <p className="mt-1 text-sm text-gray-900">{companyQuestion.question}</p>
+          <p className="text-xs font-semibold uppercase text-ink-faint">Question</p>
+          <p className="mt-1 text-sm text-ink">{companyQuestion.question}</p>
         </div>
         <div>
-          <p className="text-xs font-semibold uppercase text-gray-500">Guidance</p>
-          <p className="mt-1 text-sm text-gray-900">{companyQuestion.guidance}</p>
+          <p className="text-xs font-semibold uppercase text-ink-faint">Guidance</p>
+          <p className="mt-1 text-sm text-ink">{companyQuestion.guidance}</p>
         </div>
       </div>
 

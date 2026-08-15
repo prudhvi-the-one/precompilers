@@ -25,14 +25,14 @@ export default async function ProjectsPage() {
 
   return (
     <div className="max-w-3xl space-y-4">
-      <Link href="/prove" className="text-sm text-[#8A8AA0] hover:text-[#0F1020]">
+      <Link href="/prove" className="text-sm text-ink-faint hover:text-ink">
         ← Prove
       </Link>
       <div>
-        <h1 className="font-brand text-[25px] font-bold tracking-[-0.02em] text-[#0F1020]">
+        <h1 className="font-brand text-[25px] font-bold tracking-[-0.02em] text-ink">
           Project briefs
         </h1>
-        <p className="text-[14.5px] text-[#55556B]">
+        <p className="text-[14.5px] text-ink-muted">
           Briefed like real work, reviewed by peers.
         </p>
       </div>
@@ -43,13 +43,13 @@ export default async function ProjectsPage() {
           const submission = project.submissions[0];
 
           return (
-            <div key={project.id} className="rounded-xl border border-[#E6E6EF] bg-white p-5">
+            <div key={project.id} className="rounded-xl border border-line bg-surface p-5">
               <div className="flex items-center gap-2">
-                <h2 className="font-brand text-base font-bold text-[#0F1020]">
+                <h2 className="font-brand text-base font-bold text-ink">
                   {project.title}
                 </h2>
                 {submission ? (
-                  <span className="rounded-full bg-[#E7F7F0] px-2.5 py-0.5 text-xs font-semibold text-[#059669]">
+                  <span className="rounded-full bg-success-soft px-2.5 py-0.5 text-xs font-semibold text-success">
                     Submitted
                   </span>
                 ) : null}
@@ -58,13 +58,13 @@ export default async function ProjectsPage() {
                 <summary className="cursor-pointer text-sm font-medium text-indigo-600">
                   Read the brief
                 </summary>
-                <p className="mt-2 whitespace-pre-line text-sm text-[#55556B]">
+                <p className="mt-2 whitespace-pre-line text-sm text-ink-muted">
                   {project.brief}
                 </p>
               </details>
 
               {locked ? (
-                <p className="mt-3 text-xs text-[#8A8AA0]">
+                <p className="mt-3 text-xs text-ink-faint">
                   🔒 Unlock with a plan.
                 </p>
               ) : (
@@ -75,7 +75,7 @@ export default async function ProjectsPage() {
                     initialDescription={submission?.description}
                   />
                   {submission ? (
-                    <p className="mt-2 text-xs text-[#8A8AA0]">
+                    <p className="mt-2 text-xs text-ink-faint">
                       {submission._count.reviews} of 2 reviews received ·{" "}
                       <Link
                         href="/prove/feedback-received"

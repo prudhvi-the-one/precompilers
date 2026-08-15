@@ -23,19 +23,19 @@ export default async function InstitutionsPage() {
   return (
     <div className="mx-auto max-w-3xl space-y-8">
       <div>
-        <h1 className="font-brand text-[25px] font-bold tracking-[-0.02em] text-gray-900">
+        <h1 className="font-brand text-[25px] font-bold tracking-[-0.02em] text-ink">
           Institutions
         </h1>
-        <p className="text-sm text-gray-500">Create institutions and invite their admins.</p>
+        <p className="text-sm text-ink-faint">Create institutions and invite their admins.</p>
       </div>
 
-      <section className="rounded-xl border border-gray-200 bg-white p-5">
-        <h2 className="mb-3 font-brand text-base font-bold text-gray-900">New institution</h2>
+      <section className="rounded-xl border border-line bg-surface p-5">
+        <h2 className="mb-3 font-brand text-base font-bold text-ink">New institution</h2>
         <CreateInstitutionForm />
       </section>
 
-      <section className="rounded-xl border border-gray-200 bg-white p-5">
-        <h2 className="mb-3 font-brand text-base font-bold text-gray-900">Invite institution admin</h2>
+      <section className="rounded-xl border border-line bg-surface p-5">
+        <h2 className="mb-3 font-brand text-base font-bold text-ink">Invite institution admin</h2>
         {institutions.length ? (
           <ProvisionUserForm
             role="INSTITUTION_ADMIN"
@@ -43,21 +43,21 @@ export default async function InstitutionsPage() {
             institutionOptions={institutions.map((i) => ({ id: i.id, name: i.name }))}
           />
         ) : (
-          <p className="text-sm text-gray-500">Create an institution first.</p>
+          <p className="text-sm text-ink-faint">Create an institution first.</p>
         )}
       </section>
 
-      <section className="rounded-xl border border-gray-200 bg-white">
-        <div className="border-b border-gray-100 px-5 py-4">
-          <h2 className="font-brand text-base font-bold text-gray-900">All institutions</h2>
+      <section className="rounded-xl border border-line bg-surface">
+        <div className="border-b border-line-soft px-5 py-4">
+          <h2 className="font-brand text-base font-bold text-ink">All institutions</h2>
         </div>
         {institutions.length ? (
-          <div className="divide-y divide-gray-100">
+          <div className="divide-y divide-line-soft">
             {institutions.map((inst) => (
               <div key={inst.id} className="flex items-center justify-between px-5 py-3.5">
                 <div>
-                  <p className="text-sm font-medium text-gray-900">{inst.name}</p>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-sm font-medium text-ink">{inst.name}</p>
+                  <p className="text-xs text-ink-faint">
                     {inst._count.users} / {inst.seatCount} seats used · renews{" "}
                     {formatDate(inst.renewsAt)}
                   </p>
@@ -66,7 +66,7 @@ export default async function InstitutionsPage() {
             ))}
           </div>
         ) : (
-          <p className="px-5 py-6 text-sm text-gray-500">No institutions yet.</p>
+          <p className="px-5 py-6 text-sm text-ink-faint">No institutions yet.</p>
         )}
       </section>
     </div>

@@ -190,40 +190,40 @@ export default function QuizAuthorForm({
     <div className="space-y-6">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
-          <label className="text-sm font-medium text-gray-900">Title</label>
+          <label className="text-sm font-medium text-ink">Title</label>
           <input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="mt-1.5 w-full rounded-md border border-gray-300 p-2.5 text-sm focus:border-black focus:outline-none"
+            className="mt-1.5 w-full rounded-md border border-line p-2.5 text-sm focus:border-black focus:outline-none"
             placeholder="e.g. Operating Systems — Core Concepts"
           />
         </div>
         <div>
-          <label className="text-sm font-medium text-gray-900">Topic</label>
+          <label className="text-sm font-medium text-ink">Topic</label>
           <input
             value={topic}
             onChange={(e) => setTopic(e.target.value)}
-            className="mt-1.5 w-full rounded-md border border-gray-300 p-2.5 text-sm focus:border-black focus:outline-none"
+            className="mt-1.5 w-full rounded-md border border-line p-2.5 text-sm focus:border-black focus:outline-none"
             placeholder="e.g. Operating Systems"
           />
         </div>
         <div>
-          <label className="text-sm font-medium text-gray-900">Kind</label>
+          <label className="text-sm font-medium text-ink">Kind</label>
           <select
             value={kind}
             onChange={(e) => setKind(e.target.value as typeof kind)}
-            className="mt-1.5 w-full rounded-md border border-gray-300 p-2.5 text-sm focus:border-black focus:outline-none"
+            className="mt-1.5 w-full rounded-md border border-line p-2.5 text-sm focus:border-black focus:outline-none"
           >
             <option value="TOPIC_QUIZ">Topic quiz</option>
             <option value="APTITUDE_PAPER">Aptitude paper</option>
           </select>
         </div>
         <div>
-          <label className="text-sm font-medium text-gray-900">Required plan</label>
+          <label className="text-sm font-medium text-ink">Required plan</label>
           <select
             value={requiredEntitlement}
             onChange={(e) => setRequiredEntitlement(e.target.value as typeof requiredEntitlement)}
-            className="mt-1.5 w-full rounded-md border border-gray-300 p-2.5 text-sm focus:border-black focus:outline-none"
+            className="mt-1.5 w-full rounded-md border border-line p-2.5 text-sm focus:border-black focus:outline-none"
           >
             <option value="FREE">Free</option>
             <option value="INDIVIDUAL">Individual</option>
@@ -234,13 +234,13 @@ export default function QuizAuthorForm({
 
       <div className="space-y-5">
         {sections.map((section, sIndex) => (
-          <div key={sIndex} className="rounded-xl border border-gray-200 bg-white p-4 space-y-4">
+          <div key={sIndex} className="rounded-xl border border-line bg-surface p-4 space-y-4">
             <div className="flex items-center justify-between gap-3">
               <div className="grid flex-1 grid-cols-1 gap-3 sm:grid-cols-2">
                 <input
                   value={section.name}
                   onChange={(e) => updateSection(sIndex, { name: e.target.value })}
-                  className="rounded-md border border-gray-300 p-2 text-sm focus:border-black focus:outline-none"
+                  className="rounded-md border border-line p-2 text-sm focus:border-black focus:outline-none"
                   placeholder={`Section ${sIndex + 1} name`}
                 />
                 <input
@@ -250,7 +250,7 @@ export default function QuizAuthorForm({
                   onChange={(e) =>
                     updateSection(sIndex, { durationMinutes: Number(e.target.value) || 0 })
                   }
-                  className="rounded-md border border-gray-300 p-2 text-sm focus:border-black focus:outline-none"
+                  className="rounded-md border border-line p-2 text-sm focus:border-black focus:outline-none"
                   placeholder="Duration (minutes)"
                 />
               </div>
@@ -267,13 +267,13 @@ export default function QuizAuthorForm({
 
             <div className="space-y-4">
               {section.questions.map((question, qIndex) => (
-                <div key={qIndex} className="rounded-lg border border-gray-100 bg-gray-50 p-3.5 space-y-3">
+                <div key={qIndex} className="rounded-lg border border-line-soft bg-surface-sunk p-3.5 space-y-3">
                   <div className="flex items-start justify-between gap-3">
                     <textarea
                       value={question.text}
                       onChange={(e) => updateQuestion(sIndex, qIndex, { text: e.target.value })}
                       rows={2}
-                      className="flex-1 rounded-md border border-gray-300 p-2 text-sm focus:border-black focus:outline-none"
+                      className="flex-1 rounded-md border border-line p-2 text-sm focus:border-black focus:outline-none"
                       placeholder={`Question ${qIndex + 1}`}
                     />
                     <input
@@ -283,7 +283,7 @@ export default function QuizAuthorForm({
                       onChange={(e) =>
                         updateQuestion(sIndex, qIndex, { marks: Number(e.target.value) || 1 })
                       }
-                      className="w-20 rounded-md border border-gray-300 p-2 text-sm focus:border-black focus:outline-none"
+                      className="w-20 rounded-md border border-line p-2 text-sm focus:border-black focus:outline-none"
                       title="Marks"
                     />
                     {section.questions.length > 1 ? (
@@ -300,7 +300,7 @@ export default function QuizAuthorForm({
                     {question.options.map((option, oIndex) => (
                       <label
                         key={oIndex}
-                        className="flex items-center gap-2 rounded-md border border-gray-200 bg-white p-2"
+                        className="flex items-center gap-2 rounded-md border border-line bg-surface p-2"
                       >
                         <input
                           type="radio"
@@ -308,7 +308,7 @@ export default function QuizAuthorForm({
                           checked={option.isCorrect}
                           onChange={() => setCorrectOption(sIndex, qIndex, oIndex)}
                         />
-                        <span className="text-xs font-semibold text-gray-500">{option.label}</span>
+                        <span className="text-xs font-semibold text-ink-faint">{option.label}</span>
                         <input
                           value={option.text}
                           onChange={(e) => updateOption(sIndex, qIndex, oIndex, e.target.value)}
@@ -347,7 +347,7 @@ export default function QuizAuthorForm({
             type="button"
             onClick={() => handleSave(false)}
             disabled={submitting || title.trim().length === 0}
-            className="rounded-md border border-gray-300 px-4 py-2.5 text-sm font-semibold text-gray-700 disabled:opacity-50"
+            className="rounded-md border border-line px-4 py-2.5 text-sm font-semibold text-ink-secondary disabled:opacity-50"
           >
             Save as draft
           </button>
@@ -356,7 +356,7 @@ export default function QuizAuthorForm({
           type="button"
           onClick={() => handleSave(true)}
           disabled={submitting || !canSubmitForReview}
-          className="flex-1 rounded-md bg-black px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-50"
+          className="flex-1 rounded-md bg-ink px-4 py-2.5 text-sm font-semibold text-surface disabled:opacity-50"
         >
           {submitting
             ? variant === "admin"

@@ -4,11 +4,11 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 const STATUS_STYLE: Record<string, string> = {
-  APPLIED: "bg-[#F1F0FE] text-indigo-600",
-  INTERVIEWING: "bg-[#FEF6E7] text-[#B45309]",
-  OFFER: "bg-[#E7F7F0] text-[#059669]",
-  REJECTED: "bg-[#FDEBEC] text-[#DC2626]",
-  WITHDRAWN: "bg-[#F2F2F7] text-[#55556B]",
+  APPLIED: "bg-accent-soft text-indigo-600",
+  INTERVIEWING: "bg-warn-soft text-warn",
+  OFFER: "bg-success-soft text-success",
+  REJECTED: "bg-error-soft text-error",
+  WITHDRAWN: "bg-line-soft text-ink-muted",
 };
 
 export default function ApplicationStatusSelect({

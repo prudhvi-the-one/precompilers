@@ -14,16 +14,16 @@ export default async function UpgradePage() {
 
   return (
     <div className="max-w-4xl">
-      <h1 className="font-brand text-[28px] font-bold text-[#0F1020]">
+      <h1 className="font-brand text-[28px] font-bold text-ink">
         Choose your plan
       </h1>
-      <p className="mt-2 text-sm text-[#55556B]">
+      <p className="mt-2 text-sm text-ink-muted">
         Every tier builds on the one before it. Cancel or switch anytime by
         letting your current term run out and choosing a different one.
       </p>
 
       {user.entitlement === "INSTITUTION" ? (
-        <div className="mt-6 rounded-xl border border-[#E6E6EF] bg-[#FBFBFE] p-6 text-sm text-[#55556B]">
+        <div className="mt-6 rounded-xl border border-line bg-[#FBFBFE] p-6 text-sm text-ink-muted">
           Your account already has full access through your institution — no
           subscription needed.
         </div>

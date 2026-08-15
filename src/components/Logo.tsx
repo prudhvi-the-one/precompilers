@@ -49,7 +49,7 @@ export default function Logo({
         }
       >
         <span className="text-indigo-600">Pre</span>
-        <span className="text-gray-900">Compilers</span>
+        <span className="text-ink">Compilers</span>
       </span>
     </Link>
   );

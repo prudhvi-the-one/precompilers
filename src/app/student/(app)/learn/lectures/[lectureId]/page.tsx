@@ -40,18 +40,18 @@ export default async function LectureDetailPage({
     <div className="max-w-3xl space-y-4">
       <Link
         href="/learn"
-        className="text-sm text-[#8A8AA0] hover:text-[#0F1020]"
+        className="text-sm text-ink-faint hover:text-ink"
       >
         ← {lecture.track.name}
       </Link>
 
-      <h1 className="font-brand text-[22px] font-bold text-[#0F1020]">
+      <h1 className="font-brand text-[22px] font-bold text-ink">
         {formatOrder(lecture.order)} · {lecture.title}
       </h1>
 
       {unlocked ? (
         <>
-          <div className="aspect-video overflow-hidden rounded-xl border border-[#E6E6EF] bg-black">
+          <div className="aspect-video overflow-hidden rounded-xl border border-line bg-black">
             <iframe
               src={lecture.videoUrl}
               title={lecture.title}
@@ -60,18 +60,18 @@ export default async function LectureDetailPage({
               allowFullScreen
             />
           </div>
-          <p className="text-sm text-[#55556B]">{lecture.description}</p>
+          <p className="text-sm text-ink-muted">{lecture.description}</p>
           <MarkCompleteButton
             lectureId={lecture.id}
             initialCompleted={Boolean(progress?.completedAt)}
           />
         </>
       ) : (
-        <div className="rounded-xl border border-[#E6E6EF] bg-white p-8 text-center">
-          <p className="text-sm font-medium text-[#0F1020]">
+        <div className="rounded-xl border border-line bg-surface p-8 text-center">
+          <p className="text-sm font-medium text-ink">
             🔒 This lesson needs a plan upgrade.
           </p>
-          <p className="mt-1 text-sm text-[#8A8AA0]">
+          <p className="mt-1 text-sm text-ink-faint">
             The first lesson in every track is free to preview — this one
             unlocks with the Individual or Institution plan.
           </p>

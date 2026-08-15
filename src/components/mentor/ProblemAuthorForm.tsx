@@ -139,29 +139,29 @@ export default function ProblemAuthorForm({
     <div className="space-y-6">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
-          <label className="text-sm font-medium text-gray-900">Title</label>
+          <label className="text-sm font-medium text-ink">Title</label>
           <input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="mt-1.5 w-full rounded-md border border-gray-300 p-2.5 text-sm focus:border-black focus:outline-none"
+            className="mt-1.5 w-full rounded-md border border-line p-2.5 text-sm focus:border-black focus:outline-none"
             placeholder="e.g. Longest Subarray with Sum K"
           />
         </div>
         <div>
-          <label className="text-sm font-medium text-gray-900">Category</label>
+          <label className="text-sm font-medium text-ink">Category</label>
           <input
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="mt-1.5 w-full rounded-md border border-gray-300 p-2.5 text-sm focus:border-black focus:outline-none"
+            className="mt-1.5 w-full rounded-md border border-line p-2.5 text-sm focus:border-black focus:outline-none"
             placeholder="e.g. Arrays"
           />
         </div>
         <div>
-          <label className="text-sm font-medium text-gray-900">Difficulty</label>
+          <label className="text-sm font-medium text-ink">Difficulty</label>
           <select
             value={difficulty}
             onChange={(e) => setDifficulty(e.target.value as typeof difficulty)}
-            className="mt-1.5 w-full rounded-md border border-gray-300 p-2.5 text-sm focus:border-black focus:outline-none"
+            className="mt-1.5 w-full rounded-md border border-line p-2.5 text-sm focus:border-black focus:outline-none"
           >
             <option value="EASY">Easy</option>
             <option value="MEDIUM">Medium</option>
@@ -169,11 +169,11 @@ export default function ProblemAuthorForm({
           </select>
         </div>
         <div>
-          <label className="text-sm font-medium text-gray-900">Required plan</label>
+          <label className="text-sm font-medium text-ink">Required plan</label>
           <select
             value={requiredEntitlement}
             onChange={(e) => setRequiredEntitlement(e.target.value as typeof requiredEntitlement)}
-            className="mt-1.5 w-full rounded-md border border-gray-300 p-2.5 text-sm focus:border-black focus:outline-none"
+            className="mt-1.5 w-full rounded-md border border-line p-2.5 text-sm focus:border-black focus:outline-none"
           >
             <option value="FREE">Free</option>
             <option value="INDIVIDUAL">Individual</option>
@@ -181,57 +181,57 @@ export default function ProblemAuthorForm({
           </select>
         </div>
         <div>
-          <label className="text-sm font-medium text-gray-900">Tags (comma-separated)</label>
+          <label className="text-sm font-medium text-ink">Tags (comma-separated)</label>
           <input
             value={tags}
             onChange={(e) => setTags(e.target.value)}
-            className="mt-1.5 w-full rounded-md border border-gray-300 p-2.5 text-sm focus:border-black focus:outline-none"
+            className="mt-1.5 w-full rounded-md border border-line p-2.5 text-sm focus:border-black focus:outline-none"
             placeholder="e.g. array, sliding-window"
           />
         </div>
         <div>
-          <label className="text-sm font-medium text-gray-900">Companies (comma-separated)</label>
+          <label className="text-sm font-medium text-ink">Companies (comma-separated)</label>
           <input
             value={companies}
             onChange={(e) => setCompanies(e.target.value)}
-            className="mt-1.5 w-full rounded-md border border-gray-300 p-2.5 text-sm focus:border-black focus:outline-none"
+            className="mt-1.5 w-full rounded-md border border-line p-2.5 text-sm focus:border-black focus:outline-none"
             placeholder="e.g. Amazon, Google"
           />
         </div>
       </div>
 
       <div>
-        <label className="text-sm font-medium text-gray-900">Statement</label>
+        <label className="text-sm font-medium text-ink">Statement</label>
         <textarea
           value={statement}
           onChange={(e) => setStatement(e.target.value)}
           rows={6}
-          className="mt-1.5 w-full rounded-md border border-gray-300 p-2.5 text-sm focus:border-black focus:outline-none"
+          className="mt-1.5 w-full rounded-md border border-line p-2.5 text-sm focus:border-black focus:outline-none"
           placeholder="Describe the problem in full."
         />
       </div>
 
       <div className="space-y-3">
-        <p className="text-sm font-medium text-gray-900">Examples</p>
+        <p className="text-sm font-medium text-ink">Examples</p>
         {examples.map((example, index) => (
-          <div key={index} className="grid grid-cols-1 gap-2 rounded-lg border border-gray-100 bg-gray-50 p-3 sm:grid-cols-3">
+          <div key={index} className="grid grid-cols-1 gap-2 rounded-lg border border-line-soft bg-surface-sunk p-3 sm:grid-cols-3">
             <input
               value={example.input}
               onChange={(e) => updateExample(index, { input: e.target.value })}
-              className="rounded-md border border-gray-300 p-2 text-sm focus:border-black focus:outline-none"
+              className="rounded-md border border-line p-2 text-sm focus:border-black focus:outline-none"
               placeholder="Input"
             />
             <input
               value={example.output}
               onChange={(e) => updateExample(index, { output: e.target.value })}
-              className="rounded-md border border-gray-300 p-2 text-sm focus:border-black focus:outline-none"
+              className="rounded-md border border-line p-2 text-sm focus:border-black focus:outline-none"
               placeholder="Output"
             />
             <div className="flex gap-2">
               <input
                 value={example.explanation}
                 onChange={(e) => updateExample(index, { explanation: e.target.value })}
-                className="flex-1 rounded-md border border-gray-300 p-2 text-sm focus:border-black focus:outline-none"
+                className="flex-1 rounded-md border border-line p-2 text-sm focus:border-black focus:outline-none"
                 placeholder="Explanation (optional)"
               />
               {examples.length > 1 ? (
@@ -257,51 +257,51 @@ export default function ProblemAuthorForm({
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <div>
-          <label className="text-sm font-medium text-gray-900">Constraints</label>
+          <label className="text-sm font-medium text-ink">Constraints</label>
           <textarea
             value={constraints}
             onChange={(e) => setConstraints(e.target.value)}
             rows={3}
-            className="mt-1.5 w-full rounded-md border border-gray-300 p-2.5 text-sm focus:border-black focus:outline-none"
+            className="mt-1.5 w-full rounded-md border border-line p-2.5 text-sm focus:border-black focus:outline-none"
           />
         </div>
         <div>
-          <label className="text-sm font-medium text-gray-900">Hints</label>
+          <label className="text-sm font-medium text-ink">Hints</label>
           <textarea
             value={hints}
             onChange={(e) => setHints(e.target.value)}
             rows={3}
-            className="mt-1.5 w-full rounded-md border border-gray-300 p-2.5 text-sm focus:border-black focus:outline-none"
+            className="mt-1.5 w-full rounded-md border border-line p-2.5 text-sm focus:border-black focus:outline-none"
           />
         </div>
         <div>
-          <label className="text-sm font-medium text-gray-900">Solution explanation</label>
+          <label className="text-sm font-medium text-ink">Solution explanation</label>
           <textarea
             value={solutionExplanation}
             onChange={(e) => setSolutionExplanation(e.target.value)}
             rows={3}
-            className="mt-1.5 w-full rounded-md border border-gray-300 p-2.5 text-sm focus:border-black focus:outline-none"
+            className="mt-1.5 w-full rounded-md border border-line p-2.5 text-sm focus:border-black focus:outline-none"
           />
         </div>
       </div>
 
       <div className="space-y-3">
-        <p className="text-sm font-medium text-gray-900">Test cases</p>
+        <p className="text-sm font-medium text-ink">Test cases</p>
         {testCases.map((testCase, index) => (
-          <div key={index} className="grid grid-cols-1 gap-2 rounded-lg border border-gray-100 bg-gray-50 p-3 sm:grid-cols-4">
+          <div key={index} className="grid grid-cols-1 gap-2 rounded-lg border border-line-soft bg-surface-sunk p-3 sm:grid-cols-4">
             <input
               value={testCase.input}
               onChange={(e) => updateTestCase(index, { input: e.target.value })}
-              className="rounded-md border border-gray-300 p-2 text-sm focus:border-black focus:outline-none"
+              className="rounded-md border border-line p-2 text-sm focus:border-black focus:outline-none"
               placeholder="Input"
             />
             <input
               value={testCase.expectedOutput}
               onChange={(e) => updateTestCase(index, { expectedOutput: e.target.value })}
-              className="rounded-md border border-gray-300 p-2 text-sm focus:border-black focus:outline-none"
+              className="rounded-md border border-line p-2 text-sm focus:border-black focus:outline-none"
               placeholder="Expected output"
             />
-            <label className="flex items-center gap-2 text-xs text-gray-600">
+            <label className="flex items-center gap-2 text-xs text-ink-muted">
               <input
                 type="checkbox"
                 checked={testCase.isSample}
@@ -337,7 +337,7 @@ export default function ProblemAuthorForm({
             type="button"
             onClick={() => handleSave(false)}
             disabled={submitting || title.trim().length === 0}
-            className="rounded-md border border-gray-300 px-4 py-2.5 text-sm font-semibold text-gray-700 disabled:opacity-50"
+            className="rounded-md border border-line px-4 py-2.5 text-sm font-semibold text-ink-secondary disabled:opacity-50"
           >
             Save as draft
           </button>
@@ -346,7 +346,7 @@ export default function ProblemAuthorForm({
           type="button"
           onClick={() => handleSave(true)}
           disabled={submitting || !canSubmitForReview}
-          className="flex-1 rounded-md bg-black px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-50"
+          className="flex-1 rounded-md bg-ink px-4 py-2.5 text-sm font-semibold text-surface disabled:opacity-50"
         >
           {submitting
             ? variant === "admin"

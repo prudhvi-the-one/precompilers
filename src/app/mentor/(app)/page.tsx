@@ -30,7 +30,7 @@ export default async function MentorDashboardPage() {
   });
   if (!mentorProfile) {
     return (
-      <div className="rounded-xl border border-gray-200 bg-white p-6 text-sm text-gray-600">
+      <div className="rounded-xl border border-line bg-surface p-6 text-sm text-ink-muted">
         No mentor profile is set up for this account yet.
       </div>
     );
@@ -51,36 +51,36 @@ export default async function MentorDashboardPage() {
   return (
     <div className="mx-auto max-w-3xl space-y-8">
       <div>
-        <h1 className="font-brand text-[25px] font-bold tracking-[-0.02em] text-gray-900">
+        <h1 className="font-brand text-[25px] font-bold tracking-[-0.02em] text-ink">
           Mentor dashboard
         </h1>
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-ink-faint">
           {mentorProfile.capacityPerDay} sessions/day capacity ·{" "}
           {mentorProfile.specializations.join(", ")}
         </p>
       </div>
 
-      <section className="rounded-xl border border-gray-200 bg-white">
-        <div className="border-b border-gray-100 px-5 py-4">
-          <h2 className="font-brand text-base font-bold text-gray-900">
+      <section className="rounded-xl border border-line bg-surface">
+        <div className="border-b border-line-soft px-5 py-4">
+          <h2 className="font-brand text-base font-bold text-ink">
             Upcoming sessions
           </h2>
         </div>
         {sessions.length ? (
-          <div className="divide-y divide-gray-100">
+          <div className="divide-y divide-line-soft">
             {sessions.map((s) => (
               <div key={s.id} className="flex items-center justify-between gap-3 px-5 py-3.5">
                 <div>
-                  <p className="text-sm font-medium text-gray-900">
+                  <p className="text-sm font-medium text-ink">
                     {KIND_LABEL[s.kind]} with {s.student.name ?? s.student.email}
                   </p>
-                  <p className="text-xs text-gray-500">{formatDate(s.slot.startsAt)}</p>
+                  <p className="text-xs text-ink-faint">{formatDate(s.slot.startsAt)}</p>
                 </div>
                 <div className="flex items-center gap-3">
                   {s.roomUrl ? (
                     <Link
                       href={`/mentor-session/${s.id}`}
-                      className="rounded-md bg-black px-3 py-1.5 text-xs font-semibold text-white"
+                      className="rounded-md bg-ink px-3 py-1.5 text-xs font-semibold text-surface"
                     >
                       Join room
                     </Link>
@@ -96,29 +96,29 @@ export default async function MentorDashboardPage() {
             ))}
           </div>
         ) : (
-          <p className="px-5 py-6 text-sm text-gray-500">No sessions booked yet.</p>
+          <p className="px-5 py-6 text-sm text-ink-faint">No sessions booked yet.</p>
         )}
       </section>
 
-      <section className="rounded-xl border border-gray-200 bg-white">
-        <div className="border-b border-gray-100 px-5 py-4">
-          <h2 className="font-brand text-base font-bold text-gray-900">Your availability</h2>
+      <section className="rounded-xl border border-line bg-surface">
+        <div className="border-b border-line-soft px-5 py-4">
+          <h2 className="font-brand text-base font-bold text-ink">Your availability</h2>
         </div>
         <div className="px-5 py-4">
           <AddAvailabilityForm />
         </div>
         {slots.length ? (
-          <div className="divide-y divide-gray-100">
+          <div className="divide-y divide-line-soft">
             {slots.map((slot) => (
               <div key={slot.id} className="flex items-center justify-between px-5 py-3">
-                <span className="text-sm text-gray-700">
+                <span className="text-sm text-ink-secondary">
                   {formatDate(slot.startsAt)} · {slot.durationMinutes} min
                 </span>
                 <span
                   className={
                     slot.isBooked
-                      ? "rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-semibold text-emerald-700"
-                      : "rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-semibold text-gray-500"
+                      ? "rounded-full bg-success-soft px-2.5 py-0.5 text-xs font-semibold text-success"
+                      : "rounded-full bg-line-soft px-2.5 py-0.5 text-xs font-semibold text-ink-faint"
                   }
                 >
                   {slot.isBooked ? "Booked" : "Open"}
@@ -127,7 +127,7 @@ export default async function MentorDashboardPage() {
             ))}
           </div>
         ) : (
-          <p className="px-5 py-4 text-sm text-gray-500">No upcoming slots yet.</p>
+          <p className="px-5 py-4 text-sm text-ink-faint">No upcoming slots yet.</p>
         )}
       </section>
     </div>

@@ -43,11 +43,11 @@ export default function CreateLectureForm({
     <form onSubmit={handleSubmit} className="space-y-3">
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div>
-          <label className="mb-1 block text-xs font-medium text-gray-700">Track</label>
+          <label className="mb-1 block text-xs font-medium text-ink-secondary">Track</label>
           <select
             value={trackId}
             onChange={(e) => setTrackId(e.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+            className="w-full rounded-md border border-line px-3 py-2 text-sm"
           >
             {tracks.map((t) => (
               <option key={t.id} value={t.id}>
@@ -57,48 +57,48 @@ export default function CreateLectureForm({
           </select>
         </div>
         <div>
-          <label className="mb-1 block text-xs font-medium text-gray-700">Title</label>
+          <label className="mb-1 block text-xs font-medium text-ink-secondary">Title</label>
           <input
             required
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+            className="w-full rounded-md border border-line px-3 py-2 text-sm"
           />
         </div>
       </div>
       <div>
-        <label className="mb-1 block text-xs font-medium text-gray-700">Video URL (embed)</label>
+        <label className="mb-1 block text-xs font-medium text-ink-secondary">Video URL (embed)</label>
         <input
           required
           value={videoUrl}
           onChange={(e) => setVideoUrl(e.target.value)}
-          className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+          className="w-full rounded-md border border-line px-3 py-2 text-sm"
           placeholder="https://www.youtube.com/embed/..."
         />
       </div>
       <div>
-        <label className="mb-1 block text-xs font-medium text-gray-700">Description</label>
+        <label className="mb-1 block text-xs font-medium text-ink-secondary">Description</label>
         <textarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           rows={2}
-          className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+          className="w-full rounded-md border border-line px-3 py-2 text-sm"
         />
       </div>
       <div className="w-40">
-        <label className="mb-1 block text-xs font-medium text-gray-700">Duration (minutes)</label>
+        <label className="mb-1 block text-xs font-medium text-ink-secondary">Duration (minutes)</label>
         <input
           type="number"
           min={1}
           value={durationMinutes}
           onChange={(e) => setDurationMinutes(Number(e.target.value) || 0)}
-          className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+          className="w-full rounded-md border border-line px-3 py-2 text-sm"
         />
       </div>
       <button
         type="submit"
         disabled={submitting || !trackId}
-        className="rounded-md bg-black px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
+        className="rounded-md bg-ink px-4 py-2 text-sm font-medium text-surface disabled:opacity-50"
       >
         {submitting ? "Adding…" : "Add lecture"}
       </button>

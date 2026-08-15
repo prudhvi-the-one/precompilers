@@ -38,38 +38,38 @@ export default function CreateInstitutionForm() {
   return (
     <form onSubmit={handleSubmit} className="flex flex-wrap items-end gap-3">
       <div>
-        <label className="mb-1 block text-xs font-medium text-gray-700">Institution name</label>
+        <label className="mb-1 block text-xs font-medium text-ink-secondary">Institution name</label>
         <input
           required
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="rounded-md border border-gray-300 px-3 py-2 text-sm"
+          className="rounded-md border border-line px-3 py-2 text-sm"
         />
       </div>
       <div>
-        <label className="mb-1 block text-xs font-medium text-gray-700">Seat count</label>
+        <label className="mb-1 block text-xs font-medium text-ink-secondary">Seat count</label>
         <input
           type="number"
           min={1}
           required
           value={seatCount}
           onChange={(e) => setSeatCount(Number(e.target.value))}
-          className="w-24 rounded-md border border-gray-300 px-3 py-2 text-sm"
+          className="w-24 rounded-md border border-line px-3 py-2 text-sm"
         />
       </div>
       <div>
-        <label className="mb-1 block text-xs font-medium text-gray-700">Renews on</label>
+        <label className="mb-1 block text-xs font-medium text-ink-secondary">Renews on</label>
         <input
           type="date"
           value={renewsAt}
           onChange={(e) => setRenewsAt(e.target.value)}
-          className="rounded-md border border-gray-300 px-3 py-2 text-sm"
+          className="rounded-md border border-line px-3 py-2 text-sm"
         />
       </div>
       <button
         type="submit"
         disabled={submitting}
-        className="rounded-md bg-black px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
+        className="rounded-md bg-ink px-4 py-2 text-sm font-medium text-surface disabled:opacity-50"
       >
         {submitting ? "Creating…" : "Create institution"}
       </button>

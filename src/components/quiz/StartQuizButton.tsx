@@ -28,7 +28,7 @@ export default function StartQuizButton({
       type="button"
       onClick={handleClick}
       disabled={loading}
-      className="shrink-0 rounded-lg bg-indigo-600 px-4 py-2 font-brand text-[13px] font-semibold text-white hover:bg-[#4338CA] disabled:opacity-50"
+      className="shrink-0 rounded-lg bg-indigo-600 px-4 py-2 font-brand text-[13px] font-semibold text-white hover:bg-accent-hover disabled:opacity-50"
     >
       {loading ? "Starting…" : label}
     </button>

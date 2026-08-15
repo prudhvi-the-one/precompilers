@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import type { User } from "@prisma/client";
 import Topbar from "@/components/shell/Topbar";
 import SidebarNav from "@/components/shell/SidebarNav";
@@ -16,12 +19,19 @@ export default function AppShell({
   unlockedSections: Section[];
   children: React.ReactNode;
 }) {
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
   return (
-    <div className="flex min-h-screen flex-1 flex-col bg-white text-[#2A2A38]">
-      <Topbar user={user} currentStreak={currentStreak} />
+    <div className="flex min-h-screen flex-1 flex-col bg-surface text-ink-secondary">
+      <Topbar user={user} currentStreak={currentStreak} onMenuClick={() => setDrawerOpen(true)} />
       <div className="flex flex-1">
-        <SidebarNav overallReadiness={overallReadiness} unlockedSections={unlockedSections} />
-        <main className="flex flex-1 flex-col gap-4.5 bg-[#F8F8FB] px-7 py-6.5">
+        <SidebarNav
+          overallReadiness={overallReadiness}
+          unlockedSections={unlockedSections}
+          mobileOpen={drawerOpen}
+          onMobileClose={() => setDrawerOpen(false)}
+        />
+        <main className="flex flex-1 flex-col gap-4.5 bg-surface-sunk px-4 py-5 sm:px-7 sm:py-6.5">
           {children}
         </main>
       </div>

@@ -6,14 +6,14 @@ export default function TermsPage() {
         reviewed by a lawyer. Treat as a placeholder, not final legal text.
       </div>
 
-      <h1 className="font-brand text-[32px] font-bold tracking-[-0.02em] text-[#0F1020]">
+      <h1 className="font-brand text-[32px] font-bold tracking-[-0.02em] text-ink">
         Terms of Service
       </h1>
-      <p className="mt-2 text-sm text-[#8A8AA0]">Last updated 15 Aug 2026</p>
+      <p className="mt-2 text-sm text-ink-faint">Last updated 15 Aug 2026</p>
 
-      <div className="mt-8 space-y-8 text-[15px] leading-[1.7] text-[#2A2A38]">
+      <div className="mt-8 space-y-8 text-[15px] leading-[1.7] text-ink-secondary">
         <section>
-          <h2 className="font-brand text-lg font-bold text-[#0F1020]">
+          <h2 className="font-brand text-lg font-bold text-ink">
             Using PreCompilers
           </h2>
           <p className="mt-2">
@@ -26,7 +26,7 @@ export default function TermsPage() {
         </section>
 
         <section>
-          <h2 className="font-brand text-lg font-bold text-[#0F1020]">
+          <h2 className="font-brand text-lg font-bold text-ink">
             Accounts
           </h2>
           <p className="mt-2">
@@ -38,7 +38,7 @@ export default function TermsPage() {
         </section>
 
         <section>
-          <h2 className="font-brand text-lg font-bold text-[#0F1020]">
+          <h2 className="font-brand text-lg font-bold text-ink">
             Content you submit
           </h2>
           <p className="mt-2">
@@ -50,7 +50,7 @@ export default function TermsPage() {
         </section>
 
         <section>
-          <h2 className="font-brand text-lg font-bold text-[#0F1020]">
+          <h2 className="font-brand text-lg font-bold text-ink">
             Platform is evolving
           </h2>
           <p className="mt-2">
@@ -61,7 +61,7 @@ export default function TermsPage() {
         </section>
 
         <section>
-          <h2 className="font-brand text-lg font-bold text-[#0F1020]">
+          <h2 className="font-brand text-lg font-bold text-ink">
             Contact
           </h2>
           <p className="mt-2">
