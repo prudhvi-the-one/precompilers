@@ -49,6 +49,8 @@ export const profileUpdateSchema = z.object({
   college: z.string().trim().max(150).optional(),
   branch: z.string().trim().max(100).optional(),
   gradYear: z.number().int().min(2000).max(2100).nullable().optional(),
+  phoneNumber: z.string().trim().max(20).nullable().optional(),
+  whatsappOptIn: z.boolean().optional(),
 });
 
 export const onboardingSchema = z.object({
@@ -259,6 +261,32 @@ export const driveSchema = z.object({
   applyUrl: z.string().trim().url("Enter a valid URL").optional(),
   location: z.string().trim().max(150).optional(),
   description: z.string().trim().max(3000).default(""),
+});
+
+export const applicationSchema = z
+  .object({
+    driveId: z.string().trim().min(1).optional(),
+    companyName: z.string().trim().max(150),
+    roleTitle: z.string().trim().max(150),
+    status: z.enum(["APPLIED", "INTERVIEWING", "OFFER", "REJECTED", "WITHDRAWN"]).default("APPLIED"),
+    appliedAt: z.string().datetime().optional(),
+    deadline: z.string().datetime().nullable().optional(),
+    notes: z.string().trim().max(2000).nullable().optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.driveId) return;
+    if (!data.companyName.trim()) {
+      ctx.addIssue({ code: "custom", path: ["companyName"], message: "Company name is required" });
+    }
+    if (!data.roleTitle.trim()) {
+      ctx.addIssue({ code: "custom", path: ["roleTitle"], message: "Role is required" });
+    }
+  });
+
+export const applicationStatusSchema = z.object({
+  status: z.enum(["APPLIED", "INTERVIEWING", "OFFER", "REJECTED", "WITHDRAWN"]),
+  notes: z.string().trim().max(2000).nullable().optional(),
+  deadline: z.string().datetime().nullable().optional(),
 });
 
 export const rejectContentSchema = z.object({

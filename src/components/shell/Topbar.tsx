@@ -1,8 +1,9 @@
 import type { User } from "@prisma/client";
 import Link from "next/link";
-import { Search, Bell, Flame } from "lucide-react";
+import { Search, Flame } from "lucide-react";
 import Logo from "@/components/Logo";
 import LogoutButton from "@/components/auth/LogoutButton";
+import NotificationBell from "@/components/shell/NotificationBell";
 
 function initials(name: string | null, email: string): string {
   if (name) {
@@ -38,13 +39,7 @@ export default function Topbar({ user }: { user: User }) {
       </div>
 
       <div className="flex shrink-0 items-center gap-4">
-        <button
-          type="button"
-          aria-label="Notifications"
-          className="text-[#55556B] hover:text-[#0F1020]"
-        >
-          <Bell className="h-5 w-5" />
-        </button>
+        <NotificationBell />
 
         <span className="flex items-center gap-1 rounded-full bg-[#FEF6E7] px-2.5 py-1 font-mono text-[12.5px] text-[#B45309]">
           <Flame className="h-3.5 w-3.5" />

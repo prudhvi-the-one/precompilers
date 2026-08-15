@@ -104,6 +104,8 @@ model User {
   entitlement     Entitlement @default(FREE)
   emailVerifiedAt DateTime?
   reportShareToken String?    @unique
+  phoneNumber     String?
+  whatsappOptIn   Boolean     @default(false)
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
 
@@ -136,6 +138,8 @@ model User {
   gdParticipations  GdParticipant[]
   gdRatingsGiven    GdRating[]           @relation("GdRatingsGiven")
   gdRatingsReceived GdRating[]           @relation("GdRatingsReceived")
+  applications      Application[]
+  notifications     Notification[]
 
   @@index([institutionId, role])
 }
@@ -655,6 +659,8 @@ model Drive {
   description   String
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+
+  applications Application[]
 }
 
 model Resume {
@@ -740,4 +746,54 @@ model CompanyQuestion {
   @@index([status])
   @@index([authorId])
   @@index([companyName])
+}
+
+enum ApplicationStatus {
+  APPLIED
+  INTERVIEWING
+  OFFER
+  REJECTED
+  WITHDRAWN
+}
+
+model Application {
+  id                     String            @id @default(cuid())
+  userId                 String
+  user                   User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  driveId                String?
+  drive                  Drive?            @relation(fields: [driveId], references: [id], onDelete: SetNull)
+  companyName            String
+  roleTitle              String
+  status                 ApplicationStatus @default(APPLIED)
+  appliedAt              DateTime          @default(now())
+  deadline               DateTime?
+  notes                  String?
+  deadlineReminderSentAt DateTime?
+  createdAt              DateTime          @default(now())
+  updatedAt              DateTime          @updatedAt
+
+  @@unique([userId, driveId])
+  @@index([userId])
+}
+
+enum NotificationType {
+  DRIVE_POSTED
+  APPLICATION_STATUS_CHANGED
+  DEADLINE_REMINDER
+}
+
+model Notification {
+  id             String           @id @default(cuid())
+  userId         String
+  user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type           NotificationType
+  title          String
+  body           String
+  link           String?
+  readAt         DateTime?
+  whatsappSentAt DateTime?
+  whatsappError  String?
+  createdAt      DateTime         @default(now())
+
+  @@index([userId])
 }

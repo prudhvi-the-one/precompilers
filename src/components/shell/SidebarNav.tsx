@@ -38,6 +38,7 @@ const PROVE_SUB_ITEMS = [
 
 const CAREER_SUB_ITEMS = [
   { label: "Drives", href: "/career" },
+  { label: "Applications", href: "/career/applications" },
   { label: "My report", href: "/career/report" },
   { label: "Resume", href: "/career/resume" },
   { label: "Question bank", href: "/career/questions" },

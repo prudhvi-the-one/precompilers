@@ -22,6 +22,8 @@ export default async function ProfilePage() {
           initialCollege={user.college ?? ""}
           initialBranch={user.branch ?? ""}
           initialGradYear={user.gradYear}
+          initialPhoneNumber={user.phoneNumber ?? ""}
+          initialWhatsappOptIn={user.whatsappOptIn}
         />
       </div>
     </div>
