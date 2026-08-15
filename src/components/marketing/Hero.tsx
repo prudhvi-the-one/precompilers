@@ -1,4 +1,3 @@
-import Link from "next/link";
 import GapCard from "@/components/marketing/GapCard";
 
 export default function Hero() {
@@ -26,12 +25,12 @@ export default function Hero() {
           </p>
 
           <div className="mt-8 flex flex-wrap items-center gap-3">
-            <Link
-              href="#waitlist"
+            <a
+              href="https://student.precompilers.com/register"
               className="rounded-lg bg-indigo-600 px-6 py-3 font-brand text-[14px] font-semibold text-white transition hover:bg-[#4338CA]"
             >
-              Join the waitlist
-            </Link>
+              Sign up free
+            </a>
             <a
               href="#colleges"
               className="rounded-lg border border-[#E6E6EF] px-6 py-3 font-brand text-[14px] font-semibold text-[#0F1020] transition hover:bg-[#F6F5FF]"

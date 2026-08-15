@@ -1,61 +1,30 @@
-"use client";
-
-import { useState, type FormEvent } from "react";
-
 export default function TwoDoors() {
-  const [email, setEmail] = useState("");
-  const [submitted, setSubmitted] = useState(false);
-
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (!email) return;
-    setSubmitted(true);
-  }
-
   return (
     <section className="px-12 py-16">
       <div className="mx-auto grid max-w-6xl gap-5 sm:grid-cols-2">
         <div
-          id="waitlist"
+          id="students"
           className="rounded-xl border-[1.5px] border-indigo-600 bg-[#FBFAFF] p-8"
         >
           <p className="font-mono text-[10px] tracking-[0.1em] text-indigo-600 uppercase">
             Students
           </p>
           <h3 className="mt-3 font-brand text-[21px] font-bold text-[#0F1020]">
-            Get on the list
+            Start for free
           </h3>
           <p className="mt-2 text-sm text-[#55556B]">
-            We&apos;re opening access in batches. Drop your email and
-            we&apos;ll tell you when your spot is ready.
+            Create your account in under a minute — no waitlist, no credit
+            card. Pick a track and start today.
           </p>
 
-          {submitted ? (
-            <p className="mt-5 rounded-lg bg-indigo-600/10 px-4 py-3 text-sm font-medium text-indigo-700">
-              You&apos;re on the list! We&apos;ll email you at {email} when
-              your spot is ready.
-            </p>
-          ) : (
-            <form
-              onSubmit={handleSubmit}
-              className="mt-5 flex flex-col gap-3 sm:flex-row"
+          <div className="mt-5">
+            <a
+              href="https://student.precompilers.com/register"
+              className="inline-block rounded-lg bg-indigo-600 px-5 py-2.5 font-brand text-[13.5px] font-semibold text-white transition hover:bg-[#4338CA]"
             >
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(event) => setEmail(event.target.value)}
-                placeholder="your.name@college.edu"
-                className="w-full rounded-lg border border-[#DDD9FB] bg-white px-4 py-2.5 text-sm text-[#0F1020] outline-none focus:border-indigo-500"
-              />
-              <button
-                type="submit"
-                className="shrink-0 rounded-lg bg-indigo-600 px-5 py-2.5 font-brand text-[13.5px] font-semibold text-white transition hover:bg-[#4338CA]"
-              >
-                Join waitlist
-              </button>
-            </form>
-          )}
+              Create your free account
+            </a>
+          </div>
         </div>
 
         <div
