@@ -28,6 +28,10 @@ export async function POST(request: Request) {
       applyUrl: parsed.data.applyUrl ?? null,
       location: parsed.data.location ?? null,
       description: parsed.data.description,
+      minCgpa: parsed.data.minCgpa ?? null,
+      maxBacklogs: parsed.data.maxBacklogs ?? null,
+      eligibleBranches: parsed.data.eligibleBranches ?? [],
+      hiringBarScore: parsed.data.hiringBarScore ?? null,
     },
   });
 

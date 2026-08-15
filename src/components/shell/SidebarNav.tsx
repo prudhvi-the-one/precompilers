@@ -42,11 +42,12 @@ const PROVE_SUB_ITEMS: SubItem[] = [
 ];
 
 const CAREER_SUB_ITEMS: SubItem[] = [
-  { label: "Drives", href: "/career" },
-  { label: "Applications", href: "/career/applications" },
-  { label: "My report", href: "/career/report" },
+  { label: "Readiness report", href: "/career/report" },
+  { label: "Campus drives", href: "/career" },
   { label: "Resume", href: "/career/resume" },
-  { label: "Question bank", href: "/career/questions" },
+  { label: "Company question banks", href: "/career/questions" },
+  { label: "Applications", href: "/career/applications" },
+  { label: "Counselling", href: "/career/counselling" },
 ];
 
 const NAV_ITEMS: NavItem[] = [

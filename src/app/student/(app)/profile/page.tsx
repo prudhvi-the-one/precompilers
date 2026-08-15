@@ -22,6 +22,8 @@ export default async function ProfilePage() {
           initialCollege={user.college ?? ""}
           initialBranch={user.branch ?? ""}
           initialGradYear={user.gradYear}
+          initialCgpa={user.cgpa}
+          initialBacklogCount={user.backlogCount}
           initialPhoneNumber={user.phoneNumber ?? ""}
           initialWhatsappOptIn={user.whatsappOptIn}
         />

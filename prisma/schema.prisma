@@ -117,11 +117,15 @@ model User {
   college         String?
   branch          String?
   gradYear        Int?
+  cgpa            Float?
+  backlogCount    Int?        @default(0)
   weeklyHours     String?
   targetRole      TargetRole?
   entitlement     Entitlement @default(FREE)
   emailVerifiedAt DateTime?
   reportShareToken String?    @unique
+  reportShowCollege   Boolean @default(true)
+  reportShowMockNotes Boolean @default(false)
   phoneNumber     String?     @unique
   whatsappOptIn   Boolean     @default(false)
   failedLoginAttempts Int     @default(0)
@@ -161,8 +165,21 @@ model User {
   applications      Application[]
   notifications     Notification[]
   subscriptions     Subscription[]
+  readinessSnapshots ReadinessSnapshot[]
+  driveEligibilityWatches DriveEligibilityWatch[]
 
   @@index([institutionId, role])
+}
+
+model ReadinessSnapshot {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  overallScore Int?
+  pillars      Json
+  capturedAt   DateTime @default(now())
+
+  @@index([userId, capturedAt])
 }
 
 model Otp {
@@ -670,18 +687,34 @@ model Institution {
 }
 
 model Drive {
-  id            String    @id @default(cuid())
-  companyName   String
-  roleTitle     String
-  driveDate     DateTime
-  applyDeadline DateTime?
-  applyUrl      String?
-  location      String?
-  description   String
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id               String    @id @default(cuid())
+  companyName      String
+  roleTitle        String
+  driveDate        DateTime
+  applyDeadline    DateTime?
+  applyUrl         String?
+  location         String?
+  description      String
+  minCgpa          Float?
+  maxBacklogs      Int?
+  eligibleBranches String[]  @default([])
+  hiringBarScore   Int?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
 
   applications Application[]
+  eligibilityWatches DriveEligibilityWatch[]
+}
+
+model DriveEligibilityWatch {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  driveId   String
+  drive     Drive    @relation(fields: [driveId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, driveId])
 }
 
 model Subscription {
@@ -819,6 +852,7 @@ enum NotificationType {
   DRIVE_POSTED
   APPLICATION_STATUS_CHANGED
   DEADLINE_REMINDER
+  DRIVE_ELIGIBILITY_CHANGED
 }
 
 model Notification {

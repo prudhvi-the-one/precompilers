@@ -243,3 +243,186 @@ export async function computeOverallReadiness(userId: string): Promise<number | 
   }
   return Math.round(scored.reduce((sum, p) => sum + (p.value as number), 0) / scored.length);
 }
+
+const NINETY_DAYS_MS = 90 * 24 * 60 * 60 * 1000;
+
+export async function computeReadinessDelta(userId: string): Promise<number | null> {
+  const cutoff = new Date(Date.now() - NINETY_DAYS_MS);
+  const [current, snapshot] = await Promise.all([
+    computeOverallReadiness(userId),
+    prisma.readinessSnapshot.findFirst({
+      where: { userId, capturedAt: { lte: cutoff } },
+      orderBy: { capturedAt: "desc" },
+    }),
+  ]);
+  if (current === null || !snapshot || snapshot.overallScore === null) {
+    return null;
+  }
+  return current - snapshot.overallScore;
+}
+
+export type ActivityCounts = {
+  lessonsCompleted: number;
+  problemsSolved: number;
+  mocksCompleted: number;
+};
+
+export async function computeActivityCounts(userId: string): Promise<ActivityCounts> {
+  const [lessonsCompleted, acceptedSubmissions, mockFeedbackCount, mentorScorecardCount] =
+    await Promise.all([
+      prisma.lectureProgress.count({ where: { userId, completedAt: { not: null } } }),
+      prisma.submission.findMany({
+        where: { userId, verdict: "ACCEPTED" },
+        select: { problemId: true },
+      }),
+      prisma.mockFeedback.count({ where: { rateeId: userId } }),
+      prisma.mentorScorecard.count({
+        where: { session: { studentId: userId, kind: { in: ["MOCK", "HR_ROUND"] } } },
+      }),
+    ]);
+
+  return {
+    lessonsCompleted,
+    problemsSolved: new Set(acceptedSubmissions.map((s) => s.problemId)).size,
+    mocksCompleted: mockFeedbackCount + mentorScorecardCount,
+  };
+}
+
+export function summarizeReadiness(pillars: PillarResult[]): string | null {
+  const scored = pillars.filter(
+    (p): p is PillarResult & { value: number } => p.value !== null
+  );
+  if (scored.length === 0) {
+    return null;
+  }
+  const strongest = scored.reduce((a, b) => (b.value > a.value ? b : a));
+  const weakest = scored.reduce((a, b) => (b.value < a.value ? b : a));
+  if (strongest.label === weakest.label) {
+    return `${strongest.label} is your only assessed pillar so far, at ${strongest.value}.`;
+  }
+  return `${strongest.label} is interview-ready at ${strongest.value}. ${weakest.label} at ${weakest.value} is what's standing between you and an offer.`;
+}
+
+export type ReadinessRecommendation = {
+  action: string;
+  pointDelta: number;
+  timeEstimate: string;
+};
+
+const RECOMMENDATION_COPY: Record<string, string> = {
+  Fundamentals: "Take two more topic quizzes to firm up fundamentals",
+  "Aptitude & communication": "Attempt a full aptitude paper, focused on your weakest section",
+  "Problem solving": "Solve more problems tagged with your target companies",
+  "Industry skills": "Finish the remaining lectures in your track",
+  Projects: "Ship and submit a project brief for peer review",
+  "Interview performance": "Book a mock interview or join a group discussion",
+};
+
+const RECOMMENDATION_TIME: Record<string, string> = {
+  Fundamentals: "1-2 weeks",
+  "Aptitude & communication": "1 week",
+  "Problem solving": "2-3 weeks",
+  "Industry skills": "2-3 weeks",
+  Projects: "2 weeks",
+  "Interview performance": "ongoing",
+};
+
+const WEAK_PILLAR_THRESHOLD = 60;
+
+export type DriveRoundBreakdown = {
+  label: string;
+  value: number | null;
+  gapText: string | null;
+};
+
+export type DriveReadinessResult = {
+  overall: number | null;
+  hiringBarScore: number | null;
+  rounds: DriveRoundBreakdown[];
+  instruction: string | null;
+};
+
+export function computeDriveReadiness(
+  pillars: PillarResult[],
+  hiringBarScore: number | null
+): DriveReadinessResult {
+  const byLabel = new Map(pillars.map((p) => [p.label, p.value]));
+  const fundamentals = byLabel.get("Fundamentals");
+  const problemSolving = byLabel.get("Problem solving");
+  const technicalValues = [fundamentals, problemSolving].filter(
+    (v): v is number => v !== null && v !== undefined
+  );
+  const technical =
+    technicalValues.length > 0
+      ? Math.round(technicalValues.reduce((sum, v) => sum + v, 0) / technicalValues.length)
+      : null;
+
+  const rounds: DriveRoundBreakdown[] = [
+    {
+      label: "Aptitude round",
+      value: byLabel.get("Aptitude & communication") ?? null,
+      gapText: null,
+    },
+    { label: "Technical", value: technical, gapText: null },
+    {
+      label: "HR round",
+      value: byLabel.get("Interview performance") ?? null,
+      gapText: null,
+    },
+  ];
+
+  if (hiringBarScore !== null) {
+    for (const round of rounds) {
+      round.gapText =
+        round.value === null
+          ? "not assessed"
+          : round.value < hiringBarScore
+            ? `${round.value}, this is the gap`
+            : String(round.value);
+    }
+  }
+
+  const overall =
+    rounds.filter((r) => r.value !== null).length > 0
+      ? Math.round(
+          rounds.reduce((sum, r) => sum + (r.value ?? 0), 0) /
+            rounds.filter((r) => r.value !== null).length
+        )
+      : null;
+
+  let instruction: string | null = null;
+  if (hiringBarScore !== null) {
+    const scoredGaps = rounds.filter((r) => r.value !== null && r.value < hiringBarScore);
+    if (scoredGaps.length > 0) {
+      const weakest = scoredGaps.reduce((a, b) => ((a.value ?? 0) < (b.value ?? 0) ? a : b));
+      instruction = `Focus on ${weakest.label.toLowerCase()} — it's what's standing between you and this bar.`;
+    }
+  }
+
+  return { overall, hiringBarScore, rounds, instruction };
+}
+
+export function computeReadinessRecommendations(
+  pillars: PillarResult[]
+): ReadinessRecommendation[] {
+  const recommendations: ReadinessRecommendation[] = [];
+
+  for (const pillar of pillars) {
+    if (pillar.value !== null && pillar.value >= WEAK_PILLAR_THRESHOLD) {
+      continue;
+    }
+    const gap = WEAK_PILLAR_THRESHOLD - (pillar.value ?? 0);
+    const action = RECOMMENDATION_COPY[pillar.label];
+    const timeEstimate = RECOMMENDATION_TIME[pillar.label];
+    if (!action || !timeEstimate) {
+      continue;
+    }
+    recommendations.push({
+      action,
+      pointDelta: Math.max(4, Math.round(gap * 0.3)),
+      timeEstimate,
+    });
+  }
+
+  return recommendations.sort((a, b) => b.pointDelta - a.pointDelta).slice(0, 3);
+}

@@ -14,7 +14,8 @@ export async function PATCH(request: Request) {
   if ("error" in parsed) {
     return NextResponse.json({ error: parsed.error }, { status: 400 });
   }
-  const { name, college, branch, gradYear, phoneNumber, whatsappOptIn } = parsed.data;
+  const { name, college, branch, gradYear, cgpa, backlogCount, phoneNumber, whatsappOptIn } =
+    parsed.data;
 
   const user = await prisma.user.update({
     where: { id: session.userId },
@@ -23,6 +24,8 @@ export async function PATCH(request: Request) {
       college: college || null,
       branch: branch || null,
       gradYear: gradYear ?? null,
+      cgpa: cgpa ?? null,
+      backlogCount: backlogCount ?? null,
       phoneNumber: phoneNumber !== undefined ? phoneNumber || null : undefined,
       whatsappOptIn,
     },
@@ -34,6 +37,8 @@ export async function PATCH(request: Request) {
     college: user.college,
     branch: user.branch,
     gradYear: user.gradYear,
+    cgpa: user.cgpa,
+    backlogCount: user.backlogCount,
     phoneNumber: user.phoneNumber,
     whatsappOptIn: user.whatsappOptIn,
   });
