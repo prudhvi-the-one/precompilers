@@ -80,8 +80,8 @@ export default async function MocksPage() {
         <div className="border-b border-line-soft px-5 py-3.5">
           <h2 className="font-brand text-base font-bold text-ink">With a mentor</h2>
           <p className="text-xs text-ink-faint">
-            Book a slot for a mock interview, HR round, or counselling — real
-            mentors, verified feedback.
+            Book a slot for a mock interview or HR round — real mentors, verified
+            feedback.
           </p>
         </div>
         {openSlots.length ? (

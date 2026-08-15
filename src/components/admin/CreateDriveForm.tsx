@@ -12,6 +12,10 @@ export default function CreateDriveForm() {
   const [applyUrl, setApplyUrl] = useState("");
   const [location, setLocation] = useState("");
   const [description, setDescription] = useState("");
+  const [minCgpa, setMinCgpa] = useState("");
+  const [maxBacklogs, setMaxBacklogs] = useState("");
+  const [eligibleBranches, setEligibleBranches] = useState("");
+  const [hiringBarScore, setHiringBarScore] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -31,6 +35,12 @@ export default function CreateDriveForm() {
         applyUrl: applyUrl || undefined,
         location: location || undefined,
         description,
+        minCgpa: minCgpa ? Number(minCgpa) : undefined,
+        maxBacklogs: maxBacklogs ? Number(maxBacklogs) : undefined,
+        eligibleBranches: eligibleBranches
+          ? eligibleBranches.split(",").map((b) => b.trim()).filter(Boolean)
+          : undefined,
+        hiringBarScore: hiringBarScore ? Number(hiringBarScore) : undefined,
       }),
     });
     const data = await res.json();
@@ -46,6 +56,10 @@ export default function CreateDriveForm() {
     setApplyUrl("");
     setLocation("");
     setDescription("");
+    setMinCgpa("");
+    setMaxBacklogs("");
+    setEligibleBranches("");
+    setHiringBarScore("");
     router.refresh();
   }
 
@@ -124,6 +138,65 @@ export default function CreateDriveForm() {
           rows={3}
           className="w-full rounded-md border border-line px-3 py-2 text-sm"
         />
+      </div>
+
+      <div className="rounded-md border border-line-soft p-3">
+        <p className="mb-2 text-xs font-semibold text-ink-secondary">
+          Eligibility criteria (optional — leave blank for no restriction)
+        </p>
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <div>
+            <label className="mb-1 block text-xs font-medium text-ink-secondary">Min CGPA</label>
+            <input
+              type="number"
+              min="0"
+              max="10"
+              step="0.1"
+              value={minCgpa}
+              onChange={(e) => setMinCgpa(e.target.value)}
+              className="w-full rounded-md border border-line px-3 py-2 text-sm"
+              placeholder="e.g. 8.5"
+            />
+          </div>
+          <div>
+            <label className="mb-1 block text-xs font-medium text-ink-secondary">
+              Max backlogs
+            </label>
+            <input
+              type="number"
+              min="0"
+              value={maxBacklogs}
+              onChange={(e) => setMaxBacklogs(e.target.value)}
+              className="w-full rounded-md border border-line px-3 py-2 text-sm"
+              placeholder="e.g. 0"
+            />
+          </div>
+          <div>
+            <label className="mb-1 block text-xs font-medium text-ink-secondary">
+              Eligible branches (comma-separated)
+            </label>
+            <input
+              value={eligibleBranches}
+              onChange={(e) => setEligibleBranches(e.target.value)}
+              className="w-full rounded-md border border-line px-3 py-2 text-sm"
+              placeholder="e.g. CSE, IT, AIML"
+            />
+          </div>
+          <div>
+            <label className="mb-1 block text-xs font-medium text-ink-secondary">
+              Typical hiring bar (readiness score)
+            </label>
+            <input
+              type="number"
+              min="0"
+              max="100"
+              value={hiringBarScore}
+              onChange={(e) => setHiringBarScore(e.target.value)}
+              className="w-full rounded-md border border-line px-3 py-2 text-sm"
+              placeholder="e.g. 65"
+            />
+          </div>
+        </div>
       </div>
       <button
         type="submit"

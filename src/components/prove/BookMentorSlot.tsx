@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 const KIND_OPTIONS = [
   { value: "MOCK", label: "Mock" },
   { value: "HR_ROUND", label: "HR round" },
-  { value: "COUNSELLING", label: "Counselling" },
 ] as const;
 
 export default function BookMentorSlot({ slotId }: { slotId: string }) {

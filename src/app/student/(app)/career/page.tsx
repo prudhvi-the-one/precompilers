@@ -1,122 +1,175 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
 import { requireTierAccess } from "@/lib/tier";
 import { prisma } from "@/lib/prisma";
-import LogApplicationButton from "@/components/career/LogApplicationButton";
-import { avatarColor, initialsFromName } from "@/lib/avatar";
+import { computeOverallReadiness, computeReadinessPillars, computeDriveReadiness } from "@/lib/readiness";
+import { evaluateEligibility } from "@/lib/driveEligibility";
+import { computeBatchAppliedCounts } from "@/lib/driveSocialProof";
+import DriveCard from "@/components/career/DriveCard";
 
-const STATUS_STYLE: Record<string, string> = {
-  APPLIED: "bg-accent-soft text-indigo-600",
-  INTERVIEWING: "bg-warn-soft text-warn",
-  OFFER: "bg-success-soft text-success",
-  REJECTED: "bg-error-soft text-error",
-  WITHDRAWN: "bg-line-soft text-ink-muted",
-};
-
-const STATUS_LABEL: Record<string, string> = {
-  APPLIED: "Applied",
-  INTERVIEWING: "Interviewing",
-  OFFER: "Offer",
-  REJECTED: "Rejected",
-  WITHDRAWN: "Withdrawn",
-};
+const FILTERS = [
+  { key: "eligible", label: "Eligible" },
+  { key: "all", label: "All" },
+  { key: "applied", label: "Applied" },
+] as const;
 
 function formatDate(date: Date): string {
-  return date.toLocaleDateString("en-US", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    hourCycle: "h23",
-  });
+  return date.toLocaleDateString("en-US", { day: "numeric", month: "short" });
 }
 
-export default async function CareerPage() {
+function daysUntil(date: Date): number {
+  return Math.ceil((date.getTime() - Date.now()) / (24 * 60 * 60 * 1000));
+}
+
+export default async function CareerPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ filter?: string }>;
+}) {
   const user = await getCurrentUser();
   if (!user) {
     redirect("/login");
   }
   await requireTierAccess(user, "CAREER");
 
+  const { filter = "eligible" } = await searchParams;
+
   const now = new Date();
-  const [allDrives, applications] = await Promise.all([
+  const [allDrives, applications, overall, pillars] = await Promise.all([
     prisma.drive.findMany({ orderBy: { driveDate: "asc" } }),
     prisma.application.findMany({ where: { userId: user.id, driveId: { not: null } } }),
+    computeOverallReadiness(user.id),
+    computeReadinessPillars(user.id),
   ]);
   const drives = allDrives.filter(
     (d) => d.driveDate >= now || (d.applyDeadline && d.applyDeadline >= now)
   );
   const applicationByDriveId = new Map(applications.map((a) => [a.driveId, a]));
 
+  const eligibilityByDrive = new Map(
+    drives.map((d) => [d.id, evaluateEligibility(user, d)])
+  );
+  const eligibleDrives = drives.filter((d) => eligibilityByDrive.get(d.id)!.eligible);
+  const appliedDrives = drives.filter((d) => applicationByDriveId.has(d.id));
+
+  const [batchAppliedCounts, watches] = await Promise.all([
+    computeBatchAppliedCounts(user.id, drives.map((d) => d.id)),
+    prisma.driveEligibilityWatch.findMany({
+      where: { userId: user.id, driveId: { in: drives.map((d) => d.id) } },
+      select: { driveId: true },
+    }),
+  ]);
+  const watchingDriveIds = new Set(watches.map((w) => w.driveId));
+
+  const visibleDrives =
+    filter === "applied"
+      ? appliedDrives
+      : filter === "eligible"
+        ? eligibleDrives
+        : drives;
+
+  const featuredDrive = eligibleDrives
+    .filter((d) => !applicationByDriveId.has(d.id) && d.applyDeadline && d.applyDeadline >= now)
+    .sort((a, b) => (a.applyDeadline!.getTime() - b.applyDeadline!.getTime()))[0];
+
   return (
     <div className="max-w-3xl space-y-4">
-      <div>
-        <h1 className="font-brand text-[25px] font-bold tracking-[-0.02em] text-ink">
-          Career
-        </h1>
-        <p className="text-[14.5px] text-ink-muted">
-          Campus drives curated by the PreCompilers team.
-        </p>
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h1 className="font-brand text-[25px] font-bold tracking-[-0.02em] text-ink">
+            Campus drives
+          </h1>
+          <p className="text-[14.5px] text-ink-muted">
+            Maintained by your placement cell
+            {user.cgpa !== null ? ` · CGPA ${user.cgpa}` : ""}
+            {user.backlogCount !== null ? ` · ${user.backlogCount} backlogs` : ""}
+            {overall !== null ? ` · readiness ${overall}` : ""}
+          </p>
+        </div>
+        <div className="flex gap-2">
+          {FILTERS.map((f) => {
+            const count =
+              f.key === "eligible"
+                ? eligibleDrives.length
+                : f.key === "applied"
+                  ? appliedDrives.length
+                  : drives.length;
+            return (
+              <Link
+                key={f.key}
+                href={`/career?filter=${f.key}`}
+                className={`rounded-full px-3.5 py-1.5 text-[13px] font-medium ${
+                  filter === f.key
+                    ? "bg-ink text-surface"
+                    : "border border-line text-ink-secondary hover:bg-surface"
+                }`}
+              >
+                {f.label} · {count}
+              </Link>
+            );
+          })}
+        </div>
       </div>
 
-      <div className="rounded-xl border border-line bg-surface">
-        {drives.length ? (
-          <div className="divide-y divide-line-soft">
-            {drives.map((drive) => {
-              const application = applicationByDriveId.get(drive.id);
-              return (
-                <div key={drive.id} className="px-5 py-4">
-                  <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                    <div className="flex items-start gap-3">
-                      <span
-                        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg font-brand text-[13px] font-semibold text-white"
-                        style={{ backgroundColor: avatarColor(drive.companyName) }}
-                      >
-                        {initialsFromName(drive.companyName)}
-                      </span>
-                      <div>
-                        <p className="text-sm font-medium text-ink">
-                          {drive.companyName} · {drive.roleTitle}
-                        </p>
-                        <p className="text-xs text-ink-faint">
-                          {formatDate(drive.driveDate)}
-                          {drive.location ? ` · ${drive.location}` : ""}
-                          {drive.applyDeadline
-                            ? ` · apply by ${formatDate(drive.applyDeadline)}`
-                            : ""}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex flex-wrap items-center gap-2 sm:shrink-0">
-                      {drive.applyUrl ? (
-                        <a
-                          href={drive.applyUrl}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="rounded-md bg-ink px-3 py-1.5 text-xs font-semibold text-surface"
-                        >
-                          Apply
-                        </a>
-                      ) : null}
-                      {application ? (
-                        <span
-                          className={`rounded-full px-2.5 py-1 text-xs font-semibold ${STATUS_STYLE[application.status]}`}
-                        >
-                          {STATUS_LABEL[application.status]}
-                        </span>
-                      ) : (
-                        <LogApplicationButton driveId={drive.id} />
-                      )}
-                    </div>
-                  </div>
-                  <p className="mt-2 text-sm text-ink-muted">{drive.description}</p>
-                </div>
-              );
-            })}
+      {featuredDrive ? (
+        <div className="flex items-center justify-between gap-4 rounded-xl border border-accent-soft bg-linear-to-r from-accent-soft to-surface p-4">
+          <div className="flex items-center gap-3">
+            <span className="flex h-11 w-11 shrink-0 flex-col items-center justify-center rounded-lg bg-indigo-600 font-mono text-white">
+              <span className="text-sm font-bold leading-none">
+                {featuredDrive.applyDeadline!.getDate()}
+              </span>
+              <span className="text-[9px] uppercase leading-none">
+                {featuredDrive.applyDeadline!.toLocaleDateString("en-US", { month: "short" })}
+              </span>
+            </span>
+            <div>
+              <p className="text-sm font-semibold text-ink">
+                {featuredDrive.companyName} — applications close in{" "}
+                {daysUntil(featuredDrive.applyDeadline!)} days
+              </p>
+              <p className="text-xs text-ink-faint">
+                You&apos;re eligible. Don&apos;t miss the {formatDate(featuredDrive.applyDeadline!)} deadline.
+              </p>
+            </div>
           </div>
+          <Link
+            href={`/practice/problems?company=${encodeURIComponent(featuredDrive.companyName)}`}
+            className="shrink-0 rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-accent-hover"
+          >
+            Prepare for this drive
+          </Link>
+        </div>
+      ) : null}
+
+      <div className="space-y-3">
+        {visibleDrives.length ? (
+          visibleDrives.map((drive) => {
+            const eligibility = eligibilityByDrive.get(drive.id)!;
+            const application = applicationByDriveId.get(drive.id);
+            const driveReadiness = eligibility.eligible
+              ? computeDriveReadiness(pillars, drive.hiringBarScore)
+              : null;
+            return (
+              <DriveCard
+                key={drive.id}
+                drive={drive}
+                eligibility={eligibility}
+                application={application}
+                driveReadiness={driveReadiness}
+                batchAppliedCount={batchAppliedCounts.get(drive.id) ?? null}
+                isWatching={watchingDriveIds.has(drive.id)}
+              />
+            );
+          })
         ) : (
-          <p className="px-5 py-6 text-sm text-ink-faint">No upcoming drives right now.</p>
+          <div className="rounded-xl border border-line bg-surface px-5 py-6 text-center">
+            <p className="text-sm text-ink-muted">
+              {filter === "applied"
+                ? "You haven't applied to any drives yet."
+                : "Your placement cell hasn't added drives yet."}
+            </p>
+          </div>
         )}
       </div>
     </div>

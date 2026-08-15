@@ -1,18 +1,16 @@
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
 import { requireTierAccess } from "@/lib/tier";
-import { computeReadinessPillars, computeOverallReadiness } from "@/lib/readiness";
-import ReadinessPillarGrid from "@/components/career/ReadinessPillarGrid";
+import {
+  computeReadinessPillars,
+  computeOverallReadiness,
+  computeReadinessDelta,
+  computeActivityCounts,
+  computeReadinessRecommendations,
+  summarizeReadiness,
+} from "@/lib/readiness";
+import ReadinessReportView from "@/components/career/ReadinessReportView";
 import ShareReportControls from "@/components/career/ShareReportControls";
-
-const TARGET_ROLE_LABELS: Record<string, string> = {
-  SOFTWARE_ENGINEER: "Software engineer",
-  DATA_ML_ENGINEER: "Data / ML engineer",
-  FRONTEND_ENGINEER: "Frontend engineer",
-  CLOUD_DEVOPS: "Cloud / DevOps",
-  HIGHER_STUDIES: "Higher studies",
-  NOT_SURE: "Not sure yet",
-};
 
 export default async function MyReportPage() {
   const user = await getCurrentUser();
@@ -21,54 +19,49 @@ export default async function MyReportPage() {
   }
   await requireTierAccess(user, "CAREER");
 
-  const [pillars, overall] = await Promise.all([
+  const [pillars, overall, delta, activity] = await Promise.all([
     computeReadinessPillars(user.id),
     computeOverallReadiness(user.id),
+    computeReadinessDelta(user.id),
+    computeActivityCounts(user.id),
   ]);
+  const recommendations = computeReadinessRecommendations(pillars);
+  const narrative = summarizeReadiness(pillars);
+
+  const collegeLine = [user.college, user.branch, user.gradYear ? `Class of ${user.gradYear}` : null]
+    .filter(Boolean)
+    .join(" · ");
+  const activityLine = `${activity.lessonsCompleted} lessons · ${activity.problemsSolved} problems · ${activity.mocksCompleted} mocks`;
 
   return (
     <div className="max-w-3xl space-y-4">
       <div>
         <h1 className="font-brand text-[25px] font-bold tracking-[-0.02em] text-ink">
-          My report
+          Readiness report
         </h1>
         <p className="text-[14.5px] text-ink-muted">
           Your live job-readiness snapshot — share it with a recruiter or your placement cell.
         </p>
       </div>
 
-      <div className="rounded-xl border border-line bg-surface p-5">
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <p className="font-brand text-lg font-bold text-ink">
-              {user.name ?? user.email}
-            </p>
-            <p className="text-sm text-ink-muted">
-              {[user.college, user.branch, user.gradYear ? `Class of ${user.gradYear}` : null]
-                .filter(Boolean)
-                .join(" · ")}
-            </p>
-            {user.targetRole ? (
-              <p className="mt-1 text-xs text-ink-faint">
-                Targeting {TARGET_ROLE_LABELS[user.targetRole] ?? user.targetRole}
-              </p>
-            ) : null}
-          </div>
-          <div className="shrink-0 text-right">
-            <p className="font-brand text-3xl font-extrabold text-accent">
-              {overall !== null ? overall : "—"}
-            </p>
-            <p className="text-xs text-ink-faint">Overall readiness</p>
-          </div>
-        </div>
-      </div>
+      <ReadinessReportView
+        name={user.name ?? user.email}
+        collegeLine={collegeLine || null}
+        targetRole={user.targetRole}
+        overall={overall}
+        pillars={pillars}
+        delta={delta}
+        activityLine={activityLine}
+        narrative={narrative}
+        recommendations={recommendations}
+        mockNotes={null}
+      />
 
-      <div className="rounded-xl border border-line bg-surface p-5">
-        <h2 className="mb-3 font-brand text-base font-bold text-ink">Readiness by pillar</h2>
-        <ReadinessPillarGrid pillars={pillars} />
-      </div>
-
-      <ShareReportControls initialToken={user.reportShareToken} />
+      <ShareReportControls
+        initialToken={user.reportShareToken}
+        initialShowCollege={user.reportShowCollege}
+        initialShowMockNotes={user.reportShowMockNotes}
+      />
     </div>
   );
 }

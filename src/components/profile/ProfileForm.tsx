@@ -14,6 +14,8 @@ export default function ProfileForm({
   initialCollege,
   initialBranch,
   initialGradYear,
+  initialCgpa,
+  initialBacklogCount,
   initialPhoneNumber,
   initialWhatsappOptIn,
 }: {
@@ -21,6 +23,8 @@ export default function ProfileForm({
   initialCollege: string;
   initialBranch: string;
   initialGradYear: number | null;
+  initialCgpa: number | null;
+  initialBacklogCount: number | null;
   initialPhoneNumber: string;
   initialWhatsappOptIn: boolean;
 }) {
@@ -29,6 +33,10 @@ export default function ProfileForm({
   const [branch, setBranch] = useState(initialBranch);
   const [gradYear, setGradYear] = useState(
     initialGradYear ? String(initialGradYear) : ""
+  );
+  const [cgpa, setCgpa] = useState(initialCgpa !== null ? String(initialCgpa) : "");
+  const [backlogCount, setBacklogCount] = useState(
+    initialBacklogCount !== null ? String(initialBacklogCount) : ""
   );
   const [phoneNumber, setPhoneNumber] = useState(initialPhoneNumber);
   const [whatsappOptIn, setWhatsappOptIn] = useState(initialWhatsappOptIn);
@@ -50,6 +58,8 @@ export default function ProfileForm({
         college,
         branch,
         gradYear: gradYear ? Number(gradYear) : null,
+        cgpa: cgpa ? Number(cgpa) : null,
+        backlogCount: backlogCount ? Number(backlogCount) : null,
         phoneNumber: phoneNumber.trim() || null,
         whatsappOptIn,
       }),
@@ -119,6 +129,39 @@ export default function ProfileForm({
             </option>
           ))}
         </select>
+      </div>
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <label className={labelClass} htmlFor="cgpa">
+            CGPA
+          </label>
+          <input
+            id="cgpa"
+            type="number"
+            min="0"
+            max="10"
+            step="0.01"
+            className={inputClass}
+            value={cgpa}
+            onChange={(e) => setCgpa(e.target.value)}
+            placeholder="e.g. 8.1"
+          />
+        </div>
+        <div>
+          <label className={labelClass} htmlFor="backlogCount">
+            Backlogs
+          </label>
+          <input
+            id="backlogCount"
+            type="number"
+            min="0"
+            step="1"
+            className={inputClass}
+            value={backlogCount}
+            onChange={(e) => setBacklogCount(e.target.value)}
+            placeholder="0"
+          />
+        </div>
       </div>
       <div>
         <label className={labelClass} htmlFor="phoneNumber">

@@ -73,6 +73,8 @@ export const profileUpdateSchema = z.object({
   college: z.string().trim().max(150).optional(),
   branch: z.string().trim().max(100).optional(),
   gradYear: z.number().int().min(2000).max(2100).nullable().optional(),
+  cgpa: z.number().min(0).max(10).nullable().optional(),
+  backlogCount: z.number().int().min(0).nullable().optional(),
   phoneNumber: phoneNumber.nullable().optional(),
   whatsappOptIn: z.boolean().optional(),
 });
@@ -201,6 +203,8 @@ export const preferredMentorSchema = z.object({
 
 export const reportShareSchema = z.object({
   enabled: z.boolean(),
+  showCollege: z.boolean().optional(),
+  showMockNotes: z.boolean().optional(),
 });
 
 const resumeEducationSchema = z.object({
@@ -285,6 +289,10 @@ export const driveSchema = z.object({
   applyUrl: z.string().trim().url("Enter a valid URL").optional(),
   location: z.string().trim().max(150).optional(),
   description: z.string().trim().max(3000).default(""),
+  minCgpa: z.number().min(0).max(10).optional(),
+  maxBacklogs: z.number().int().min(0).optional(),
+  eligibleBranches: z.array(z.string().trim().min(1)).optional(),
+  hiringBarScore: z.number().int().min(0).max(100).optional(),
 });
 
 export const applicationSchema = z

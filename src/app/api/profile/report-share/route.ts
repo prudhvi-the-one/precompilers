@@ -19,23 +19,44 @@ export async function POST(request: Request) {
     );
   }
 
-  if (!parsed.data.enabled) {
-    await prisma.user.update({
+  const { enabled, showCollege, showMockNotes } = parsed.data;
+  const prefUpdate = {
+    ...(showCollege !== undefined ? { reportShowCollege: showCollege } : {}),
+    ...(showMockNotes !== undefined ? { reportShowMockNotes: showMockNotes } : {}),
+  };
+
+  if (!enabled) {
+    const updated = await prisma.user.update({
       where: { id: user.id },
-      data: { reportShareToken: null },
+      data: { reportShareToken: null, ...prefUpdate },
     });
-    return NextResponse.json({ token: null });
+    return NextResponse.json({
+      token: null,
+      showCollege: updated.reportShowCollege,
+      showMockNotes: updated.reportShowMockNotes,
+    });
   }
 
   if (user.reportShareToken) {
-    return NextResponse.json({ token: user.reportShareToken });
+    const updated = Object.keys(prefUpdate).length
+      ? await prisma.user.update({ where: { id: user.id }, data: prefUpdate })
+      : user;
+    return NextResponse.json({
+      token: updated.reportShareToken,
+      showCollege: updated.reportShowCollege,
+      showMockNotes: updated.reportShowMockNotes,
+    });
   }
 
   const token = crypto.randomBytes(20).toString("hex");
-  await prisma.user.update({
+  const updated = await prisma.user.update({
     where: { id: user.id },
-    data: { reportShareToken: token },
+    data: { reportShareToken: token, ...prefUpdate },
   });
 
-  return NextResponse.json({ token });
+  return NextResponse.json({
+    token: updated.reportShareToken,
+    showCollege: updated.reportShowCollege,
+    showMockNotes: updated.reportShowMockNotes,
+  });
 }

@@ -1,16 +1,14 @@
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { computeReadinessPillars, computeOverallReadiness } from "@/lib/readiness";
-import ReadinessPillarGrid from "@/components/career/ReadinessPillarGrid";
-
-const TARGET_ROLE_LABELS: Record<string, string> = {
-  SOFTWARE_ENGINEER: "Software engineer",
-  DATA_ML_ENGINEER: "Data / ML engineer",
-  FRONTEND_ENGINEER: "Frontend engineer",
-  CLOUD_DEVOPS: "Cloud / DevOps",
-  HIGHER_STUDIES: "Higher studies",
-  NOT_SURE: "Not sure yet",
-};
+import {
+  computeReadinessPillars,
+  computeOverallReadiness,
+  computeReadinessDelta,
+  computeActivityCounts,
+  computeReadinessRecommendations,
+  summarizeReadiness,
+} from "@/lib/readiness";
+import ReadinessReportView from "@/components/career/ReadinessReportView";
 
 export default async function PublicReportPage({
   params,
@@ -23,10 +21,31 @@ export default async function PublicReportPage({
     notFound();
   }
 
-  const [pillars, overall] = await Promise.all([
+  const [pillars, overall, delta, activity, mockScorecards] = await Promise.all([
     computeReadinessPillars(user.id),
     computeOverallReadiness(user.id),
+    computeReadinessDelta(user.id),
+    computeActivityCounts(user.id),
+    user.reportShowMockNotes
+      ? prisma.mentorScorecard.findMany({
+          where: { session: { studentId: user.id, kind: { in: ["MOCK", "HR_ROUND"] } } },
+          orderBy: { submittedAt: "desc" },
+          take: 5,
+        })
+      : Promise.resolve([]),
   ]);
+  const recommendations = computeReadinessRecommendations(pillars);
+  const narrative = summarizeReadiness(pillars);
+
+  const collegeLine = user.reportShowCollege
+    ? [user.college, user.branch, user.gradYear ? `Class of ${user.gradYear}` : null]
+        .filter(Boolean)
+        .join(" · ")
+    : "";
+  const activityLine = `${activity.lessonsCompleted} lessons · ${activity.problemsSolved} problems · ${activity.mocksCompleted} mocks`;
+  const mockNotes = user.reportShowMockNotes
+    ? mockScorecards.map((s) => s.writtenFeedback).filter(Boolean)
+    : null;
 
   return (
     <div className="mx-auto w-full max-w-3xl space-y-4 px-6 py-10">
@@ -36,36 +55,18 @@ export default async function PublicReportPage({
         </p>
       </div>
 
-      <div className="rounded-xl border border-line bg-surface p-5">
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <p className="font-brand text-lg font-bold text-ink">
-              {user.name ?? "PreCompilers student"}
-            </p>
-            <p className="text-sm text-ink-muted">
-              {[user.college, user.branch, user.gradYear ? `Class of ${user.gradYear}` : null]
-                .filter(Boolean)
-                .join(" · ")}
-            </p>
-            {user.targetRole ? (
-              <p className="mt-1 text-xs text-ink-faint">
-                Targeting {TARGET_ROLE_LABELS[user.targetRole] ?? user.targetRole}
-              </p>
-            ) : null}
-          </div>
-          <div className="shrink-0 text-right">
-            <p className="font-brand text-3xl font-extrabold text-accent">
-              {overall !== null ? overall : "—"}
-            </p>
-            <p className="text-xs text-ink-faint">Overall readiness</p>
-          </div>
-        </div>
-      </div>
-
-      <div className="rounded-xl border border-line bg-surface p-5">
-        <h2 className="mb-3 font-brand text-base font-bold text-ink">Readiness by pillar</h2>
-        <ReadinessPillarGrid pillars={pillars} />
-      </div>
+      <ReadinessReportView
+        name={user.name ?? "PreCompilers student"}
+        collegeLine={collegeLine || null}
+        targetRole={user.targetRole}
+        overall={overall}
+        pillars={pillars}
+        delta={delta}
+        activityLine={activityLine}
+        narrative={narrative}
+        recommendations={recommendations}
+        mockNotes={mockNotes}
+      />
 
       <div className="flex items-center justify-between rounded-xl border border-line bg-surface px-5 py-4">
         <p className="text-xs text-ink-faint">
