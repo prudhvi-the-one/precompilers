@@ -30,34 +30,34 @@ export default async function QuizHistoryPage() {
   return (
     <div className="max-w-3xl space-y-4">
       <div>
-        <h1 className="font-brand text-[25px] font-bold tracking-[-0.02em] text-[#0F1020]">
+        <h1 className="font-brand text-[25px] font-bold tracking-[-0.02em] text-ink">
           History
         </h1>
-        <p className="text-[14.5px] text-[#55556B]">
+        <p className="text-[14.5px] text-ink-muted">
           Every quiz and aptitude paper attempt you&apos;ve submitted.
         </p>
       </div>
 
       {attempts.length ? (
-        <div className="divide-y divide-[#F2F2F7] rounded-xl border border-[#E6E6EF] bg-white">
+        <div className="divide-y divide-line-soft rounded-xl border border-line bg-surface">
           {attempts.map((attempt) => {
             const verified = attempt.proctored && !attempt.endedByViolation;
             return (
               <Link
                 key={attempt.id}
                 href={`/practice/results/${attempt.id}`}
-                className="flex items-center justify-between gap-3 px-5 py-3.5 hover:bg-[#FBFBFD]"
+                className="flex items-center justify-between gap-3 px-5 py-3.5 hover:bg-surface-sunk"
               >
                 <div>
-                  <p className="text-sm font-medium text-[#0F1020]">{attempt.quiz.title}</p>
-                  <p className="text-xs text-[#8A8AA0]">
+                  <p className="text-sm font-medium text-ink">{attempt.quiz.title}</p>
+                  <p className="text-xs text-ink-faint">
                     {formatDate(attempt.submittedAt as Date)}
                     {attempt.quiz.kind === "APTITUDE_PAPER" ? (
                       <span
                         className={
                           verified
-                            ? "ml-2 rounded-full bg-[#E7F7F0] px-2 py-0.5 font-semibold text-[#059669]"
-                            : "ml-2 rounded-full bg-[#F2F2F7] px-2 py-0.5 font-semibold text-[#8A8AA0]"
+                            ? "ml-2 rounded-full bg-success-soft px-2 py-0.5 font-semibold text-success"
+                            : "ml-2 rounded-full bg-line-soft px-2 py-0.5 font-semibold text-ink-faint"
                         }
                       >
                         {verified ? "VERIFIED" : "SELF-PACED"}
@@ -65,7 +65,7 @@ export default async function QuizHistoryPage() {
                     ) : null}
                   </p>
                 </div>
-                <span className="font-brand text-lg font-bold text-[#0F1020]">
+                <span className="font-brand text-lg font-bold text-ink">
                   {attempt.score}%
                 </span>
               </Link>
@@ -73,7 +73,7 @@ export default async function QuizHistoryPage() {
           })}
         </div>
       ) : (
-        <div className="rounded-xl border border-[#E6E6EF] bg-white p-6 text-center text-sm text-[#55556B]">
+        <div className="rounded-xl border border-line bg-surface p-6 text-center text-sm text-ink-muted">
           No attempts yet.{" "}
           <Link href="/practice/quizzes" className="font-semibold text-indigo-600 hover:underline">
             Take your first quiz

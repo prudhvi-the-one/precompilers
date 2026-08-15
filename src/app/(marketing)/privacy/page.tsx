@@ -7,14 +7,14 @@ export default function PrivacyPolicyPage() {
         a lawyer and should not be treated as final legal text.
       </div>
 
-      <h1 className="font-brand text-[32px] font-bold tracking-[-0.02em] text-[#0F1020]">
+      <h1 className="font-brand text-[32px] font-bold tracking-[-0.02em] text-ink">
         Privacy Policy
       </h1>
-      <p className="mt-2 text-sm text-[#8A8AA0]">Last updated 15 Aug 2026</p>
+      <p className="mt-2 text-sm text-ink-faint">Last updated 15 Aug 2026</p>
 
-      <div className="mt-8 space-y-8 text-[15px] leading-[1.7] text-[#2A2A38]">
+      <div className="mt-8 space-y-8 text-[15px] leading-[1.7] text-ink-secondary">
         <section>
-          <h2 className="font-brand text-lg font-bold text-[#0F1020]">
+          <h2 className="font-brand text-lg font-bold text-ink">
             What we collect
           </h2>
           <p className="mt-2">
@@ -35,7 +35,7 @@ export default function PrivacyPolicyPage() {
         </section>
 
         <section>
-          <h2 className="font-brand text-lg font-bold text-[#0F1020]">
+          <h2 className="font-brand text-lg font-bold text-ink">
             How we use it
           </h2>
           <p className="mt-2">
@@ -48,7 +48,7 @@ export default function PrivacyPolicyPage() {
         </section>
 
         <section>
-          <h2 className="font-brand text-lg font-bold text-[#0F1020]">
+          <h2 className="font-brand text-lg font-bold text-ink">
             Third parties we use
           </h2>
           <ul className="mt-2 list-disc space-y-1 pl-5">
@@ -67,7 +67,7 @@ export default function PrivacyPolicyPage() {
         </section>
 
         <section>
-          <h2 className="font-brand text-lg font-bold text-[#0F1020]">
+          <h2 className="font-brand text-lg font-bold text-ink">
             Retention
           </h2>
           <p className="mt-2">
@@ -78,7 +78,7 @@ export default function PrivacyPolicyPage() {
         </section>
 
         <section>
-          <h2 className="font-brand text-lg font-bold text-[#0F1020]">
+          <h2 className="font-brand text-lg font-bold text-ink">
             Your rights
           </h2>
           <p className="mt-2">

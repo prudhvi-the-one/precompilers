@@ -29,7 +29,7 @@ export default async function ReviewQueuePage() {
 
   return (
     <div className="max-w-3xl space-y-4">
-      <Link href="/prove" className="text-sm text-[#8A8AA0] hover:text-[#0F1020]">
+      <Link href="/prove" className="text-sm text-ink-faint hover:text-ink">
         ← Prove
       </Link>
 
@@ -37,21 +37,21 @@ export default async function ReviewQueuePage() {
         <>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="font-brand text-[22px] font-bold text-[#0F1020]">
+              <h1 className="font-brand text-[22px] font-bold text-ink">
                 Reviewing: {next.project.title}
               </h1>
-              <span className="rounded-full bg-[#FBECD9] px-2.5 py-0.5 font-mono text-[10px] font-semibold text-[#B45309]">
+              <span className="rounded-full bg-warn-soft px-2.5 py-0.5 font-mono text-[10px] font-semibold text-warn">
                 DUE IN {hoursUntil(new Date(next.submittedAt.getTime() + 48 * 3_600_000))}H
               </span>
             </div>
-            <p className="text-[13.5px] text-[#8A8AA0]">
+            <p className="text-[13.5px] text-ink-faint">
               Anonymous — you&apos;ll see the author after you submit.
             </p>
           </div>
 
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1.4fr_1fr]">
-            <div className="space-y-3 rounded-xl border border-[#E6E6EF] bg-white p-5">
-              <p className="text-sm font-medium text-[#0F1020]">Submission</p>
+            <div className="space-y-3 rounded-xl border border-line bg-surface p-5">
+              <p className="text-sm font-medium text-ink">Submission</p>
               <a
                 href={next.submissionUrl}
                 target="_blank"
@@ -60,22 +60,22 @@ export default async function ReviewQueuePage() {
               >
                 {next.submissionUrl}
               </a>
-              <p className="whitespace-pre-line text-sm text-[#55556B]">
+              <p className="whitespace-pre-line text-sm text-ink-muted">
                 {next.description}
               </p>
             </div>
 
-            <div className="rounded-xl border border-[#E6E6EF] bg-white p-5">
+            <div className="rounded-xl border border-line bg-surface p-5">
               <PeerReviewForm submissionId={next.id} />
             </div>
           </div>
         </>
       ) : (
-        <div className="rounded-xl border border-[#E6E6EF] bg-white p-8 text-center">
-          <p className="text-sm font-medium text-[#0F1020]">
+        <div className="rounded-xl border border-line bg-surface p-8 text-center">
+          <p className="text-sm font-medium text-ink">
             Nothing to review right now.
           </p>
-          <p className="mt-1 text-sm text-[#8A8AA0]">
+          <p className="mt-1 text-sm text-ink-faint">
             Every current submission already has two reviews. Check back once
             more students submit.
           </p>

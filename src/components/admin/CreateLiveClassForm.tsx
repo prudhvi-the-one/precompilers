@@ -46,11 +46,11 @@ export default function CreateLiveClassForm({
     <form onSubmit={handleSubmit} className="flex flex-wrap items-end gap-3">
       {batches ? (
         <div>
-          <label className="mb-1 block text-xs font-medium text-gray-700">Batch</label>
+          <label className="mb-1 block text-xs font-medium text-ink-secondary">Batch</label>
           <select
             value={batchId}
             onChange={(e) => setBatchId(e.target.value)}
-            className="rounded-md border border-gray-300 px-3 py-2 text-sm"
+            className="rounded-md border border-line px-3 py-2 text-sm"
           >
             {batches.map((b) => (
               <option key={b.id} value={b.id}>
@@ -61,39 +61,39 @@ export default function CreateLiveClassForm({
         </div>
       ) : null}
       <div>
-        <label className="mb-1 block text-xs font-medium text-gray-700">Title</label>
+        <label className="mb-1 block text-xs font-medium text-ink-secondary">Title</label>
         <input
           required
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          className="rounded-md border border-gray-300 px-3 py-2 text-sm"
+          className="rounded-md border border-line px-3 py-2 text-sm"
           placeholder="e.g. Window functions, live walkthrough"
         />
       </div>
       <div>
-        <label className="mb-1 block text-xs font-medium text-gray-700">Starts at</label>
+        <label className="mb-1 block text-xs font-medium text-ink-secondary">Starts at</label>
         <input
           required
           type="datetime-local"
           value={scheduledAt}
           onChange={(e) => setScheduledAt(e.target.value)}
-          className="rounded-md border border-gray-300 px-3 py-2 text-sm"
+          className="rounded-md border border-line px-3 py-2 text-sm"
         />
       </div>
       <div className="w-32">
-        <label className="mb-1 block text-xs font-medium text-gray-700">Duration (min)</label>
+        <label className="mb-1 block text-xs font-medium text-ink-secondary">Duration (min)</label>
         <input
           type="number"
           min={15}
           value={durationMinutes}
           onChange={(e) => setDurationMinutes(Number(e.target.value) || 0)}
-          className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+          className="w-full rounded-md border border-line px-3 py-2 text-sm"
         />
       </div>
       <button
         type="submit"
         disabled={submitting || (batches ? !batchId : false)}
-        className="rounded-md bg-black px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
+        className="rounded-md bg-ink px-4 py-2 text-sm font-medium text-surface disabled:opacity-50"
       >
         {submitting ? "Scheduling…" : "Schedule live class"}
       </button>

@@ -5,8 +5,8 @@ import { useRouter } from "next/navigation";
 import AuthCard from "@/components/auth/AuthCard";
 
 const inputClass =
-  "w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-300";
-const labelClass = "mb-1 block text-sm font-medium text-gray-700";
+  "w-full rounded-md border border-line px-3 py-2 text-sm focus:border-ink-faint focus:outline-none focus:ring-1 focus:ring-line";
+const labelClass = "mb-1 block text-sm font-medium text-ink-secondary";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -73,7 +73,7 @@ export default function LoginForm() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full rounded-md bg-black py-2 text-sm font-medium text-white disabled:opacity-50"
+          className="w-full rounded-md bg-ink py-2 text-sm font-medium text-surface disabled:opacity-50"
         >
           {loading ? "Logging in…" : "Log in"}
         </button>

@@ -321,11 +321,11 @@ export default function QuizAttemptClient({
       <div
         className={
           isPaper
-            ? "flex items-center justify-between border-b border-white/10 px-6 py-3.5"
-            : "flex items-center justify-between border-b border-[#EDEDF3] bg-white px-6 py-3.5"
+            ? "flex flex-wrap items-center justify-between gap-2 border-b border-white/10 px-4 py-3 sm:px-6 sm:py-3.5"
+            : "flex flex-wrap items-center justify-between gap-2 border-b border-[#EDEDF3] bg-surface px-4 py-3 sm:px-6 sm:py-3.5"
         }
       >
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <span
             className={
               isPaper
@@ -372,7 +372,7 @@ export default function QuizAttemptClient({
               type="button"
               onClick={submitSection}
               disabled={submitting}
-              className="rounded-lg border border-[#DDDDE7] bg-white px-3.5 py-1.5 text-[13px] font-semibold text-[#0F1020] hover:bg-[#FBFBFD] disabled:opacity-50"
+              className="rounded-lg border border-[#DDDDE7] bg-surface px-3.5 py-1.5 text-[13px] font-semibold text-[#0F1020] hover:bg-[#FBFBFD] disabled:opacity-50"
             >
               Submit quiz
             </button>
@@ -400,7 +400,7 @@ export default function QuizAttemptClient({
                 key={section.id}
                 className={
                   isCurrent
-                    ? "flex-1 border-b-2 border-indigo-500 bg-white px-4 py-2.5 text-center"
+                    ? "flex-1 border-b-2 border-indigo-500 bg-surface px-4 py-2.5 text-center"
                     : "flex-1 px-4 py-2.5 text-center"
                 }
               >
@@ -424,7 +424,7 @@ export default function QuizAttemptClient({
         </div>
       )}
 
-      <div className="flex gap-8 px-6 py-8">
+      <div className="flex flex-col gap-6 px-4 py-6 sm:px-6 sm:py-8 lg:flex-row lg:gap-8">
         {/* Question area */}
         <div className="max-w-[760px] flex-1">
           <div className={isPaper ? "rounded-xl bg-[#151633] p-6" : ""}>
@@ -537,7 +537,7 @@ export default function QuizAttemptClient({
         </div>
 
         {/* Right rail */}
-        <div className="w-[280px] shrink-0 space-y-4">
+        <div className="w-full space-y-4 lg:w-70 lg:shrink-0">
           {isPaper && proctored ? (
             <div className="rounded-xl bg-[#151633] p-3">
               <div className="flex aspect-[4/3] items-center justify-center overflow-hidden rounded-lg bg-black">
@@ -594,7 +594,7 @@ export default function QuizAttemptClient({
             </div>
           ) : null}
 
-          <div className={isPaper ? "rounded-xl bg-[#151633] p-4" : "rounded-xl border border-[#E6E6EF] bg-white p-4"}>
+          <div className={isPaper ? "rounded-xl bg-[#151633] p-4" : "rounded-xl border border-[#E6E6EF] bg-surface p-4"}>
             <p className={isPaper ? "font-mono text-[10px] uppercase text-white/40" : "font-mono text-[10px] uppercase text-[#9A9AAE]"}>
               Question map
             </p>

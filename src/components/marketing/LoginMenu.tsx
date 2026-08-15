@@ -46,7 +46,7 @@ export default function LoginMenu() {
     return (
       <a
         href={dashboardHref(role)}
-        className="hidden text-sm text-[#2A2A38] hover:text-[#0F1020] sm:inline"
+        className="hidden text-sm text-ink-secondary hover:text-ink sm:inline"
       >
         Go to dashboard
       </a>
@@ -58,17 +58,17 @@ export default function LoginMenu() {
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="text-sm text-[#2A2A38] hover:text-[#0F1020]"
+        className="text-sm text-ink-secondary hover:text-ink"
       >
         Log in ▾
       </button>
       {open ? (
-        <div className="absolute right-0 top-full z-20 mt-2 w-44 rounded-lg border border-[#E6E6EF] bg-white py-1.5 shadow-lg">
+        <div className="absolute right-0 top-full z-20 mt-2 w-44 rounded-lg border border-line bg-surface py-1.5 shadow-lg">
           {PORTAL_LOGINS.map((portal) => (
             <a
               key={portal.href}
               href={portal.href}
-              className="block px-4 py-2 text-sm text-[#2A2A38] hover:bg-[#F6F5FF]"
+              className="block px-4 py-2 text-sm text-ink-secondary hover:bg-[#F6F5FF]"
             >
               {portal.label} login
             </a>

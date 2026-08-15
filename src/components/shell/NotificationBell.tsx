@@ -65,7 +65,7 @@ export default function NotificationBell() {
         type="button"
         aria-label="Notifications"
         onClick={() => setOpen((v) => !v)}
-        className="relative text-[#55556B] hover:text-[#0F1020]"
+        className="relative text-ink-muted hover:text-ink"
       >
         <Bell className="h-5 w-5" />
         {unreadCount > 0 ? (
@@ -76,9 +76,9 @@ export default function NotificationBell() {
       </button>
 
       {open ? (
-        <div className="absolute right-0 top-full z-20 mt-2 w-80 rounded-xl border border-[#E6E6EF] bg-white shadow-lg">
-          <div className="flex items-center justify-between border-b border-[#EDEDF3] px-4 py-3">
-            <span className="font-brand text-sm font-bold text-[#0F1020]">Notifications</span>
+        <div className="absolute right-0 top-full z-20 mt-2 w-80 rounded-xl border border-line bg-surface shadow-lg">
+          <div className="flex items-center justify-between border-b border-line-soft px-4 py-3">
+            <span className="font-brand text-sm font-bold text-ink">Notifications</span>
             {unreadCount > 0 ? (
               <button
                 type="button"
@@ -91,13 +91,13 @@ export default function NotificationBell() {
           </div>
           <div className="max-h-96 overflow-y-auto">
             {notifications.length ? (
-              <div className="divide-y divide-[#F2F2F7]">
+              <div className="divide-y divide-line-soft">
                 {notifications.map((n) => {
                   const inner = (
-                    <div className={`px-4 py-3 ${n.readAt ? "" : "bg-[#F1F0FE]/40"}`}>
-                      <p className="text-[13.5px] font-medium text-[#0F1020]">{n.title}</p>
-                      <p className="mt-0.5 text-[12.5px] text-[#55556B]">{n.body}</p>
-                      <p className="mt-1 text-[11px] text-[#9A9AAE]">{timeAgo(n.createdAt)}</p>
+                    <div className={`px-4 py-3 ${n.readAt ? "" : "bg-accent-soft/40"}`}>
+                      <p className="text-[13.5px] font-medium text-ink">{n.title}</p>
+                      <p className="mt-0.5 text-[12.5px] text-ink-muted">{n.body}</p>
+                      <p className="mt-1 text-[11px] text-ink-faintest">{timeAgo(n.createdAt)}</p>
                     </div>
                   );
                   return (
@@ -105,7 +105,7 @@ export default function NotificationBell() {
                       key={n.id}
                       type="button"
                       onClick={() => markRead(n.id)}
-                      className="block w-full text-left hover:bg-[#FBFBFD]"
+                      className="block w-full text-left hover:bg-surface-sunk"
                     >
                       {inner}
                     </button>
@@ -113,7 +113,7 @@ export default function NotificationBell() {
                 })}
               </div>
             ) : (
-              <p className="px-4 py-6 text-center text-sm text-[#8A8AA0]">No notifications yet.</p>
+              <p className="px-4 py-6 text-center text-sm text-ink-faint">No notifications yet.</p>
             )}
           </div>
         </div>

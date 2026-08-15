@@ -7,8 +7,8 @@ import AuthCard from "@/components/auth/AuthCard";
 import PhoneLoginForm from "./PhoneLoginForm";
 
 const inputClass =
-  "w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-300";
-const labelClass = "mb-1 block text-sm font-medium text-gray-700";
+  "w-full rounded-md border border-line px-3 py-2 text-sm focus:border-ink-faint focus:outline-none focus:ring-1 focus:ring-line";
+const labelClass = "mb-1 block text-sm font-medium text-ink-secondary";
 
 export default function LoginForm({
   phoneLoginEnabled,
@@ -50,12 +50,12 @@ export default function LoginForm({
   return (
     <AuthCard title="Log in to PreCompilers">
       {phoneLoginEnabled ? (
-        <div className="mb-4 flex rounded-md border border-gray-300 p-1 text-sm">
+        <div className="mb-4 flex rounded-md border border-line p-1 text-sm">
           <button
             type="button"
             onClick={() => setMode("email")}
             className={`flex-1 rounded py-1.5 font-medium ${
-              mode === "email" ? "bg-black text-white" : "text-gray-500"
+              mode === "email" ? "bg-ink text-surface" : "text-ink-faint"
             }`}
           >
             Email
@@ -64,7 +64,7 @@ export default function LoginForm({
             type="button"
             onClick={() => setMode("phone")}
             className={`flex-1 rounded py-1.5 font-medium ${
-              mode === "phone" ? "bg-black text-white" : "text-gray-500"
+              mode === "phone" ? "bg-ink text-surface" : "text-ink-faint"
             }`}
           >
             Phone
@@ -106,14 +106,14 @@ export default function LoginForm({
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-md bg-black py-2 text-sm font-medium text-white disabled:opacity-50"
+            className="w-full rounded-md bg-ink py-2 text-sm font-medium text-surface disabled:opacity-50"
           >
             {loading ? "Logging in…" : "Log in"}
           </button>
         </form>
       )}
 
-      <div className="mt-4 flex justify-between text-sm text-gray-500">
+      <div className="mt-4 flex justify-between text-sm text-ink-faint">
         <Link href="/register" className="underline">
           Create account
         </Link>

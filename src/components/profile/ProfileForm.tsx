@@ -3,8 +3,8 @@
 import { useState } from "react";
 
 const inputClass =
-  "w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-300";
-const labelClass = "mb-1 block text-sm font-medium text-gray-700";
+  "w-full rounded-md border border-line px-3 py-2 text-sm focus:border-ink-faint focus:outline-none focus:ring-1 focus:ring-line";
+const labelClass = "mb-1 block text-sm font-medium text-ink-secondary";
 
 const currentYear = new Date().getFullYear();
 const GRAD_YEARS = Array.from({ length: 7 }, (_, i) => currentYear - 1 + i);
@@ -140,7 +140,7 @@ export default function ProfileForm({
           checked={whatsappOptIn}
           onChange={(e) => setWhatsappOptIn(e.target.checked)}
         />
-        <label htmlFor="whatsappOptIn" className="text-sm text-gray-700">
+        <label htmlFor="whatsappOptIn" className="text-sm text-ink-secondary">
           Send me WhatsApp notifications
         </label>
       </div>
@@ -151,7 +151,7 @@ export default function ProfileForm({
       <button
         type="submit"
         disabled={status === "saving"}
-        className="rounded-md bg-black px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
+        className="rounded-md bg-ink px-4 py-2 text-sm font-medium text-surface disabled:opacity-50"
       >
         {status === "saving" ? "Saving…" : "Save changes"}
       </button>

@@ -33,15 +33,15 @@ export default async function RecordingReviewPage({
 
   return (
     <div className="mx-auto max-w-2xl space-y-6">
-      <Link href="/recordings" className="text-sm text-gray-500 hover:text-gray-900">
+      <Link href="/recordings" className="text-sm text-ink-faint hover:text-ink">
         ← Recordings
       </Link>
 
       <div>
-        <h1 className="font-brand text-xl font-bold text-gray-900">
+        <h1 className="font-brand text-xl font-bold text-ink">
           {attempt.user.name ?? attempt.user.email} · {attempt.quiz.title}
         </h1>
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-ink-faint">
           Score: {attempt.score ?? "—"}% · Violations: {attempt.violationCount}
           {attempt.endedByViolation ? " · Force-submitted after a violation" : ""}
         </p>

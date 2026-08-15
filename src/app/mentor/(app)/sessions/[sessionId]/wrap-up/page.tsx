@@ -26,16 +26,16 @@ export default async function SessionWrapUpPage({
   return (
     <div className="mx-auto max-w-lg space-y-6">
       <div>
-        <h1 className="font-brand text-xl font-bold text-gray-900">
+        <h1 className="font-brand text-xl font-bold text-ink">
           {mentorSession.kind === "COUNSELLING" ? "Session notes" : "Scorecard"}
         </h1>
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-ink-faint">
           For {mentorSession.student.name ?? mentorSession.student.email}
         </p>
       </div>
 
       {mentorSession.status === "COMPLETED" ? (
-        <p className="rounded-md border border-gray-200 bg-white p-4 text-sm text-gray-600">
+        <p className="rounded-md border border-line bg-surface p-4 text-sm text-ink-muted">
           Already submitted for this session.
         </p>
       ) : mentorSession.kind === "COUNSELLING" ? (

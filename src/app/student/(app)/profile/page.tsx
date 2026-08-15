@@ -11,12 +11,12 @@ export default async function ProfilePage() {
   return (
     <div className="max-w-md space-y-6">
       <div>
-        <h1 className="font-brand text-[25px] font-bold tracking-[-0.02em] text-[#0F1020]">
+        <h1 className="font-brand text-[25px] font-bold tracking-[-0.02em] text-ink">
           Profile
         </h1>
-        <p className="text-[14.5px] text-[#55556B]">{user.email}</p>
+        <p className="text-[14.5px] text-ink-muted">{user.email}</p>
       </div>
-      <div className="rounded-xl border border-[#E6E6EF] bg-white p-6">
+      <div className="rounded-xl border border-line bg-surface p-6">
         <ProfileForm
           initialName={user.name ?? ""}
           initialCollege={user.college ?? ""}

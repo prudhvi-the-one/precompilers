@@ -9,7 +9,7 @@ export default async function NewAdminCompanyQuestionPage() {
 
   return (
     <div className="mx-auto max-w-3xl space-y-6">
-      <h1 className="font-brand text-[25px] font-bold tracking-[-0.02em] text-gray-900">
+      <h1 className="font-brand text-[25px] font-bold tracking-[-0.02em] text-ink">
         New company question
       </h1>
       <CompanyQuestionForm mode="create" variant="admin" />

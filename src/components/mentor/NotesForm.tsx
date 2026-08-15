@@ -32,7 +32,7 @@ export default function NotesForm({ sessionId }: { sessionId: string }) {
         value={notes}
         onChange={(e) => setNotes(e.target.value)}
         rows={6}
-        className="w-full rounded-md border border-gray-300 p-3 text-sm text-gray-900 focus:border-black focus:outline-none"
+        className="w-full rounded-md border border-line p-3 text-sm text-ink focus:border-black focus:outline-none"
         placeholder="Summary of the counselling conversation and next steps."
       />
       {error ? <p className="text-sm text-red-600">{error}</p> : null}
@@ -40,7 +40,7 @@ export default function NotesForm({ sessionId }: { sessionId: string }) {
         type="button"
         onClick={handleSubmit}
         disabled={!notes.trim() || submitting}
-        className="w-full rounded-md bg-black px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-50"
+        className="w-full rounded-md bg-ink px-4 py-2.5 text-sm font-semibold text-surface disabled:opacity-50"
       >
         {submitting ? "Saving…" : "Save notes"}
       </button>

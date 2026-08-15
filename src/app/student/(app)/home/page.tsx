@@ -66,10 +66,10 @@ export default async function HomePage() {
   return (
     <div className="max-w-3xl space-y-4.5">
       <div>
-        <h1 className="font-brand text-[25px] font-bold tracking-[-0.02em] text-[#0F1020]">
+        <h1 className="font-brand text-[25px] font-bold tracking-[-0.02em] text-ink">
           Welcome{user.name ? `, ${user.name}` : ""}
         </h1>
-        <p className="text-[14.5px] text-[#55556B]">
+        <p className="text-[14.5px] text-ink-muted">
           {enrollment
             ? enrollment.track.name
             : user.gradYear
@@ -79,31 +79,31 @@ export default async function HomePage() {
       </div>
 
       {soonLiveClass ? (
-        <div className="flex items-center justify-between gap-4 rounded-xl border border-[#DDD9FB] bg-gradient-to-r from-[#F6F5FF] to-white p-4">
+        <div className="flex items-center justify-between gap-4 rounded-xl border border-accent-soft bg-linear-to-r from-accent-soft to-surface p-4">
           <div className="flex items-center gap-3">
             <span className="flex h-10.5 w-10.5 items-center justify-center rounded-lg bg-indigo-600 font-mono text-[10px] font-bold text-white">
               LIVE
             </span>
             <div>
-              <p className="text-sm font-semibold text-[#0F1020]">
+              <p className="text-sm font-semibold text-ink">
                 {soonLiveClass.title}
               </p>
-              <p className="text-xs text-[#8A8AA0]">
+              <p className="text-xs text-ink-faint">
                 Starts in {minutesUntil(soonLiveClass.scheduledAt)} minutes
               </p>
             </div>
           </div>
           <Link
             href={`/live/${soonLiveClass.id}`}
-            className="shrink-0 rounded-lg bg-indigo-600 px-4 py-2 font-brand text-[13px] font-semibold text-white hover:bg-[#4338CA]"
+            className="shrink-0 rounded-lg bg-indigo-600 px-4 py-2 font-brand text-[13px] font-semibold text-white hover:bg-accent-hover"
           >
             Join class
           </Link>
         </div>
       ) : null}
 
-      <div className="rounded-xl border border-[#E6E6EF] bg-white p-5">
-        <h2 className="font-brand text-base font-bold text-[#0F1020]">
+      <div className="rounded-xl border border-line bg-surface p-5">
+        <h2 className="font-brand text-base font-bold text-ink">
           What to do next
         </h2>
 
@@ -129,35 +129,35 @@ export default async function HomePage() {
             cta="Resume"
           />
         ) : (
-          <p className="mt-2 text-sm text-[#55556B]">
+          <p className="mt-2 text-sm text-ink-muted">
             You&apos;ve finished every lecture in {enrollment.track.name}.
             Practice, Prove and Career are being built next.
           </p>
         )}
       </div>
 
-      <div className="rounded-xl border border-[#E6E6EF] bg-white p-5">
-        <h2 className="font-brand text-base font-bold text-[#0F1020]">
+      <div className="rounded-xl border border-line bg-surface p-5">
+        <h2 className="font-brand text-base font-bold text-ink">
           Readiness by pillar
         </h2>
-        <div className="mt-3 grid grid-cols-2 gap-4 sm:grid-cols-3">
+        <div className="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-3">
           {pillars.map((pillar) => (
             <div key={pillar.label}>
-              <div className="flex min-h-4.25 flex-wrap items-start gap-1.5 text-xs text-[#55556B]">
+              <div className="flex min-h-4.25 flex-wrap items-start gap-1.5 text-xs text-ink-muted">
                 {pillar.label}
                 {pillar.provenance ? (
                   <span
                     className={
                       pillar.provenance === "VERIFIED"
-                        ? "rounded-full bg-[#E7F7F0] px-1.5 py-0.5 font-mono text-[9px] font-semibold text-[#059669]"
-                        : "rounded-full bg-[#F2F2F7] px-1.5 py-0.5 font-mono text-[9px] font-semibold text-[#9A9AAE]"
+                        ? "rounded-full bg-success-soft px-1.5 py-0.5 font-mono text-[9px] font-semibold text-success"
+                        : "rounded-full bg-line-soft px-1.5 py-0.5 font-mono text-[9px] font-semibold text-ink-faintest"
                     }
                   >
                     {pillar.provenance}
                   </span>
                 ) : null}
               </div>
-              <div className="mt-1.5 h-1.5 rounded-full bg-[#EDEDF3]">
+              <div className="mt-1.5 h-1.5 rounded-full bg-line-soft">
                 {pillar.value !== null ? (
                   <div
                     className="h-full rounded-full"
@@ -165,7 +165,7 @@ export default async function HomePage() {
                   />
                 ) : null}
               </div>
-              <div className="mt-1 text-xs text-[#9A9AAE]">
+              <div className="mt-1 text-xs text-ink-faintest">
                 {pillar.value !== null ? `${pillar.value} · ${pillar.caption}` : "Not assessed"}
               </div>
             </div>
@@ -173,14 +173,14 @@ export default async function HomePage() {
         </div>
       </div>
 
-      <div className="rounded-xl border border-[#E6E6EF] bg-white p-5">
-        <h2 className="font-brand text-base font-bold text-[#0F1020]">
+      <div className="rounded-xl border border-line bg-surface p-5">
+        <h2 className="font-brand text-base font-bold text-ink">
           Your batch
         </h2>
         {leaderboard ? (
           <>
-            <p className="mt-1 text-sm text-[#55556B]">
-              You&apos;re <span className="font-semibold text-[#0F1020]">#{leaderboard.rank}</span> of{" "}
+            <p className="mt-1 text-sm text-ink-muted">
+              You&apos;re <span className="font-semibold text-ink">#{leaderboard.rank}</span> of{" "}
               {leaderboard.total} in your batch.
             </p>
             <div className="mt-3 space-y-2.5">
@@ -196,7 +196,7 @@ export default async function HomePage() {
             </div>
           </>
         ) : (
-          <p className="mt-2 text-sm text-[#55556B]">
+          <p className="mt-2 text-sm text-ink-muted">
             Join a batch and take a quiz or two to see how you compare with your cohort.
           </p>
         )}
@@ -218,17 +218,17 @@ function LeaderboardRow({
         entry.isMe ? "bg-[#F6F5FF]" : ""
       }`}
     >
-      <span className="w-5 shrink-0 text-xs font-semibold text-[#9A9AAE]">{rank}</span>
-      <span className="flex-1 text-sm font-medium text-[#0F1020]">
+      <span className="w-5 shrink-0 text-xs font-semibold text-ink-faintest">{rank}</span>
+      <span className="flex-1 text-sm font-medium text-ink">
         {entry.isMe ? `${entry.name} (you)` : entry.name}
       </span>
-      <div className="h-1.5 w-24 shrink-0 rounded-full bg-[#EDEDF3]">
+      <div className="h-1.5 w-24 shrink-0 rounded-full bg-line-soft">
         <div
           className="h-full rounded-full"
           style={{ width: `${entry.score}%`, backgroundColor: barColor(entry.score) }}
         />
       </div>
-      <span className="w-8 shrink-0 text-right text-xs font-mono text-[#8A8AA0]">
+      <span className="w-8 shrink-0 text-right text-xs font-mono text-ink-faint">
         {entry.score}
       </span>
     </div>
@@ -247,14 +247,14 @@ function NextActionRow({
   cta: string;
 }) {
   return (
-    <div className="mt-3 flex items-center justify-between gap-4 rounded-lg border border-[#DDD9FB] bg-[#FBFAFF] px-4 py-3">
+    <div className="mt-3 flex items-center justify-between gap-4 rounded-lg border border-[#DDD9FB] bg-accent-soft px-4 py-3">
       <div>
-        <div className="text-sm font-medium text-[#0F1020]">{title}</div>
-        <div className="text-xs text-[#8A8AA0]">{description}</div>
+        <div className="text-sm font-medium text-ink">{title}</div>
+        <div className="text-xs text-ink-faint">{description}</div>
       </div>
       <Link
         href={href}
-        className="shrink-0 rounded-md border border-[#DDD9FB] px-3 py-1.5 text-xs font-semibold text-indigo-600 hover:bg-white"
+        className="shrink-0 rounded-md border border-[#DDD9FB] px-3 py-1.5 text-xs font-semibold text-indigo-600 hover:bg-surface"
       >
         {cta}
       </Link>

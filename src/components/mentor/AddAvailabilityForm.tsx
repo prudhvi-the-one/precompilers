@@ -37,7 +37,7 @@ export default function AddAvailabilityForm() {
   return (
     <form onSubmit={handleSubmit} className="flex flex-wrap items-end gap-3">
       <div>
-        <label className="mb-1 block text-xs font-medium text-gray-700">
+        <label className="mb-1 block text-xs font-medium text-ink-secondary">
           Slot start
         </label>
         <input
@@ -45,17 +45,17 @@ export default function AddAvailabilityForm() {
           required
           value={startsAt}
           onChange={(e) => setStartsAt(e.target.value)}
-          className="rounded-md border border-gray-300 px-3 py-2 text-sm"
+          className="rounded-md border border-line px-3 py-2 text-sm"
         />
       </div>
       <div>
-        <label className="mb-1 block text-xs font-medium text-gray-700">
+        <label className="mb-1 block text-xs font-medium text-ink-secondary">
           Duration (min)
         </label>
         <select
           value={durationMinutes}
           onChange={(e) => setDurationMinutes(Number(e.target.value))}
-          className="rounded-md border border-gray-300 px-3 py-2 text-sm"
+          className="rounded-md border border-line px-3 py-2 text-sm"
         >
           {[15, 30, 45, 60].map((m) => (
             <option key={m} value={m}>
@@ -67,7 +67,7 @@ export default function AddAvailabilityForm() {
       <button
         type="submit"
         disabled={submitting}
-        className="rounded-md bg-black px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
+        className="rounded-md bg-ink px-4 py-2 text-sm font-medium text-surface disabled:opacity-50"
       >
         {submitting ? "Adding…" : "Add slot"}
       </button>

@@ -33,10 +33,10 @@ export default async function LiveClassesPage() {
   return (
     <div className="max-w-3xl space-y-4">
       <div>
-        <h1 className="font-brand text-[25px] font-bold tracking-[-0.02em] text-[#0F1020]">
+        <h1 className="font-brand text-[25px] font-bold tracking-[-0.02em] text-ink">
           Live classes
         </h1>
-        <p className="text-[14.5px] text-[#55556B]">
+        <p className="text-[14.5px] text-ink-muted">
           {enrollment
             ? `Upcoming sessions for ${enrollment.track.name}.`
             : "Pick a track to see its live class schedule."}
@@ -44,24 +44,24 @@ export default async function LiveClassesPage() {
       </div>
 
       {enrollment?.batch?.liveClasses.length ? (
-        <div className="divide-y divide-[#F2F2F7] rounded-xl border border-[#E6E6EF] bg-white">
+        <div className="divide-y divide-line-soft rounded-xl border border-line bg-surface">
           {enrollment.batch.liveClasses.map((liveClass) => (
             <div
               key={liveClass.id}
               className="flex items-center justify-between gap-3 px-5 py-4"
             >
               <div>
-                <p className="text-sm font-medium text-[#0F1020]">
+                <p className="text-sm font-medium text-ink">
                   {liveClass.title}
                 </p>
-                <p className="text-xs text-[#8A8AA0]">
+                <p className="text-xs text-ink-faint">
                   {formatSchedule(liveClass.scheduledAt)} ·{" "}
                   {liveClass.durationMinutes} min
                 </p>
               </div>
               <Link
                 href={`/live/${liveClass.id}`}
-                className="shrink-0 rounded-lg bg-indigo-600 px-4 py-2 font-brand text-[13px] font-semibold text-white hover:bg-[#4338CA]"
+                className="shrink-0 rounded-lg bg-indigo-600 px-4 py-2 font-brand text-[13px] font-semibold text-white hover:bg-accent-hover"
               >
                 Join class
               </Link>
@@ -69,7 +69,7 @@ export default async function LiveClassesPage() {
           ))}
         </div>
       ) : (
-        <div className="rounded-xl border border-[#E6E6EF] bg-white p-6 text-center text-sm text-[#55556B]">
+        <div className="rounded-xl border border-line bg-surface p-6 text-center text-sm text-ink-muted">
           {enrollment
             ? "No live classes scheduled yet for this batch."
             : "Set your track to see upcoming live classes."}

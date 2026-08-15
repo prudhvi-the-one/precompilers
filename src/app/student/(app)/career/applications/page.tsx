@@ -50,10 +50,10 @@ export default async function ApplicationsPage({
     <div className="max-w-3xl space-y-6">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="font-brand text-[25px] font-bold tracking-[-0.02em] text-[#0F1020]">
+          <h1 className="font-brand text-[25px] font-bold tracking-[-0.02em] text-ink">
             Application tracker
           </h1>
-          <p className="text-[14.5px] text-[#55556B]">
+          <p className="text-[14.5px] text-ink-muted">
             {allApplications.length} application{allApplications.length === 1 ? "" : "s"} logged.
           </p>
         </div>
@@ -64,8 +64,8 @@ export default async function ApplicationsPage({
               href={f.key === "all" ? "/career/applications" : `/career/applications?filter=${f.key}`}
               className={`rounded-full px-3.5 py-1.5 text-[13px] font-medium ${
                 filter === f.key
-                  ? "bg-[#0F1020] text-white"
-                  : "border border-[#E6E6EF] text-[#2A2A38] hover:bg-white"
+                  ? "bg-ink text-surface"
+                  : "border border-line text-ink-secondary hover:bg-surface"
               }`}
             >
               {f.label}
@@ -76,21 +76,21 @@ export default async function ApplicationsPage({
 
       <ApplicationForm />
 
-      <div className="rounded-xl border border-[#E6E6EF] bg-white">
+      <div className="rounded-xl border border-line bg-surface">
         {applications.length ? (
-          <div className="divide-y divide-[#F2F2F7]">
+          <div className="divide-y divide-line-soft">
             {applications.map((application) => (
               <div key={application.id} className="flex items-start justify-between gap-3 px-5 py-4">
                 <div>
-                  <p className="text-sm font-medium text-[#0F1020]">
+                  <p className="text-sm font-medium text-ink">
                     {application.companyName} · {application.roleTitle}
                   </p>
-                  <p className="text-xs text-[#8A8AA0]">
+                  <p className="text-xs text-ink-faint">
                     Applied {formatDate(application.appliedAt)}
                     {application.deadline ? ` · deadline ${formatDate(application.deadline)}` : ""}
                   </p>
                   {application.notes ? (
-                    <p className="mt-1.5 text-sm text-[#55556B]">{application.notes}</p>
+                    <p className="mt-1.5 text-sm text-ink-muted">{application.notes}</p>
                   ) : null}
                 </div>
                 <ApplicationStatusSelect applicationId={application.id} status={application.status} />
@@ -98,7 +98,7 @@ export default async function ApplicationsPage({
             ))}
           </div>
         ) : (
-          <p className="px-5 py-6 text-sm text-[#8A8AA0]">
+          <p className="px-5 py-6 text-sm text-ink-faint">
             No applications logged yet — use the form above or log one directly from a drive on the Career page.
           </p>
         )}

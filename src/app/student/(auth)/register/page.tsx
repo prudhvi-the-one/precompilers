@@ -8,8 +8,8 @@ import PasswordStrength from "@/components/auth/PasswordStrength";
 import { isPasswordValid } from "@/lib/passwordPolicy";
 
 const inputClass =
-  "w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-300";
-const labelClass = "mb-1 block text-sm font-medium text-gray-700";
+  "w-full rounded-md border border-line px-3 py-2 text-sm focus:border-ink-faint focus:outline-none focus:ring-1 focus:ring-line";
+const labelClass = "mb-1 block text-sm font-medium text-ink-secondary";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -125,14 +125,14 @@ export default function RegisterPage() {
         <button
           type="submit"
           disabled={loading || !canSubmit}
-          className="w-full rounded-md bg-black py-2 text-sm font-medium text-white transition-opacity disabled:cursor-not-allowed disabled:opacity-50"
+          className="w-full rounded-md bg-ink py-2 text-sm font-medium text-surface transition-opacity disabled:cursor-not-allowed disabled:opacity-50"
         >
           {loading ? "Creating account…" : "Create account"}
         </button>
       </form>
-      <p className="text-center text-sm text-gray-500">
+      <p className="text-center text-sm text-ink-faint">
         Already have an account?{" "}
-        <Link href="/login" className="font-medium text-black underline">
+        <Link href="/login" className="font-medium text-ink underline">
           Log in
         </Link>
       </p>

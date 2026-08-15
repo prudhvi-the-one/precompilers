@@ -46,20 +46,20 @@ export default function CreateBatchForm({
   return (
     <form onSubmit={handleSubmit} className="flex flex-wrap items-end gap-3">
       <div>
-        <label className="mb-1 block text-xs font-medium text-gray-700">Batch name</label>
+        <label className="mb-1 block text-xs font-medium text-ink-secondary">Batch name</label>
         <input
           required
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="rounded-md border border-gray-300 px-3 py-2 text-sm"
+          className="rounded-md border border-line px-3 py-2 text-sm"
         />
       </div>
       <div>
-        <label className="mb-1 block text-xs font-medium text-gray-700">Track</label>
+        <label className="mb-1 block text-xs font-medium text-ink-secondary">Track</label>
         <select
           value={trackId}
           onChange={(e) => setTrackId(e.target.value)}
-          className="rounded-md border border-gray-300 px-3 py-2 text-sm"
+          className="rounded-md border border-line px-3 py-2 text-sm"
         >
           {tracks.map((t) => (
             <option key={t.id} value={t.id}>
@@ -69,11 +69,11 @@ export default function CreateBatchForm({
         </select>
       </div>
       <div>
-        <label className="mb-1 block text-xs font-medium text-gray-700">Institution (optional)</label>
+        <label className="mb-1 block text-xs font-medium text-ink-secondary">Institution (optional)</label>
         <select
           value={institutionId}
           onChange={(e) => setInstitutionId(e.target.value)}
-          className="rounded-md border border-gray-300 px-3 py-2 text-sm"
+          className="rounded-md border border-line px-3 py-2 text-sm"
         >
           <option value="">None</option>
           {institutions.map((i) => (
@@ -84,18 +84,18 @@ export default function CreateBatchForm({
         </select>
       </div>
       <div>
-        <label className="mb-1 block text-xs font-medium text-gray-700">Starts</label>
+        <label className="mb-1 block text-xs font-medium text-ink-secondary">Starts</label>
         <input
           type="date"
           value={startsAt}
           onChange={(e) => setStartsAt(e.target.value)}
-          className="rounded-md border border-gray-300 px-3 py-2 text-sm"
+          className="rounded-md border border-line px-3 py-2 text-sm"
         />
       </div>
       <button
         type="submit"
         disabled={submitting || !trackId}
-        className="rounded-md bg-black px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
+        className="rounded-md bg-ink px-4 py-2 text-sm font-medium text-surface disabled:opacity-50"
       >
         {submitting ? "Creating…" : "Create batch"}
       </button>

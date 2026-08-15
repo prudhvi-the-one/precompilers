@@ -17,13 +17,13 @@ export default async function StudentPortalPage() {
       <div className="flex justify-center gap-4">
         <Link
           href="/login"
-          className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium"
+          className="rounded-md border border-line px-4 py-2 text-sm font-medium"
         >
           Log in
         </Link>
         <Link
           href="/register"
-          className="rounded-md bg-black px-4 py-2 text-sm font-medium text-white"
+          className="rounded-md bg-ink px-4 py-2 text-sm font-medium text-surface"
         >
           Create account
         </Link>

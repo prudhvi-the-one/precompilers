@@ -55,31 +55,31 @@ export default function ProvisionUserForm({
   return (
     <form onSubmit={handleSubmit} className="flex flex-wrap items-end gap-3">
       <div>
-        <label className="mb-1 block text-xs font-medium text-gray-700">Name</label>
+        <label className="mb-1 block text-xs font-medium text-ink-secondary">Name</label>
         <input
           required
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="rounded-md border border-gray-300 px-3 py-2 text-sm"
+          className="rounded-md border border-line px-3 py-2 text-sm"
         />
       </div>
       <div>
-        <label className="mb-1 block text-xs font-medium text-gray-700">Email</label>
+        <label className="mb-1 block text-xs font-medium text-ink-secondary">Email</label>
         <input
           type="email"
           required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="rounded-md border border-gray-300 px-3 py-2 text-sm"
+          className="rounded-md border border-line px-3 py-2 text-sm"
         />
       </div>
       {institutionOptions ? (
         <div>
-          <label className="mb-1 block text-xs font-medium text-gray-700">Institution</label>
+          <label className="mb-1 block text-xs font-medium text-ink-secondary">Institution</label>
           <select
             value={institutionId}
             onChange={(e) => setInstitutionId(e.target.value)}
-            className="rounded-md border border-gray-300 px-3 py-2 text-sm"
+            className="rounded-md border border-line px-3 py-2 text-sm"
           >
             {institutionOptions.map((inst) => (
               <option key={inst.id} value={inst.id}>
@@ -91,11 +91,11 @@ export default function ProvisionUserForm({
       ) : null}
       {batchOptions ? (
         <div>
-          <label className="mb-1 block text-xs font-medium text-gray-700">Batch</label>
+          <label className="mb-1 block text-xs font-medium text-ink-secondary">Batch</label>
           <select
             value={facultyBatchId}
             onChange={(e) => setFacultyBatchId(e.target.value)}
-            className="rounded-md border border-gray-300 px-3 py-2 text-sm"
+            className="rounded-md border border-line px-3 py-2 text-sm"
           >
             {batchOptions.map((batch) => (
               <option key={batch.id} value={batch.id}>
@@ -108,13 +108,13 @@ export default function ProvisionUserForm({
       <button
         type="submit"
         disabled={submitting}
-        className="rounded-md bg-black px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
+        className="rounded-md bg-ink px-4 py-2 text-sm font-medium text-surface disabled:opacity-50"
       >
         {submitting ? "Inviting…" : `Invite ${roleLabel}`}
       </button>
       {error ? <p className="w-full text-sm text-red-600">{error}</p> : null}
       {success ? (
-        <p className="w-full text-sm text-emerald-700">
+        <p className="w-full text-sm text-success">
           Account created — they&apos;ll get an email to set their password.
         </p>
       ) : null}

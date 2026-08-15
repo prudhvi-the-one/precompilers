@@ -25,7 +25,7 @@ export default function LogApplicationButton({ driveId }: { driveId: string }) {
       type="button"
       onClick={handleClick}
       disabled={submitting}
-      className="shrink-0 rounded-md border border-[#E6E6EF] px-3 py-1.5 text-xs font-semibold text-[#2A2A38] hover:bg-[#FBFBFD] disabled:opacity-50"
+      className="shrink-0 rounded-md border border-line px-3 py-1.5 text-xs font-semibold text-ink-secondary hover:bg-surface-sunk disabled:opacity-50"
     >
       {submitting ? "Logging…" : "Log application"}
     </button>

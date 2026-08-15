@@ -33,10 +33,10 @@ export default function HowWeCloseIt() {
   return (
     <section id="how-we-close-it" className="px-12 py-16">
       <div className="mx-auto max-w-6xl">
-        <h2 className="font-brand text-[34px] font-bold tracking-[-0.025em] text-[#0F1020]">
+        <h2 className="font-brand text-[34px] font-bold tracking-[-0.025em] text-ink">
           How we close it
         </h2>
-        <p className="mt-3 text-[15px] text-[#55556B]">
+        <p className="mt-3 text-[15px] text-ink-muted">
           Four things, in the order they matter. People are involved in all
           of them.
         </p>
@@ -46,15 +46,15 @@ export default function HowWeCloseIt() {
             <div
               key={item.number}
               id={item.id}
-              className="rounded-xl border border-[#E6E6EF] p-6"
+              className="rounded-xl border border-line p-6"
             >
-              <span className="flex h-8.5 w-8.5 items-center justify-center rounded-[9px] bg-[#F1F0FE] font-mono text-[12px] text-indigo-600">
+              <span className="flex h-8.5 w-8.5 items-center justify-center rounded-[9px] bg-accent-soft font-mono text-[12px] text-indigo-600">
                 {item.number}
               </span>
-              <h3 className="mt-4 font-brand text-[17px] font-bold text-[#0F1020]">
+              <h3 className="mt-4 font-brand text-[17px] font-bold text-ink">
                 {item.title}
               </h3>
-              <p className="mt-2 text-sm text-[#55556B]">
+              <p className="mt-2 text-sm text-ink-muted">
                 {item.description}
               </p>
             </div>

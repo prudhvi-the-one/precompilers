@@ -4,8 +4,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 const inputClass =
-  "w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-gray-500 focus:outline-none focus:ring-1 focus:ring-gray-300";
-const labelClass = "mb-1 block text-sm font-medium text-gray-700";
+  "w-full rounded-md border border-line px-3 py-2 text-sm focus:border-ink-faint focus:outline-none focus:ring-1 focus:ring-line";
+const labelClass = "mb-1 block text-sm font-medium text-ink-secondary";
 
 export default function PhoneLoginForm() {
   const router = useRouter();
@@ -77,7 +77,7 @@ export default function PhoneLoginForm() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full rounded-md bg-black py-2 text-sm font-medium text-white disabled:opacity-50"
+          className="w-full rounded-md bg-ink py-2 text-sm font-medium text-surface disabled:opacity-50"
         >
           {loading ? "Sending…" : "Send code"}
         </button>
@@ -87,7 +87,7 @@ export default function PhoneLoginForm() {
 
   return (
     <form onSubmit={handleVerify} className="space-y-4">
-      <p className="text-sm text-gray-500">
+      <p className="text-sm text-ink-faint">
         We sent a 6-digit code to {phoneNumber}.
       </p>
       <div>
@@ -108,7 +108,7 @@ export default function PhoneLoginForm() {
       <button
         type="submit"
         disabled={loading}
-        className="w-full rounded-md bg-black py-2 text-sm font-medium text-white disabled:opacity-50"
+        className="w-full rounded-md bg-ink py-2 text-sm font-medium text-surface disabled:opacity-50"
       >
         {loading ? "Verifying…" : "Verify & log in"}
       </button>
@@ -119,7 +119,7 @@ export default function PhoneLoginForm() {
           setCode("");
           setError(null);
         }}
-        className="w-full text-center text-sm text-gray-500 underline"
+        className="w-full text-center text-sm text-ink-faint underline"
       >
         Use a different number
       </button>

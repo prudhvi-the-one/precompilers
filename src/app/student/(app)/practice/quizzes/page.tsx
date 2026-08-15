@@ -38,10 +38,10 @@ export default async function QuizzesPage() {
     <div className="max-w-3xl space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="font-brand text-[25px] font-bold tracking-[-0.02em] text-[#0F1020]">
+          <h1 className="font-brand text-[25px] font-bold tracking-[-0.02em] text-ink">
             Topic quizzes
           </h1>
-          <p className="text-[14.5px] text-[#55556B]">
+          <p className="text-[14.5px] text-ink-muted">
             Short, timed quizzes across core CS &amp; AIML topics.
           </p>
         </div>
@@ -53,7 +53,7 @@ export default async function QuizzesPage() {
         </Link>
       </div>
 
-      <div className="divide-y divide-[#F2F2F7] rounded-xl border border-[#E6E6EF] bg-white">
+      <div className="divide-y divide-line-soft rounded-xl border border-line bg-surface">
         {quizzes.map((quiz) => {
           const totalQuestions = quiz.sections.reduce(
             (n, s) => n + s.questions.length,
@@ -65,15 +65,15 @@ export default async function QuizzesPage() {
           return (
             <div key={quiz.id} className="flex items-center justify-between gap-3 px-5 py-4">
               <div>
-                <p className="text-sm font-medium text-[#0F1020]">{quiz.title}</p>
-                <p className="text-xs text-[#8A8AA0]">
+                <p className="text-sm font-medium text-ink">{quiz.title}</p>
+                <p className="text-xs text-ink-faint">
                   {totalQuestions} questions
                   {lastScore !== undefined ? ` · last score ${lastScore}%` : ""}
                   {locked ? " · 🔒 Plan" : ""}
                 </p>
               </div>
               {locked ? (
-                <span className="text-xs text-[#8A8AA0]">Unlock with a plan</span>
+                <span className="text-xs text-ink-faint">Unlock with a plan</span>
               ) : (
                 <StartQuizButton
                   quizId={quiz.id}

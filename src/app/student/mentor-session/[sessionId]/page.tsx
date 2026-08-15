@@ -41,7 +41,7 @@ export default async function StudentMentorSessionPage({
         </div>
         <Link
           href="/prove/mocks"
-          className="rounded-lg bg-[#EF4444] px-4 py-2 text-sm font-semibold text-white hover:bg-[#DC2626]"
+          className="rounded-lg bg-error px-4 py-2 text-sm font-semibold text-white hover:bg-error"
         >
           Leave
         </Link>

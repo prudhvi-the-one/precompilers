@@ -103,14 +103,14 @@ export default function UpgradeTiers({
 
   return (
     <div>
-      <div className="inline-flex items-center gap-1 rounded-full border border-[#E6E6EF] p-1">
+      <div className="inline-flex items-center gap-1 rounded-full border border-line p-1">
         <button
           type="button"
           onClick={() => setBilling("MONTHLY")}
           className={`rounded-full px-4 py-1.5 font-brand text-[13px] font-semibold transition ${
             billing === "MONTHLY"
               ? "bg-indigo-600 text-white"
-              : "text-[#55556B] hover:text-[#0F1020]"
+              : "text-ink-muted hover:text-ink"
           }`}
         >
           Monthly
@@ -121,7 +121,7 @@ export default function UpgradeTiers({
           className={`flex items-center gap-2 rounded-full px-4 py-1.5 font-brand text-[13px] font-semibold transition ${
             billing === "ANNUAL"
               ? "bg-indigo-600 text-white"
-              : "text-[#55556B] hover:text-[#0F1020]"
+              : "text-ink-muted hover:text-ink"
           }`}
         >
           Annual
@@ -129,7 +129,7 @@ export default function UpgradeTiers({
             className={`rounded-full px-2 py-0.5 font-mono text-[10px] ${
               billing === "ANNUAL"
                 ? "bg-white/20 text-white"
-                : "bg-[#F1F0FE] text-indigo-600"
+                : "bg-accent-soft text-indigo-600"
             }`}
           >
             Save 33%
@@ -151,8 +151,8 @@ export default function UpgradeTiers({
               key={tier.tier}
               className={
                 tier.highlight
-                  ? "rounded-xl border-[1.5px] border-indigo-600 bg-[#FBFAFF] p-8"
-                  : "rounded-xl border border-[#E6E6EF] bg-white p-8"
+                  ? "rounded-xl border-[1.5px] border-indigo-600 bg-accent-soft p-8"
+                  : "rounded-xl border border-line bg-surface p-8"
               }
             >
               {tier.highlight ? (
@@ -161,17 +161,17 @@ export default function UpgradeTiers({
                 </p>
               ) : null}
 
-              <h3 className="mt-3 font-brand text-[21px] font-bold text-[#0F1020]">
+              <h3 className="mt-3 font-brand text-[21px] font-bold text-ink">
                 {tier.name}
               </h3>
-              <p className="mt-1 text-sm text-[#55556B]">{tier.tagline}</p>
+              <p className="mt-1 text-sm text-ink-muted">{tier.tagline}</p>
 
               <div className="mt-5">
-                <span className="font-brand text-[36px] font-extrabold text-[#0F1020]">
+                <span className="font-brand text-[36px] font-extrabold text-ink">
                   {inr(displayMonthly)}
                 </span>
-                <span className="text-sm text-[#55556B]">/month</span>
-                <p className="mt-1 text-[13px] text-[#9A9AAE]">
+                <span className="text-sm text-ink-muted">/month</span>
+                <p className="mt-1 text-[13px] text-ink-faintest">
                   {billing === "ANNUAL"
                     ? `Billed ${inr(price)} yearly · + GST`
                     : "Billed monthly · + GST"}
@@ -180,7 +180,7 @@ export default function UpgradeTiers({
 
               <div className="mt-5">
                 {isCurrent ? (
-                  <span className="block rounded-lg bg-[#E7F7F0] px-5 py-2.5 text-center font-brand text-[13.5px] font-semibold text-[#059669]">
+                  <span className="block rounded-lg bg-success-soft px-5 py-2.5 text-center font-brand text-[13.5px] font-semibold text-success">
                     Current plan
                   </span>
                 ) : (
@@ -190,8 +190,8 @@ export default function UpgradeTiers({
                     disabled={purchasing !== null}
                     className={
                       tier.highlight
-                        ? "block w-full rounded-lg bg-indigo-600 px-5 py-2.5 text-center font-brand text-[13.5px] font-semibold text-white transition hover:bg-[#4338CA] disabled:opacity-50"
-                        : "block w-full rounded-lg border border-[#E6E6EF] px-5 py-2.5 text-center font-brand text-[13.5px] font-semibold text-[#0F1020] transition hover:bg-[#F6F5FF] disabled:opacity-50"
+                        ? "block w-full rounded-lg bg-indigo-600 px-5 py-2.5 text-center font-brand text-[13.5px] font-semibold text-white transition hover:bg-accent-hover disabled:opacity-50"
+                        : "block w-full rounded-lg border border-line px-5 py-2.5 text-center font-brand text-[13.5px] font-semibold text-ink transition hover:bg-[#F6F5FF] disabled:opacity-50"
                     }
                   >
                     {purchasing === tier.tier ? "Opening checkout…" : `Get ${tier.name}`}
@@ -201,12 +201,12 @@ export default function UpgradeTiers({
 
               <ul className="mt-6 space-y-2.5">
                 {tier.featuresIntro ? (
-                  <li className="text-[13px] font-medium text-[#8A8AA0]">
+                  <li className="text-[13px] font-medium text-ink-faint">
                     {tier.featuresIntro}
                   </li>
                 ) : null}
                 {tier.features.map((feature) => (
-                  <li key={feature} className="flex gap-2 text-sm text-[#55556B]">
+                  <li key={feature} className="flex gap-2 text-sm text-ink-muted">
                     <span className="text-indigo-600">✓</span>
                     <span>{feature}</span>
                   </li>

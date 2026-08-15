@@ -33,10 +33,10 @@ export default async function ProvePage() {
   return (
     <div className="max-w-3xl space-y-4">
       <div>
-        <h1 className="font-brand text-[25px] font-bold tracking-[-0.02em] text-[#0F1020]">
+        <h1 className="font-brand text-[25px] font-bold tracking-[-0.02em] text-ink">
           Prove
         </h1>
-        <p className="text-[14.5px] text-[#55556B]">
+        <p className="text-[14.5px] text-ink-muted">
           Peer review, mock interviews, and group discussions.
         </p>
       </div>
@@ -44,10 +44,10 @@ export default async function ProvePage() {
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Link
           href="/prove/projects"
-          className="rounded-xl border border-[#E6E6EF] bg-white p-5 hover:bg-[#FBFBFD]"
+          className="rounded-xl border border-line bg-surface p-5 hover:bg-surface-sunk"
         >
-          <h2 className="font-brand text-base font-bold text-[#0F1020]">Project briefs</h2>
-          <p className="mt-1 text-sm text-[#55556B]">
+          <h2 className="font-brand text-base font-bold text-ink">Project briefs</h2>
+          <p className="mt-1 text-sm text-ink-muted">
             {mySubmissionCount > 0
               ? `${mySubmissionCount} submitted`
               : "Pick a brief and ship it"}
@@ -55,10 +55,10 @@ export default async function ProvePage() {
         </Link>
         <Link
           href="/prove/review-queue"
-          className="rounded-xl border border-[#E6E6EF] bg-white p-5 hover:bg-[#FBFBFD]"
+          className="rounded-xl border border-line bg-surface p-5 hover:bg-surface-sunk"
         >
-          <h2 className="font-brand text-base font-bold text-[#0F1020]">Review queue</h2>
-          <p className="mt-1 text-sm text-[#55556B]">
+          <h2 className="font-brand text-base font-bold text-ink">Review queue</h2>
+          <p className="mt-1 text-sm text-ink-muted">
             {pendingReviewCount > 0
               ? `${pendingReviewCount} awaiting review`
               : "Nothing to review right now"}
@@ -66,10 +66,10 @@ export default async function ProvePage() {
         </Link>
         <Link
           href="/prove/mocks"
-          className="rounded-xl border border-[#E6E6EF] bg-white p-5 hover:bg-[#FBFBFD]"
+          className="rounded-xl border border-line bg-surface p-5 hover:bg-surface-sunk"
         >
-          <h2 className="font-brand text-base font-bold text-[#0F1020]">Mock interviews</h2>
-          <p className="mt-1 text-sm text-[#55556B]">
+          <h2 className="font-brand text-base font-bold text-ink">Mock interviews</h2>
+          <p className="mt-1 text-sm text-ink-muted">
             {myMockRequest
               ? "You have a paired mock"
               : "Join the peer pool, free and unlimited"}
@@ -77,10 +77,10 @@ export default async function ProvePage() {
         </Link>
         <Link
           href="/prove/group-discussions"
-          className="rounded-xl border border-[#E6E6EF] bg-white p-5 hover:bg-[#FBFBFD]"
+          className="rounded-xl border border-line bg-surface p-5 hover:bg-surface-sunk"
         >
-          <h2 className="font-brand text-base font-bold text-[#0F1020]">Group discussions</h2>
-          <p className="mt-1 text-sm text-[#55556B]">
+          <h2 className="font-brand text-base font-bold text-ink">Group discussions</h2>
+          <p className="mt-1 text-sm text-ink-muted">
             {upcomingGd
               ? `Next: "${upcomingGd.topic}"`
               : "No sessions scheduled"}

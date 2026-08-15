@@ -40,11 +40,11 @@ export default function CreateNoteForm({
     <form onSubmit={handleSubmit} className="space-y-3">
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div>
-          <label className="mb-1 block text-xs font-medium text-gray-700">Track</label>
+          <label className="mb-1 block text-xs font-medium text-ink-secondary">Track</label>
           <select
             value={trackId}
             onChange={(e) => setTrackId(e.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+            className="w-full rounded-md border border-line px-3 py-2 text-sm"
           >
             {tracks.map((t) => (
               <option key={t.id} value={t.id}>
@@ -54,29 +54,29 @@ export default function CreateNoteForm({
           </select>
         </div>
         <div>
-          <label className="mb-1 block text-xs font-medium text-gray-700">Title</label>
+          <label className="mb-1 block text-xs font-medium text-ink-secondary">Title</label>
           <input
             required
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+            className="w-full rounded-md border border-line px-3 py-2 text-sm"
           />
         </div>
       </div>
       <div>
-        <label className="mb-1 block text-xs font-medium text-gray-700">Content</label>
+        <label className="mb-1 block text-xs font-medium text-ink-secondary">Content</label>
         <textarea
           required
           value={content}
           onChange={(e) => setContent(e.target.value)}
           rows={4}
-          className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+          className="w-full rounded-md border border-line px-3 py-2 text-sm"
         />
       </div>
       <button
         type="submit"
         disabled={submitting || !trackId}
-        className="rounded-md bg-black px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
+        className="rounded-md bg-ink px-4 py-2 text-sm font-medium text-surface disabled:opacity-50"
       >
         {submitting ? "Adding…" : "Add note"}
       </button>

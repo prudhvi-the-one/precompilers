@@ -53,82 +53,82 @@ export default function CreateDriveForm() {
     <form onSubmit={handleSubmit} className="space-y-3">
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div>
-          <label className="mb-1 block text-xs font-medium text-gray-700">Company</label>
+          <label className="mb-1 block text-xs font-medium text-ink-secondary">Company</label>
           <input
             required
             value={companyName}
             onChange={(e) => setCompanyName(e.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+            className="w-full rounded-md border border-line px-3 py-2 text-sm"
           />
         </div>
         <div>
-          <label className="mb-1 block text-xs font-medium text-gray-700">Role</label>
+          <label className="mb-1 block text-xs font-medium text-ink-secondary">Role</label>
           <input
             required
             value={roleTitle}
             onChange={(e) => setRoleTitle(e.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+            className="w-full rounded-md border border-line px-3 py-2 text-sm"
             placeholder="e.g. SDE-1"
           />
         </div>
         <div>
-          <label className="mb-1 block text-xs font-medium text-gray-700">Drive date</label>
+          <label className="mb-1 block text-xs font-medium text-ink-secondary">Drive date</label>
           <input
             required
             type="datetime-local"
             value={driveDate}
             onChange={(e) => setDriveDate(e.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+            className="w-full rounded-md border border-line px-3 py-2 text-sm"
           />
         </div>
         <div>
-          <label className="mb-1 block text-xs font-medium text-gray-700">
+          <label className="mb-1 block text-xs font-medium text-ink-secondary">
             Apply deadline (optional)
           </label>
           <input
             type="datetime-local"
             value={applyDeadline}
             onChange={(e) => setApplyDeadline(e.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+            className="w-full rounded-md border border-line px-3 py-2 text-sm"
           />
         </div>
         <div>
-          <label className="mb-1 block text-xs font-medium text-gray-700">
+          <label className="mb-1 block text-xs font-medium text-ink-secondary">
             Apply URL (optional)
           </label>
           <input
             value={applyUrl}
             onChange={(e) => setApplyUrl(e.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+            className="w-full rounded-md border border-line px-3 py-2 text-sm"
             placeholder="https://..."
           />
         </div>
         <div>
-          <label className="mb-1 block text-xs font-medium text-gray-700">
+          <label className="mb-1 block text-xs font-medium text-ink-secondary">
             Location (optional)
           </label>
           <input
             value={location}
             onChange={(e) => setLocation(e.target.value)}
-            className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+            className="w-full rounded-md border border-line px-3 py-2 text-sm"
             placeholder="e.g. Virtual, Bengaluru"
           />
         </div>
       </div>
       <div>
-        <label className="mb-1 block text-xs font-medium text-gray-700">Description</label>
+        <label className="mb-1 block text-xs font-medium text-ink-secondary">Description</label>
         <textarea
           required
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           rows={3}
-          className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
+          className="w-full rounded-md border border-line px-3 py-2 text-sm"
         />
       </div>
       <button
         type="submit"
         disabled={submitting}
-        className="rounded-md bg-black px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
+        className="rounded-md bg-ink px-4 py-2 text-sm font-medium text-surface disabled:opacity-50"
       >
         {submitting ? "Adding…" : "Add drive"}
       </button>

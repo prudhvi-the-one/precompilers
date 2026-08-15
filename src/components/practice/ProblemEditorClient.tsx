@@ -47,9 +47,9 @@ const MONACO_LANGUAGE: Record<string, string> = {
 };
 
 const DIFFICULTY_STYLE: Record<string, string> = {
-  EASY: "bg-[#E7F7F0] text-[#059669]",
-  MEDIUM: "bg-[#FEF6E7] text-[#B45309]",
-  HARD: "bg-[#FDEBEC] text-[#DC2626]",
+  EASY: "bg-success-soft text-success",
+  MEDIUM: "bg-warn-soft text-warn",
+  HARD: "bg-error-soft text-error",
 };
 
 const TABS = ["Problem", "Hints", "Solutions", "Discussion"] as const;
@@ -61,6 +61,7 @@ export default function ProblemEditorClient({
   problem: ProblemWithRelations;
   locked: boolean;
 }) {
+  const [mobileView, setMobileView] = useState<"problem" | "code">("problem");
   const [tab, setTab] = useState<(typeof TABS)[number]>("Problem");
   const [language, setLanguage] = useState("PYTHON3");
   const [code, setCode] = useState(STARTER_CODE.PYTHON3);
@@ -136,8 +137,8 @@ export default function ProblemEditorClient({
 
   if (locked) {
     return (
-      <div className="max-w-md rounded-xl border border-[#E6E6EF] bg-white p-6 text-center">
-        <p className="text-sm text-[#55556B]">
+      <div className="max-w-md rounded-xl border border-line bg-surface p-6 text-center">
+        <p className="text-sm text-ink-muted">
           🔒 This problem needs a plan upgrade.
         </p>
         <Link href="/practice/problems" className="mt-2 inline-block text-sm font-semibold text-indigo-600 hover:underline">
@@ -150,13 +151,13 @@ export default function ProblemEditorClient({
   const passedCount = results?.filter((r) => r.passed).length ?? 0;
 
   return (
-    <div className="flex h-[calc(100vh-3rem)] flex-col overflow-hidden rounded-[14px] border border-[#E6E6EF] bg-white shadow-sm">
+    <div className="flex h-[calc(100vh-3rem)] flex-col overflow-hidden rounded-[14px] border border-line bg-surface shadow-sm">
       {/* Header */}
-      <div className="flex h-14 shrink-0 items-center gap-3 border-b border-[#EDEDF3] px-5.5">
-        <Link href="/practice/problems" className="text-sm text-[#8A8AA0] hover:text-[#0F1020]">
+      <div className="flex h-auto shrink-0 flex-wrap items-center gap-3 border-b border-line-soft px-3.5 py-2.5 sm:h-14 sm:px-5.5 sm:py-0">
+        <Link href="/practice/problems" className="text-sm text-ink-faint hover:text-ink">
           ← Practice / {problem.category}
         </Link>
-        <span className="font-brand text-[15px] font-semibold text-[#0F1020]">
+        <span className="font-brand text-[15px] font-semibold text-ink">
           {problem.title}
         </span>
         <span
@@ -166,14 +167,14 @@ export default function ProblemEditorClient({
         </span>
         <div className="ml-auto flex items-center gap-3">
           {problem.companies.length ? (
-            <span className="text-xs text-[#9A9AAE]">
+            <span className="hidden text-xs text-ink-faintest sm:inline">
               Asked at {problem.companies.join(", ")}
             </span>
           ) : null}
           <button
             onClick={handleRun}
             disabled={busy !== null}
-            className="rounded-lg border border-[#E6E6EF] px-3.5 py-1.5 text-sm font-semibold text-[#43435A] hover:bg-[#FBFBFD] disabled:opacity-50"
+            className="rounded-lg border border-line px-3.5 py-1.5 text-sm font-semibold text-[#43435A] hover:bg-surface-sunk disabled:opacity-50"
           >
             {busy === "run" ? "Running…" : "Run"}
           </button>
@@ -187,19 +188,40 @@ export default function ProblemEditorClient({
         </div>
       </div>
 
+      {/* Mobile problem/code switcher */}
+      <div className="flex shrink-0 border-b border-line-soft lg:hidden">
+        {(["problem", "code"] as const).map((view) => (
+          <button
+            key={view}
+            onClick={() => setMobileView(view)}
+            className={`flex-1 border-b-2 py-2.5 text-sm font-medium capitalize ${
+              mobileView === view
+                ? "border-indigo-600 text-ink"
+                : "border-transparent text-ink-faint hover:text-ink"
+            }`}
+          >
+            {view === "problem" ? "Problem" : "Code"}
+          </button>
+        ))}
+      </div>
+
       {/* Body */}
       <div className="flex flex-1 overflow-hidden">
         {/* Left pane */}
-        <div className="flex w-[520px] shrink-0 flex-col border-r border-[#EDEDF3]">
-          <div className="flex border-b border-[#EDEDF3] px-5.5">
+        <div
+          className={`${
+            mobileView === "problem" ? "flex" : "hidden"
+          } w-full shrink-0 flex-col border-line-soft lg:flex lg:w-[520px] lg:border-r`}
+        >
+          <div className="flex border-b border-line-soft px-5.5">
             {TABS.map((t) => (
               <button
                 key={t}
                 onClick={() => setTab(t)}
                 className={`border-b-2 px-3 py-3 text-sm font-medium ${
                   tab === t
-                    ? "border-indigo-600 text-[#0F1020]"
-                    : "border-transparent text-[#8A8AA0] hover:text-[#0F1020]"
+                    ? "border-indigo-600 text-ink"
+                    : "border-transparent text-ink-faint hover:text-ink"
                 }`}
               >
                 {t}
@@ -210,33 +232,33 @@ export default function ProblemEditorClient({
           <div className="flex-1 overflow-y-auto px-5.5 py-4">
             {tab === "Problem" ? (
               <div className="space-y-4">
-                <p className="whitespace-pre-wrap text-sm text-[#2A2A38]">{problem.statement}</p>
+                <p className="whitespace-pre-wrap text-sm text-ink-secondary">{problem.statement}</p>
                 {examples.map((ex, i) => (
-                  <div key={i} className="rounded-[10px] border border-[#EDEDF3]">
-                    <div className="rounded-t-[10px] bg-[#FAFAFC] px-3.5 py-2 text-xs font-semibold text-[#55556B]">
+                  <div key={i} className="rounded-[10px] border border-line-soft">
+                    <div className="rounded-t-[10px] bg-surface-sunk px-3.5 py-2 text-xs font-semibold text-ink-muted">
                       Example {i + 1}
                     </div>
-                    <div className="space-y-1 px-3.5 py-2.5 font-mono text-[12.5px] text-[#2A2A38]">
+                    <div className="space-y-1 px-3.5 py-2.5 font-mono text-[12.5px] text-ink-secondary">
                       <p>Input: {ex.input}</p>
                       <p>Output: {ex.output}</p>
                       {ex.explanation ? (
-                        <p className="text-[#8A8AA0]">{`// ${ex.explanation}`}</p>
+                        <p className="text-ink-faint">{`// ${ex.explanation}`}</p>
                       ) : null}
                     </div>
                   </div>
                 ))}
                 <div>
-                  <p className="text-xs font-semibold text-[#55556B]">Constraints</p>
-                  <p className="mt-1 whitespace-pre-wrap font-mono text-[12.5px] text-[#2A2A38]">
+                  <p className="text-xs font-semibold text-ink-muted">Constraints</p>
+                  <p className="mt-1 whitespace-pre-wrap font-mono text-[12.5px] text-ink-secondary">
                     {problem.constraints}
                   </p>
                 </div>
                 <div className="mt-auto flex flex-wrap gap-1.5 pt-4">
-                  <span className="text-xs text-[#8A8AA0]">Part of</span>
+                  <span className="text-xs text-ink-faint">Part of</span>
                   {problem.tags.map((tag) => (
                     <span
                       key={tag}
-                      className="rounded-full bg-[#F1F0FE] px-2 py-0.5 text-[11px] font-medium text-indigo-600"
+                      className="rounded-full bg-accent-soft px-2 py-0.5 text-[11px] font-medium text-indigo-600"
                     >
                       {tag}
                     </span>
@@ -246,11 +268,11 @@ export default function ProblemEditorClient({
             ) : null}
 
             {tab === "Hints" ? (
-              <p className="whitespace-pre-wrap text-sm text-[#2A2A38]">{problem.hints}</p>
+              <p className="whitespace-pre-wrap text-sm text-ink-secondary">{problem.hints}</p>
             ) : null}
 
             {tab === "Solutions" ? (
-              <p className="whitespace-pre-wrap text-sm text-[#2A2A38]">
+              <p className="whitespace-pre-wrap text-sm text-ink-secondary">
                 {problem.solutionExplanation}
               </p>
             ) : null}
@@ -262,7 +284,7 @@ export default function ProblemEditorClient({
                     value={commentDraft}
                     onChange={(e) => setCommentDraft(e.target.value)}
                     placeholder="Ask something or share an approach…"
-                    className="flex-1 rounded-lg border border-[#E6E6EF] px-3 py-2 text-sm outline-none focus:border-indigo-400"
+                    className="flex-1 rounded-lg border border-line px-3 py-2 text-sm outline-none focus:border-indigo-400"
                   />
                   <button
                     onClick={handlePostComment}
@@ -273,15 +295,15 @@ export default function ProblemEditorClient({
                 </div>
                 <div className="space-y-3">
                   {comments.map((c) => (
-                    <div key={c.id} className="border-b border-[#F2F2F7] pb-2.5">
-                      <p className="text-xs font-semibold text-[#55556B]">
+                    <div key={c.id} className="border-b border-line-soft pb-2.5">
+                      <p className="text-xs font-semibold text-ink-muted">
                         {c.user.name ?? c.user.email}
                       </p>
-                      <p className="text-sm text-[#2A2A38]">{c.body}</p>
+                      <p className="text-sm text-ink-secondary">{c.body}</p>
                     </div>
                   ))}
                   {comments.length === 0 ? (
-                    <p className="text-sm text-[#8A8AA0]">No comments yet — be the first.</p>
+                    <p className="text-sm text-ink-faint">No comments yet — be the first.</p>
                   ) : null}
                 </div>
               </div>
@@ -290,12 +312,16 @@ export default function ProblemEditorClient({
         </div>
 
         {/* Right pane */}
-        <div className="flex flex-1 flex-col">
-          <div className="flex h-11 shrink-0 items-center gap-3 bg-[#FAFAFC] px-4">
+        <div
+          className={`${
+            mobileView === "code" ? "flex" : "hidden"
+          } flex-1 flex-col lg:flex`}
+        >
+          <div className="flex h-11 shrink-0 items-center gap-3 bg-surface-sunk px-4">
             <select
               value={language}
               onChange={(e) => changeLanguage(e.target.value)}
-              className="rounded-md border border-[#E6E6EF] bg-white px-2.5 py-1 text-[13px] font-medium text-[#2A2A38] outline-none"
+              className="rounded-md border border-line bg-surface px-2.5 py-1 text-[13px] font-medium text-ink-secondary outline-none"
             >
               {LANGUAGES.map((l) => (
                 <option key={l.key} value={l.key}>
@@ -305,7 +331,7 @@ export default function ProblemEditorClient({
             </select>
             <button
               onClick={() => setCode(STARTER_CODE[language] ?? "")}
-              className="ml-auto text-xs font-medium text-[#8A8AA0] hover:text-[#0F1020]"
+              className="ml-auto text-xs font-medium text-ink-faint hover:text-ink"
             >
               Reset
             </button>
@@ -326,15 +352,15 @@ export default function ProblemEditorClient({
             />
           </div>
 
-          <div className="h-[196px] shrink-0 overflow-y-auto border-t border-[#EDEDF3] bg-white px-4 py-3">
+          <div className="h-[196px] shrink-0 overflow-y-auto border-t border-line-soft bg-surface px-4 py-3">
             <div className="flex items-center gap-3">
-              <p className="text-sm font-semibold text-[#0F1020]">Test results</p>
+              <p className="text-sm font-semibold text-ink">Test results</p>
               {results ? (
                 <span
                   className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${
                     passedCount === results.length
-                      ? "bg-[#E7F7F0] text-[#059669]"
-                      : "bg-[#FDEBEC] text-[#DC2626]"
+                      ? "bg-success-soft text-success"
+                      : "bg-error-soft text-error"
                   }`}
                 >
                   {passedCount} / {results.length} PASSED
@@ -350,25 +376,25 @@ export default function ProblemEditorClient({
               ) : null}
             </div>
 
-            {error ? <p className="mt-2 text-sm text-[#DC2626]">{error}</p> : null}
+            {error ? <p className="mt-2 text-sm text-error">{error}</p> : null}
 
             {results ? (
               <div className="mt-2 space-y-1.5">
                 {results.map((r, i) => (
                   <div
                     key={i}
-                    className="rounded-lg border border-[#EDEDF3] px-3 py-1.5 font-mono text-[12.5px]"
+                    className="rounded-lg border border-line-soft px-3 py-1.5 font-mono text-[12.5px]"
                   >
-                    <span className={r.passed ? "text-[#059669]" : "text-[#DC2626]"}>
+                    <span className={r.passed ? "text-success" : "text-error"}>
                       {r.passed ? "✓" : "✗"}
                     </span>{" "}
-                    <span className="text-[#8A8AA0]">Case {i + 1}</span>{" "}
+                    <span className="text-ink-faint">Case {i + 1}</span>{" "}
                     {r.isSample ? (
                       <span>
                         {r.input} → {r.actualOutput}
                       </span>
                     ) : (
-                      <span className="text-[#8A8AA0]">hidden — large input</span>
+                      <span className="text-ink-faint">hidden — large input</span>
                     )}
                   </div>
                 ))}

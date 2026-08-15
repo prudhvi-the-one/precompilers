@@ -39,7 +39,7 @@ export default async function EditQuizPage({
 
   return (
     <div className="mx-auto max-w-3xl space-y-6">
-      <h1 className="font-brand text-[25px] font-bold tracking-[-0.02em] text-gray-900">
+      <h1 className="font-brand text-[25px] font-bold tracking-[-0.02em] text-ink">
         Edit quiz
       </h1>
       {quiz.status === "REJECTED" && quiz.rejectionReason ? (

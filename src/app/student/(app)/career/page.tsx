@@ -5,11 +5,11 @@ import { prisma } from "@/lib/prisma";
 import LogApplicationButton from "@/components/career/LogApplicationButton";
 
 const STATUS_STYLE: Record<string, string> = {
-  APPLIED: "bg-[#F1F0FE] text-indigo-600",
-  INTERVIEWING: "bg-[#FEF6E7] text-[#B45309]",
-  OFFER: "bg-[#E7F7F0] text-[#059669]",
-  REJECTED: "bg-[#FDEBEC] text-[#DC2626]",
-  WITHDRAWN: "bg-[#F2F2F7] text-[#55556B]",
+  APPLIED: "bg-accent-soft text-indigo-600",
+  INTERVIEWING: "bg-warn-soft text-warn",
+  OFFER: "bg-success-soft text-success",
+  REJECTED: "bg-error-soft text-error",
+  WITHDRAWN: "bg-line-soft text-ink-muted",
 };
 
 const STATUS_LABEL: Record<string, string> = {
@@ -51,27 +51,27 @@ export default async function CareerPage() {
   return (
     <div className="max-w-3xl space-y-4">
       <div>
-        <h1 className="font-brand text-[25px] font-bold tracking-[-0.02em] text-[#0F1020]">
+        <h1 className="font-brand text-[25px] font-bold tracking-[-0.02em] text-ink">
           Career
         </h1>
-        <p className="text-[14.5px] text-[#55556B]">
+        <p className="text-[14.5px] text-ink-muted">
           Campus drives curated by the PreCompilers team.
         </p>
       </div>
 
-      <div className="rounded-xl border border-[#E6E6EF] bg-white">
+      <div className="rounded-xl border border-line bg-surface">
         {drives.length ? (
-          <div className="divide-y divide-[#F2F2F7]">
+          <div className="divide-y divide-line-soft">
             {drives.map((drive) => {
               const application = applicationByDriveId.get(drive.id);
               return (
                 <div key={drive.id} className="px-5 py-4">
-                  <div className="flex items-start justify-between gap-3">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                     <div>
-                      <p className="text-sm font-medium text-[#0F1020]">
+                      <p className="text-sm font-medium text-ink">
                         {drive.companyName} · {drive.roleTitle}
                       </p>
-                      <p className="text-xs text-[#8A8AA0]">
+                      <p className="text-xs text-ink-faint">
                         {formatDate(drive.driveDate)}
                         {drive.location ? ` · ${drive.location}` : ""}
                         {drive.applyDeadline
@@ -79,13 +79,13 @@ export default async function CareerPage() {
                           : ""}
                       </p>
                     </div>
-                    <div className="flex shrink-0 items-center gap-2">
+                    <div className="flex flex-wrap items-center gap-2 sm:shrink-0">
                       {drive.applyUrl ? (
                         <a
                           href={drive.applyUrl}
                           target="_blank"
                           rel="noreferrer"
-                          className="rounded-md bg-[#0F1020] px-3 py-1.5 text-xs font-semibold text-white"
+                          className="rounded-md bg-ink px-3 py-1.5 text-xs font-semibold text-surface"
                         >
                           Apply
                         </a>
@@ -101,13 +101,13 @@ export default async function CareerPage() {
                       )}
                     </div>
                   </div>
-                  <p className="mt-2 text-sm text-[#55556B]">{drive.description}</p>
+                  <p className="mt-2 text-sm text-ink-muted">{drive.description}</p>
                 </div>
               );
             })}
           </div>
         ) : (
-          <p className="px-5 py-6 text-sm text-[#8A8AA0]">No upcoming drives right now.</p>
+          <p className="px-5 py-6 text-sm text-ink-faint">No upcoming drives right now.</p>
         )}
       </div>
     </div>

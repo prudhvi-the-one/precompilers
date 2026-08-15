@@ -18,10 +18,10 @@ export default async function NotesPage() {
   return (
     <div className="max-w-3xl space-y-4">
       <div>
-        <h1 className="font-brand text-[25px] font-bold tracking-[-0.02em] text-[#0F1020]">
+        <h1 className="font-brand text-[25px] font-bold tracking-[-0.02em] text-ink">
           Notes &amp; resources
         </h1>
-        <p className="text-[14.5px] text-[#55556B]">
+        <p className="text-[14.5px] text-ink-muted">
           {enrollment
             ? `Reference notes for ${enrollment.track.name}.`
             : "Pick a track to see its notes here."}
@@ -33,29 +33,29 @@ export default async function NotesPage() {
           {enrollment.track.notes.map((note) => (
             <details
               key={note.id}
-              className="group rounded-xl border border-[#E6E6EF] bg-white open:pb-5"
+              className="group rounded-xl border border-line bg-surface open:pb-5"
             >
-              <summary className="cursor-pointer list-none px-5 py-4 font-brand text-[15px] font-bold text-[#0F1020] marker:content-none">
-                <span className="mr-2 inline-block text-[#9A9AAE] transition-transform group-open:rotate-90">
+              <summary className="cursor-pointer list-none px-5 py-4 font-brand text-[15px] font-bold text-ink marker:content-none">
+                <span className="mr-2 inline-block text-ink-faintest transition-transform group-open:rotate-90">
                   ›
                 </span>
                 {note.title}
               </summary>
-              <p className="px-5 text-sm whitespace-pre-line text-[#2A2A38]">
+              <p className="px-5 text-sm whitespace-pre-line text-ink-secondary">
                 {note.content}
               </p>
             </details>
           ))}
         </div>
       ) : (
-        <div className="rounded-xl border border-[#E6E6EF] bg-white p-6 text-center text-sm text-[#55556B]">
+        <div className="rounded-xl border border-line bg-surface p-6 text-center text-sm text-ink-muted">
           {enrollment
             ? "No notes for this track yet."
             : "Set your track to see its notes."}
         </div>
       )}
 
-      <p className="text-xs text-[#9A9AAE]">
+      <p className="text-xs text-ink-faintest">
         Downloadable PDF export is coming soon — notes are viewable in-app for
         now.
       </p>

@@ -35,14 +35,14 @@ export default function ApproveRejectActions({
   }
 
   return (
-    <div className="space-y-3 rounded-xl border border-gray-200 bg-white p-4">
+    <div className="space-y-3 rounded-xl border border-line bg-surface p-4">
       {error ? <p className="text-sm text-red-600">{error}</p> : null}
       <div className="flex gap-3">
         <button
           type="button"
           onClick={() => act("approve")}
           disabled={submitting}
-          className="rounded-md bg-black px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-50"
+          className="rounded-md bg-ink px-4 py-2.5 text-sm font-semibold text-surface disabled:opacity-50"
         >
           Approve
         </button>
@@ -61,7 +61,7 @@ export default function ApproveRejectActions({
             value={reason}
             onChange={(e) => setReason(e.target.value)}
             rows={3}
-            className="w-full rounded-md border border-gray-300 p-2.5 text-sm focus:border-black focus:outline-none"
+            className="w-full rounded-md border border-line p-2.5 text-sm focus:border-black focus:outline-none"
             placeholder="Tell the mentor what to fix (at least 10 characters)."
           />
           <button

@@ -30,16 +30,16 @@ export default async function BatchesPage() {
   return (
     <div className="mx-auto max-w-3xl space-y-8">
       <div>
-        <h1 className="font-brand text-[25px] font-bold tracking-[-0.02em] text-gray-900">
+        <h1 className="font-brand text-[25px] font-bold tracking-[-0.02em] text-ink">
           Batches
         </h1>
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-ink-faint">
           Cohorts sharing a track and live-class schedule, optionally scoped to an institution.
         </p>
       </div>
 
-      <section className="rounded-xl border border-gray-200 bg-white p-5">
-        <h2 className="mb-3 font-brand text-base font-bold text-gray-900">New batch</h2>
+      <section className="rounded-xl border border-line bg-surface p-5">
+        <h2 className="mb-3 font-brand text-base font-bold text-ink">New batch</h2>
         <CreateBatchForm
           tracks={tracks.map((t) => ({ id: t.id, name: t.name }))}
           institutions={institutions.map((i) => ({ id: i.id, name: i.name }))}
@@ -47,27 +47,27 @@ export default async function BatchesPage() {
       </section>
 
       {batches.length ? (
-        <section className="rounded-xl border border-gray-200 bg-white p-5">
-          <h2 className="mb-3 font-brand text-base font-bold text-gray-900">
+        <section className="rounded-xl border border-line bg-surface p-5">
+          <h2 className="mb-3 font-brand text-base font-bold text-ink">
             Schedule live class
           </h2>
           <CreateLiveClassForm batches={batches.map((b) => ({ id: b.id, name: b.name }))} />
         </section>
       ) : null}
 
-      <section className="rounded-xl border border-gray-200 bg-white">
-        <div className="border-b border-gray-100 px-5 py-4">
-          <h2 className="font-brand text-base font-bold text-gray-900">All batches</h2>
+      <section className="rounded-xl border border-line bg-surface">
+        <div className="border-b border-line-soft px-5 py-4">
+          <h2 className="font-brand text-base font-bold text-ink">All batches</h2>
         </div>
         {batches.length ? (
-          <div className="divide-y divide-gray-100">
+          <div className="divide-y divide-line-soft">
             {batches.map((batch) => (
               <div key={batch.id} className="flex items-center justify-between px-5 py-3.5">
                 <div>
-                  <p className="text-sm font-medium text-gray-900">
+                  <p className="text-sm font-medium text-ink">
                     {batch.name} · {batch.track.name}
                   </p>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-ink-faint">
                     {formatDate(batch.startsAt)} · {batch._count.enrollments} enrolled
                     {batch.institution ? ` · ${batch.institution.name}` : ""}
                   </p>
@@ -76,7 +76,7 @@ export default async function BatchesPage() {
             ))}
           </div>
         ) : (
-          <p className="px-5 py-6 text-sm text-gray-500">No batches yet.</p>
+          <p className="px-5 py-6 text-sm text-ink-faint">No batches yet.</p>
         )}
       </section>
     </div>

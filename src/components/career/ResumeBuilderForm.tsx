@@ -173,49 +173,49 @@ export default function ResumeBuilderForm({
 
   return (
     <div className="space-y-6">
-      <div className="rounded-xl border border-[#E6E6EF] bg-white p-5 space-y-4">
-        <h2 className="font-brand text-base font-bold text-[#0F1020]">Header</h2>
+      <div className="rounded-xl border border-line bg-surface p-5 space-y-4">
+        <h2 className="font-brand text-base font-bold text-ink">Header</h2>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <input
             value={fullName}
             onChange={(e) => setFullName(e.target.value)}
-            className="rounded-md border border-gray-300 p-2.5 text-sm focus:border-black focus:outline-none"
+            className="rounded-md border border-line p-2.5 text-sm focus:border-black focus:outline-none"
             placeholder="Full name"
           />
           <input
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="rounded-md border border-gray-300 p-2.5 text-sm focus:border-black focus:outline-none"
+            className="rounded-md border border-line p-2.5 text-sm focus:border-black focus:outline-none"
             placeholder="Email"
           />
           <input
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
-            className="rounded-md border border-gray-300 p-2.5 text-sm focus:border-black focus:outline-none"
+            className="rounded-md border border-line p-2.5 text-sm focus:border-black focus:outline-none"
             placeholder="Phone (optional)"
           />
           <input
             value={location}
             onChange={(e) => setLocation(e.target.value)}
-            className="rounded-md border border-gray-300 p-2.5 text-sm focus:border-black focus:outline-none"
+            className="rounded-md border border-line p-2.5 text-sm focus:border-black focus:outline-none"
             placeholder="Location (optional)"
           />
           <input
             value={linkedinUrl}
             onChange={(e) => setLinkedinUrl(e.target.value)}
-            className="rounded-md border border-gray-300 p-2.5 text-sm focus:border-black focus:outline-none"
+            className="rounded-md border border-line p-2.5 text-sm focus:border-black focus:outline-none"
             placeholder="LinkedIn URL (optional)"
           />
           <input
             value={githubUrl}
             onChange={(e) => setGithubUrl(e.target.value)}
-            className="rounded-md border border-gray-300 p-2.5 text-sm focus:border-black focus:outline-none"
+            className="rounded-md border border-line p-2.5 text-sm focus:border-black focus:outline-none"
             placeholder="GitHub URL (optional)"
           />
           <input
             value={portfolioUrl}
             onChange={(e) => setPortfolioUrl(e.target.value)}
-            className="rounded-md border border-gray-300 p-2.5 text-sm focus:border-black focus:outline-none sm:col-span-2"
+            className="rounded-md border border-line p-2.5 text-sm focus:border-black focus:outline-none sm:col-span-2"
             placeholder="Portfolio URL (optional)"
           />
         </div>
@@ -223,56 +223,56 @@ export default function ResumeBuilderForm({
           value={summary}
           onChange={(e) => setSummary(e.target.value)}
           rows={3}
-          className="w-full rounded-md border border-gray-300 p-2.5 text-sm focus:border-black focus:outline-none"
+          className="w-full rounded-md border border-line p-2.5 text-sm focus:border-black focus:outline-none"
           placeholder="Short summary (optional)"
         />
         <input
           value={skills}
           onChange={(e) => setSkills(e.target.value)}
-          className="w-full rounded-md border border-gray-300 p-2.5 text-sm focus:border-black focus:outline-none"
+          className="w-full rounded-md border border-line p-2.5 text-sm focus:border-black focus:outline-none"
           placeholder="Skills, comma-separated (e.g. Python, React, SQL)"
         />
       </div>
 
-      <div className="rounded-xl border border-[#E6E6EF] bg-white p-5 space-y-4">
-        <h2 className="font-brand text-base font-bold text-[#0F1020]">Education</h2>
+      <div className="rounded-xl border border-line bg-surface p-5 space-y-4">
+        <h2 className="font-brand text-base font-bold text-ink">Education</h2>
         {education.map((e, index) => (
-          <div key={index} className="grid grid-cols-1 gap-2 rounded-lg border border-gray-100 bg-gray-50 p-3 sm:grid-cols-3">
+          <div key={index} className="grid grid-cols-1 gap-2 rounded-lg border border-line-soft bg-surface-sunk p-3 sm:grid-cols-3">
             <input
               value={e.institution}
               onChange={(ev) => updateEducation(index, { institution: ev.target.value })}
-              className="rounded-md border border-gray-300 p-2 text-sm focus:border-black focus:outline-none"
+              className="rounded-md border border-line p-2 text-sm focus:border-black focus:outline-none"
               placeholder="Institution"
             />
             <input
               value={e.degree}
               onChange={(ev) => updateEducation(index, { degree: ev.target.value })}
-              className="rounded-md border border-gray-300 p-2 text-sm focus:border-black focus:outline-none"
+              className="rounded-md border border-line p-2 text-sm focus:border-black focus:outline-none"
               placeholder="Degree"
             />
             <input
               value={e.fieldOfStudy}
               onChange={(ev) => updateEducation(index, { fieldOfStudy: ev.target.value })}
-              className="rounded-md border border-gray-300 p-2 text-sm focus:border-black focus:outline-none"
+              className="rounded-md border border-line p-2 text-sm focus:border-black focus:outline-none"
               placeholder="Field of study"
             />
             <input
               value={e.startYear}
               onChange={(ev) => updateEducation(index, { startYear: ev.target.value })}
-              className="rounded-md border border-gray-300 p-2 text-sm focus:border-black focus:outline-none"
+              className="rounded-md border border-line p-2 text-sm focus:border-black focus:outline-none"
               placeholder="Start year"
             />
             <input
               value={e.endYear}
               onChange={(ev) => updateEducation(index, { endYear: ev.target.value })}
-              className="rounded-md border border-gray-300 p-2 text-sm focus:border-black focus:outline-none"
+              className="rounded-md border border-line p-2 text-sm focus:border-black focus:outline-none"
               placeholder="End year"
             />
             <div className="flex gap-2">
               <input
                 value={e.gpa}
                 onChange={(ev) => updateEducation(index, { gpa: ev.target.value })}
-                className="flex-1 rounded-md border border-gray-300 p-2 text-sm focus:border-black focus:outline-none"
+                className="flex-1 rounded-md border border-line p-2 text-sm focus:border-black focus:outline-none"
                 placeholder="GPA (optional)"
               />
               {education.length > 1 ? (
@@ -296,33 +296,33 @@ export default function ResumeBuilderForm({
         </button>
       </div>
 
-      <div className="rounded-xl border border-[#E6E6EF] bg-white p-5 space-y-4">
-        <h2 className="font-brand text-base font-bold text-[#0F1020]">Experience</h2>
+      <div className="rounded-xl border border-line bg-surface p-5 space-y-4">
+        <h2 className="font-brand text-base font-bold text-ink">Experience</h2>
         {experience.map((e, index) => (
-          <div key={index} className="space-y-2 rounded-lg border border-gray-100 bg-gray-50 p-3">
+          <div key={index} className="space-y-2 rounded-lg border border-line-soft bg-surface-sunk p-3">
             <div className="grid grid-cols-1 gap-2 sm:grid-cols-4">
               <input
                 value={e.company}
                 onChange={(ev) => updateExperience(index, { company: ev.target.value })}
-                className="rounded-md border border-gray-300 p-2 text-sm focus:border-black focus:outline-none"
+                className="rounded-md border border-line p-2 text-sm focus:border-black focus:outline-none"
                 placeholder="Company"
               />
               <input
                 value={e.role}
                 onChange={(ev) => updateExperience(index, { role: ev.target.value })}
-                className="rounded-md border border-gray-300 p-2 text-sm focus:border-black focus:outline-none"
+                className="rounded-md border border-line p-2 text-sm focus:border-black focus:outline-none"
                 placeholder="Role"
               />
               <input
                 value={e.startDate}
                 onChange={(ev) => updateExperience(index, { startDate: ev.target.value })}
-                className="rounded-md border border-gray-300 p-2 text-sm focus:border-black focus:outline-none"
+                className="rounded-md border border-line p-2 text-sm focus:border-black focus:outline-none"
                 placeholder="Start (e.g. Jun 2025)"
               />
               <input
                 value={e.endDate}
                 onChange={(ev) => updateExperience(index, { endDate: ev.target.value })}
-                className="rounded-md border border-gray-300 p-2 text-sm focus:border-black focus:outline-none"
+                className="rounded-md border border-line p-2 text-sm focus:border-black focus:outline-none"
                 placeholder="End (blank = Present)"
               />
             </div>
@@ -330,7 +330,7 @@ export default function ResumeBuilderForm({
               value={e.description}
               onChange={(ev) => updateExperience(index, { description: ev.target.value })}
               rows={2}
-              className="w-full rounded-md border border-gray-300 p-2 text-sm focus:border-black focus:outline-none"
+              className="w-full rounded-md border border-line p-2 text-sm focus:border-black focus:outline-none"
               placeholder="What you did"
             />
             <button
@@ -351,9 +351,9 @@ export default function ResumeBuilderForm({
         </button>
       </div>
 
-      <div className="rounded-xl border border-[#E6E6EF] bg-white p-5 space-y-4">
+      <div className="rounded-xl border border-line bg-surface p-5 space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="font-brand text-base font-bold text-[#0F1020]">Projects</h2>
+          <h2 className="font-brand text-base font-bold text-ink">Projects</h2>
           {importableSubmissions.length ? (
             <div className="flex flex-wrap gap-2">
               {importableSubmissions.map((s) => (
@@ -361,7 +361,7 @@ export default function ResumeBuilderForm({
                   key={s.id}
                   type="button"
                   onClick={() => importSubmission(s)}
-                  className="rounded-full border border-indigo-200 bg-[#F1F0FE] px-2.5 py-1 text-xs font-medium text-indigo-600 hover:bg-[#E4E2FD]"
+                  className="rounded-full border border-indigo-200 bg-accent-soft px-2.5 py-1 text-xs font-medium text-indigo-600 hover:bg-[#E4E2FD]"
                 >
                   + Import &quot;{s.title}&quot;
                 </button>
@@ -370,24 +370,24 @@ export default function ResumeBuilderForm({
           ) : null}
         </div>
         {projects.map((p, index) => (
-          <div key={index} className="space-y-2 rounded-lg border border-gray-100 bg-gray-50 p-3">
+          <div key={index} className="space-y-2 rounded-lg border border-line-soft bg-surface-sunk p-3">
             <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
               <input
                 value={p.title}
                 onChange={(ev) => updateProject(index, { title: ev.target.value })}
-                className="rounded-md border border-gray-300 p-2 text-sm focus:border-black focus:outline-none"
+                className="rounded-md border border-line p-2 text-sm focus:border-black focus:outline-none"
                 placeholder="Project title"
               />
               <input
                 value={p.techStack}
                 onChange={(ev) => updateProject(index, { techStack: ev.target.value })}
-                className="rounded-md border border-gray-300 p-2 text-sm focus:border-black focus:outline-none"
+                className="rounded-md border border-line p-2 text-sm focus:border-black focus:outline-none"
                 placeholder="Tech stack (optional)"
               />
               <input
                 value={p.link}
                 onChange={(ev) => updateProject(index, { link: ev.target.value })}
-                className="rounded-md border border-gray-300 p-2 text-sm focus:border-black focus:outline-none"
+                className="rounded-md border border-line p-2 text-sm focus:border-black focus:outline-none"
                 placeholder="Link (optional)"
               />
             </div>
@@ -395,7 +395,7 @@ export default function ResumeBuilderForm({
               value={p.description}
               onChange={(ev) => updateProject(index, { description: ev.target.value })}
               rows={2}
-              className="w-full rounded-md border border-gray-300 p-2 text-sm focus:border-black focus:outline-none"
+              className="w-full rounded-md border border-line p-2 text-sm focus:border-black focus:outline-none"
               placeholder="What it does"
             />
             <button
@@ -424,14 +424,14 @@ export default function ResumeBuilderForm({
           type="button"
           onClick={handleSave}
           disabled={submitting || fullName.trim().length === 0}
-          className="rounded-md bg-[#0F1020] px-4 py-2.5 text-sm font-semibold text-white disabled:opacity-50"
+          className="rounded-md bg-ink px-4 py-2.5 text-sm font-semibold text-surface disabled:opacity-50"
         >
           {submitting ? "Saving…" : "Save"}
         </button>
         {hasResume ? (
           <a
             href="/api/profile/resume/pdf"
-            className="rounded-md border border-gray-300 px-4 py-2.5 text-sm font-semibold text-gray-700"
+            className="rounded-md border border-line px-4 py-2.5 text-sm font-semibold text-ink-secondary"
           >
             Download PDF
           </a>

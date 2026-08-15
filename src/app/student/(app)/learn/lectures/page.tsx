@@ -34,10 +34,10 @@ export default async function LecturesPage() {
   return (
     <div className="max-w-3xl space-y-4">
       <div>
-        <h1 className="font-brand text-[25px] font-bold tracking-[-0.02em] text-[#0F1020]">
+        <h1 className="font-brand text-[25px] font-bold tracking-[-0.02em] text-ink">
           Lectures
         </h1>
-        <p className="text-[14.5px] text-[#55556B]">
+        <p className="text-[14.5px] text-ink-muted">
           {enrollment
             ? `Every lecture in ${enrollment.track.name}.`
             : "Pick a track to see its lectures here."}
@@ -45,27 +45,27 @@ export default async function LecturesPage() {
       </div>
 
       {enrollment ? (
-        <div className="divide-y divide-[#F2F2F7] rounded-xl border border-[#E6E6EF] bg-white">
+        <div className="divide-y divide-line-soft rounded-xl border border-line bg-surface">
           {enrollment.track.lectures.map((lecture) => (
             <Link
               key={lecture.id}
               href={`/learn/lectures/${lecture.id}`}
-              className="flex items-center gap-3 px-5 py-3.5 hover:bg-[#FBFBFD]"
+              className="flex items-center gap-3 px-5 py-3.5 hover:bg-surface-sunk"
             >
               <span
                 className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-xs ${
                   completedIds.has(lecture.id)
-                    ? "bg-[#E7F7F0] text-[#059669]"
+                    ? "bg-success-soft text-success"
                     : "border border-[#DDDDE7]"
                 }`}
               >
                 {completedIds.has(lecture.id) ? "✓" : ""}
               </span>
-              <span className="flex-1 text-sm text-[#0F1020]">
+              <span className="flex-1 text-sm text-ink">
                 {lecture.title}
               </span>
               <DownloadAffordance />
-              <span className="text-xs text-[#9A9AAE]">
+              <span className="text-xs text-ink-faintest">
                 {lecture.durationMinutes} min
               </span>
             </Link>

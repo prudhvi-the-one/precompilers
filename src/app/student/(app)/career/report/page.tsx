@@ -29,42 +29,42 @@ export default async function MyReportPage() {
   return (
     <div className="max-w-3xl space-y-4">
       <div>
-        <h1 className="font-brand text-[25px] font-bold tracking-[-0.02em] text-[#0F1020]">
+        <h1 className="font-brand text-[25px] font-bold tracking-[-0.02em] text-ink">
           My report
         </h1>
-        <p className="text-[14.5px] text-[#55556B]">
+        <p className="text-[14.5px] text-ink-muted">
           Your live job-readiness snapshot — share it with a recruiter or your placement cell.
         </p>
       </div>
 
-      <div className="rounded-xl border border-[#E6E6EF] bg-white p-5">
+      <div className="rounded-xl border border-line bg-surface p-5">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <p className="font-brand text-lg font-bold text-[#0F1020]">
+            <p className="font-brand text-lg font-bold text-ink">
               {user.name ?? user.email}
             </p>
-            <p className="text-sm text-[#55556B]">
+            <p className="text-sm text-ink-muted">
               {[user.college, user.branch, user.gradYear ? `Class of ${user.gradYear}` : null]
                 .filter(Boolean)
                 .join(" · ")}
             </p>
             {user.targetRole ? (
-              <p className="mt-1 text-xs text-[#8A8AA0]">
+              <p className="mt-1 text-xs text-ink-faint">
                 Targeting {TARGET_ROLE_LABELS[user.targetRole] ?? user.targetRole}
               </p>
             ) : null}
           </div>
           <div className="shrink-0 text-right">
-            <p className="font-brand text-3xl font-extrabold text-[#4F46E5]">
+            <p className="font-brand text-3xl font-extrabold text-accent">
               {overall !== null ? overall : "—"}
             </p>
-            <p className="text-xs text-[#8A8AA0]">Overall readiness</p>
+            <p className="text-xs text-ink-faint">Overall readiness</p>
           </div>
         </div>
       </div>
 
-      <div className="rounded-xl border border-[#E6E6EF] bg-white p-5">
-        <h2 className="mb-3 font-brand text-base font-bold text-[#0F1020]">Readiness by pillar</h2>
+      <div className="rounded-xl border border-line bg-surface p-5">
+        <h2 className="mb-3 font-brand text-base font-bold text-ink">Readiness by pillar</h2>
         <ReadinessPillarGrid pillars={pillars} />
       </div>
 

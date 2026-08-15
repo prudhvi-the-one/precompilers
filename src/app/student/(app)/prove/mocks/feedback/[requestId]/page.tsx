@@ -26,10 +26,10 @@ export default async function MockFeedbackPage({
   return (
     <div className="max-w-md space-y-4">
       <div>
-        <h1 className="font-brand text-[22px] font-bold text-[#0F1020]">
+        <h1 className="font-brand text-[22px] font-bold text-ink">
           How did it go?
         </h1>
-        <p className="text-[13.5px] text-[#8A8AA0]">
+        <p className="text-[13.5px] text-ink-faint">
           Rate your partner — this feeds their Interview performance pillar.
         </p>
       </div>

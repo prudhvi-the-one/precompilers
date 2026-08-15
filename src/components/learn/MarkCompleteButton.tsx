@@ -24,7 +24,7 @@ export default function MarkCompleteButton({
 
   if (completed) {
     return (
-      <span className="inline-flex items-center gap-2 rounded-lg bg-[#E7F7F0] px-4 py-2 text-sm font-medium text-[#059669]">
+      <span className="inline-flex items-center gap-2 rounded-lg bg-success-soft px-4 py-2 text-sm font-medium text-success">
         ✓ Completed
       </span>
     );
@@ -35,7 +35,7 @@ export default function MarkCompleteButton({
       type="button"
       onClick={handleClick}
       disabled={loading}
-      className="rounded-lg bg-indigo-600 px-4 py-2 font-brand text-sm font-semibold text-white transition hover:bg-[#4338CA] disabled:opacity-50"
+      className="rounded-lg bg-indigo-600 px-4 py-2 font-brand text-sm font-semibold text-white transition hover:bg-accent-hover disabled:opacity-50"
     >
       {loading ? "Saving…" : "Mark complete"}
     </button>
