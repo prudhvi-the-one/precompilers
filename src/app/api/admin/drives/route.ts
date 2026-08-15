@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireRole } from "@/lib/session";
 import { driveSchema } from "@/lib/validation";
+import { notifyUser } from "@/lib/notifications";
 
 export async function POST(request: Request) {
   const actor = await requireRole(["ADMIN", "SUPER_ADMIN"]);
@@ -29,6 +30,25 @@ export async function POST(request: Request) {
       description: parsed.data.description,
     },
   });
+
+  const students = await prisma.user.findMany({
+    where: { role: "STUDENT" },
+    select: { id: true, phoneNumber: true, whatsappOptIn: true },
+  });
+
+  await Promise.allSettled(
+    students.map((student) =>
+      notifyUser({
+        userId: student.id,
+        type: "DRIVE_POSTED",
+        title: `New drive: ${drive.companyName}`,
+        body: `${drive.companyName} is hiring for ${drive.roleTitle}. Check the details on your Career page.`,
+        link: "/career",
+        phoneNumber: student.phoneNumber,
+        whatsappOptIn: student.whatsappOptIn,
+      })
+    )
+  );
 
   return NextResponse.json({ drive }, { status: 201 });
 }

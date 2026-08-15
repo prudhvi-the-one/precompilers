@@ -14,11 +14,15 @@ export default function ProfileForm({
   initialCollege,
   initialBranch,
   initialGradYear,
+  initialPhoneNumber,
+  initialWhatsappOptIn,
 }: {
   initialName: string;
   initialCollege: string;
   initialBranch: string;
   initialGradYear: number | null;
+  initialPhoneNumber: string;
+  initialWhatsappOptIn: boolean;
 }) {
   const [name, setName] = useState(initialName);
   const [college, setCollege] = useState(initialCollege);
@@ -26,6 +30,8 @@ export default function ProfileForm({
   const [gradYear, setGradYear] = useState(
     initialGradYear ? String(initialGradYear) : ""
   );
+  const [phoneNumber, setPhoneNumber] = useState(initialPhoneNumber);
+  const [whatsappOptIn, setWhatsappOptIn] = useState(initialWhatsappOptIn);
   const [status, setStatus] = useState<"idle" | "saving" | "saved" | "error">(
     "idle"
   );
@@ -44,6 +50,8 @@ export default function ProfileForm({
         college,
         branch,
         gradYear: gradYear ? Number(gradYear) : null,
+        phoneNumber: phoneNumber.trim() || null,
+        whatsappOptIn,
       }),
     });
     const data = await res.json();
@@ -111,6 +119,30 @@ export default function ProfileForm({
             </option>
           ))}
         </select>
+      </div>
+      <div>
+        <label className={labelClass} htmlFor="phoneNumber">
+          Phone number
+        </label>
+        <input
+          id="phoneNumber"
+          type="tel"
+          className={inputClass}
+          value={phoneNumber}
+          onChange={(e) => setPhoneNumber(e.target.value)}
+          placeholder="+91XXXXXXXXXX"
+        />
+      </div>
+      <div className="flex items-center gap-2">
+        <input
+          id="whatsappOptIn"
+          type="checkbox"
+          checked={whatsappOptIn}
+          onChange={(e) => setWhatsappOptIn(e.target.checked)}
+        />
+        <label htmlFor="whatsappOptIn" className="text-sm text-gray-700">
+          Send me WhatsApp notifications
+        </label>
       </div>
       {error ? <p className="text-sm text-red-600">{error}</p> : null}
       {status === "saved" ? (
