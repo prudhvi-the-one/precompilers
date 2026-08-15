@@ -84,6 +84,12 @@ enum ContentStatus {
   REJECTED
 }
 
+enum CompanyQuestionCategory {
+  BEHAVIORAL
+  TECHNICAL
+  HR
+}
+
 model User {
   id              String      @id @default(cuid())
   email           String      @unique
@@ -121,6 +127,8 @@ model User {
   reviewedQuizzes   Quiz[]               @relation("QuizReviewer")
   authoredProblems  Problem[]            @relation("ProblemAuthor")
   reviewedProblems  Problem[]            @relation("ProblemReviewer")
+  authoredCompanyQuestions CompanyQuestion[] @relation("CompanyQuestionAuthor")
+  reviewedCompanyQuestions CompanyQuestion[] @relation("CompanyQuestionReviewer")
   reviewsGiven      PeerReview[]         @relation("ReviewsGiven")
   mockRequests      MockRequest[]
   mockFeedbackGiven MockFeedback[]       @relation("MockFeedbackGiven")
@@ -710,4 +718,26 @@ model ResumeProject {
   description String
 
   @@index([resumeId])
+}
+
+model CompanyQuestion {
+  id              String                  @id @default(cuid())
+  companyName     String
+  category        CompanyQuestionCategory
+  question        String
+  guidance        String
+  status          ContentStatus           @default(PUBLISHED)
+  authorId        String?
+  author          User?                   @relation("CompanyQuestionAuthor", fields: [authorId], references: [id], onDelete: SetNull)
+  reviewedById    String?
+  reviewedBy      User?                   @relation("CompanyQuestionReviewer", fields: [reviewedById], references: [id], onDelete: SetNull)
+  submittedAt     DateTime?
+  reviewedAt      DateTime?
+  rejectionReason String?
+  createdAt       DateTime                @default(now())
+  updatedAt       DateTime                @updatedAt
+
+  @@index([status])
+  @@index([authorId])
+  @@index([companyName])
 }

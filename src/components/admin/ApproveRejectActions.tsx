@@ -7,7 +7,7 @@ export default function ApproveRejectActions({
   type,
   id,
 }: {
-  type: "quizzes" | "problems";
+  type: "quizzes" | "problems" | "company-questions";
   id: string;
 }) {
   const router = useRouter();

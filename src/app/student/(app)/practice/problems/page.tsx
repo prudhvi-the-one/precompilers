@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
+import CompanyFilterSelect from "@/components/practice/CompanyFilterSelect";
 
 const FILTERS = [
   { key: "all", label: "All" },
@@ -19,14 +20,14 @@ const DIFFICULTY_STYLE: Record<string, string> = {
 export default async function ProblemsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ filter?: string }>;
+  searchParams: Promise<{ filter?: string; company?: string }>;
 }) {
   const user = await getCurrentUser();
   if (!user) {
     redirect("/login");
   }
 
-  const { filter = "all" } = await searchParams;
+  const { filter = "all", company = "all" } = await searchParams;
 
   const [allProblems, acceptedSubmissions] = await Promise.all([
     prisma.problem.findMany({ where: { status: "PUBLISHED" }, orderBy: { order: "asc" } }),
@@ -37,9 +38,12 @@ export default async function ProblemsPage({
   ]);
   const solvedIds = new Set(acceptedSubmissions.map((s) => s.problemId));
 
+  const companies = [...new Set(allProblems.flatMap((p) => p.companies))].sort();
+
   const problems = allProblems.filter((p) => {
-    if (filter === "all") return true;
-    return p.difficulty === filter.toUpperCase();
+    const matchesDifficulty = filter === "all" || p.difficulty === filter.toUpperCase();
+    const matchesCompany = company === "all" || p.companies.includes(company);
+    return matchesDifficulty && matchesCompany;
   });
 
   return (
@@ -53,20 +57,29 @@ export default async function ProblemsPage({
             {solvedIds.size} of {allProblems.length} solved.
           </p>
         </div>
-        <div className="flex gap-2">
-          {FILTERS.map((f) => (
-            <Link
-              key={f.key}
-              href={f.key === "all" ? "/practice/problems" : `/practice/problems?filter=${f.key}`}
-              className={`rounded-full px-3.5 py-1.5 text-[13px] font-medium ${
-                filter === f.key
-                  ? "bg-[#0F1020] text-white"
-                  : "border border-[#E6E6EF] text-[#2A2A38] hover:bg-white"
-              }`}
-            >
-              {f.label}
-            </Link>
-          ))}
+        <div className="flex flex-wrap items-center gap-2">
+          {FILTERS.map((f) => {
+            const params = new URLSearchParams();
+            if (f.key !== "all") params.set("filter", f.key);
+            if (company !== "all") params.set("company", company);
+            const query = params.toString();
+            return (
+              <Link
+                key={f.key}
+                href={query ? `/practice/problems?${query}` : "/practice/problems"}
+                className={`rounded-full px-3.5 py-1.5 text-[13px] font-medium ${
+                  filter === f.key
+                    ? "bg-[#0F1020] text-white"
+                    : "border border-[#E6E6EF] text-[#2A2A38] hover:bg-white"
+                }`}
+              >
+                {f.label}
+              </Link>
+            );
+          })}
+          {companies.length ? (
+            <CompanyFilterSelect companies={companies} selected={company} />
+          ) : null}
         </div>
       </div>
 
@@ -98,6 +111,14 @@ export default async function ProblemsPage({
                     className="rounded-full bg-[#F1F0FE] px-2 py-0.5 text-[11px] font-medium text-indigo-600"
                   >
                     {tag}
+                  </span>
+                ))}
+                {problem.companies.map((c) => (
+                  <span
+                    key={c}
+                    className="rounded-full bg-[#F2F2F7] px-2 py-0.5 text-[11px] font-medium text-[#55556B]"
+                  >
+                    {c}
                   </span>
                 ))}
               </div>

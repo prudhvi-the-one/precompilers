@@ -25,7 +25,7 @@ export default async function AdminContentPage() {
     return null;
   }
 
-  const [tracks, quizzes, problems] = await Promise.all([
+  const [tracks, quizzes, problems, companyQuestions] = await Promise.all([
     prisma.track.findMany({
       orderBy: { order: "asc" },
       include: { _count: { select: { lectures: true, notes: true } } },
@@ -35,6 +35,10 @@ export default async function AdminContentPage() {
       include: { author: { select: { name: true, email: true } } },
     }),
     prisma.problem.findMany({
+      orderBy: { updatedAt: "desc" },
+      include: { author: { select: { name: true, email: true } } },
+    }),
+    prisma.companyQuestion.findMany({
       orderBy: { updatedAt: "desc" },
       include: { author: { select: { name: true, email: true } } },
     }),
@@ -158,6 +162,49 @@ export default async function AdminContentPage() {
             </div>
           ) : (
             <p className="px-5 py-6 text-sm text-gray-500">No problems yet.</p>
+          )}
+        </div>
+      </section>
+
+      <section className="space-y-3">
+        <div className="flex items-center justify-between">
+          <h2 className="text-sm font-semibold text-gray-900">Company questions</h2>
+          <Link
+            href="/content/company-questions/new"
+            className="rounded-md bg-black px-3 py-1.5 text-xs font-semibold text-white"
+          >
+            New question
+          </Link>
+        </div>
+        <div className="rounded-xl border border-gray-200 bg-white">
+          {companyQuestions.length ? (
+            <div className="divide-y divide-gray-100">
+              {companyQuestions.map((companyQuestion) => (
+                <div
+                  key={companyQuestion.id}
+                  className="flex items-center justify-between gap-3 px-5 py-3.5"
+                >
+                  <div>
+                    <p className="text-sm font-medium text-gray-900">
+                      {companyQuestion.companyName}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      {companyQuestion.category} · by{" "}
+                      {companyQuestion.author?.name ??
+                        companyQuestion.author?.email ??
+                        "PreCompilers staff"}
+                    </p>
+                  </div>
+                  <span
+                    className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${STATUS_STYLE[companyQuestion.status]}`}
+                  >
+                    {STATUS_LABEL[companyQuestion.status]}
+                  </span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="px-5 py-6 text-sm text-gray-500">No company questions yet.</p>
           )}
         </div>
       </section>

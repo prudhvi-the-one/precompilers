@@ -216,6 +216,41 @@ export const resumeSchema = z.object({
   projects: z.array(resumeProjectSchema).max(15).default([]),
 });
 
+export const companyQuestionSchema = z
+  .object({
+    companyName: z.string().trim().max(150),
+    category: z.enum(["BEHAVIORAL", "TECHNICAL", "HR"]),
+    question: z.string().trim().max(2000),
+    guidance: z.string().trim().max(3000),
+    submit: z.boolean(),
+  })
+  .superRefine((data, ctx) => {
+    if (!data.submit) {
+      return;
+    }
+    if (!data.companyName.trim()) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["companyName"],
+        message: "Company name is required before submitting for review",
+      });
+    }
+    if (!data.question.trim()) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["question"],
+        message: "Question is required before submitting for review",
+      });
+    }
+    if (!data.guidance.trim()) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["guidance"],
+        message: "Guidance is required before submitting for review",
+      });
+    }
+  });
+
 export const driveSchema = z.object({
   companyName: z.string().trim().min(1, "Company name is required").max(150),
   roleTitle: z.string().trim().min(1, "Role is required").max(150),
