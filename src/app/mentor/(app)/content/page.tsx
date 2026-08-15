@@ -22,12 +22,16 @@ export default async function MentorContentPage() {
     return null;
   }
 
-  const [quizzes, problems] = await Promise.all([
+  const [quizzes, problems, companyQuestions] = await Promise.all([
     prisma.quiz.findMany({
       where: { authorId: mentor.id },
       orderBy: { updatedAt: "desc" },
     }),
     prisma.problem.findMany({
+      where: { authorId: mentor.id },
+      orderBy: { updatedAt: "desc" },
+    }),
+    prisma.companyQuestion.findMany({
       where: { authorId: mentor.id },
       orderBy: { updatedAt: "desc" },
     }),
@@ -136,6 +140,59 @@ export default async function MentorContentPage() {
             </div>
           ) : (
             <p className="px-5 py-6 text-sm text-gray-500">No problems yet.</p>
+          )}
+        </div>
+      </section>
+
+      <section className="space-y-3">
+        <div className="flex items-center justify-between">
+          <h2 className="text-sm font-semibold text-gray-900">My company questions</h2>
+          <Link
+            href="/content/company-questions/new"
+            className="rounded-md bg-black px-3 py-1.5 text-xs font-semibold text-white"
+          >
+            New question
+          </Link>
+        </div>
+        <div className="rounded-xl border border-gray-200 bg-white">
+          {companyQuestions.length ? (
+            <div className="divide-y divide-gray-100">
+              {companyQuestions.map((companyQuestion) => (
+                <div
+                  key={companyQuestion.id}
+                  className="flex items-center justify-between gap-3 px-5 py-3.5"
+                >
+                  <div>
+                    <p className="text-sm font-medium text-gray-900">
+                      {companyQuestion.companyName}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      {companyQuestion.category}
+                      {companyQuestion.status === "REJECTED" && companyQuestion.rejectionReason
+                        ? ` · ${companyQuestion.rejectionReason}`
+                        : ""}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span
+                      className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${STATUS_STYLE[companyQuestion.status]}`}
+                    >
+                      {STATUS_LABEL[companyQuestion.status]}
+                    </span>
+                    {companyQuestion.status === "DRAFT" || companyQuestion.status === "REJECTED" ? (
+                      <Link
+                        href={`/content/company-questions/${companyQuestion.id}/edit`}
+                        className="rounded-md border border-gray-200 px-3 py-1.5 text-xs font-semibold text-gray-700 hover:bg-gray-50"
+                      >
+                        Edit
+                      </Link>
+                    ) : null}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="px-5 py-6 text-sm text-gray-500">No company questions yet.</p>
           )}
         </div>
       </section>

@@ -19,13 +19,18 @@ export default async function ContentReviewPage() {
     return null;
   }
 
-  const [quizzes, problems] = await Promise.all([
+  const [quizzes, problems, companyQuestions] = await Promise.all([
     prisma.quiz.findMany({
       where: { status: "PENDING_REVIEW" },
       include: { author: { select: { name: true, email: true } } },
       orderBy: { submittedAt: "asc" },
     }),
     prisma.problem.findMany({
+      where: { status: "PENDING_REVIEW" },
+      include: { author: { select: { name: true, email: true } } },
+      orderBy: { submittedAt: "asc" },
+    }),
+    prisma.companyQuestion.findMany({
       where: { status: "PENDING_REVIEW" },
       include: { author: { select: { name: true, email: true } } },
       orderBy: { submittedAt: "asc" },
@@ -48,6 +53,14 @@ export default async function ContentReviewPage() {
       author: p.author,
       submittedAt: p.submittedAt,
       href: `/content-review/problems/${p.id}`,
+    })),
+    ...companyQuestions.map((c) => ({
+      type: "Company question" as const,
+      id: c.id,
+      title: `${c.companyName} — ${c.category}`,
+      author: c.author,
+      submittedAt: c.submittedAt,
+      href: `/content-review/company-questions/${c.id}`,
     })),
   ].sort((a, b) => (a.submittedAt?.getTime() ?? 0) - (b.submittedAt?.getTime() ?? 0));
 

@@ -40,6 +40,7 @@ const CAREER_SUB_ITEMS = [
   { label: "Drives", href: "/career" },
   { label: "My report", href: "/career/report" },
   { label: "Resume", href: "/career/resume" },
+  { label: "Question bank", href: "/career/questions" },
 ];
 
 const NAV_ITEMS: NavItem[] = [
