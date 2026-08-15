@@ -5,6 +5,9 @@ import { createSessionToken, setSessionCookie } from "@/lib/session";
 import { loginSchema } from "@/lib/validation";
 import { parseBody } from "@/lib/api";
 
+const MAX_FAILED_ATTEMPTS = 5;
+const LOCKOUT_MINUTES = 15;
+
 export async function POST(request: Request) {
   const parsed = await parseBody(request, loginSchema);
   if ("error" in parsed) {
@@ -20,6 +23,13 @@ export async function POST(request: Request) {
     );
   }
 
+  if (user.lockedUntil && user.lockedUntil > new Date()) {
+    return NextResponse.json(
+      { error: "Too many failed attempts. Try again in a few minutes." },
+      { status: 429 }
+    );
+  }
+
   if (!user.emailVerifiedAt) {
     return NextResponse.json(
       {
@@ -32,10 +42,28 @@ export async function POST(request: Request) {
 
   const validPassword = await verifyPassword(password, user.passwordHash);
   if (!validPassword) {
+    const failedLoginAttempts = user.failedLoginAttempts + 1;
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        failedLoginAttempts,
+        lockedUntil:
+          failedLoginAttempts >= MAX_FAILED_ATTEMPTS
+            ? new Date(Date.now() + LOCKOUT_MINUTES * 60 * 1000)
+            : null,
+      },
+    });
     return NextResponse.json(
       { error: "Invalid email or password" },
       { status: 401 }
     );
+  }
+
+  if (user.failedLoginAttempts > 0 || user.lockedUntil) {
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { failedLoginAttempts: 0, lockedUntil: null },
+    });
   }
 
   const token = await createSessionToken({ userId: user.id, role: user.role });

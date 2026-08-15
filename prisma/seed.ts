@@ -963,7 +963,7 @@ const MENTORS: MentorSeed[] = [
   },
 ];
 
-const MENTOR_SEED_PASSWORD = "MentorPass123!";
+const MENTOR_SEED_PASSWORD = "kqN!7Z6SphP@@WpF";
 
 async function seedMentors() {
   const passwordHash = await hashPassword(MENTOR_SEED_PASSWORD);
@@ -971,7 +971,7 @@ async function seedMentors() {
   for (const mentorData of MENTORS) {
     const user = await prisma.user.upsert({
       where: { email: mentorData.email },
-      update: { name: mentorData.name },
+      update: { name: mentorData.name, passwordHash },
       create: {
         email: mentorData.email,
         passwordHash,
@@ -1009,11 +1009,7 @@ async function seedMentors() {
     }
   }
 
-  console.log(
-    "Seeded mentors:",
-    MENTORS.map((m) => m.email).join(", "),
-    `(password: ${MENTOR_SEED_PASSWORD})`
-  );
+  console.log("Seeded mentors:", MENTORS.map((m) => m.email).join(", "));
 }
 
 async function main() {
@@ -1113,13 +1109,13 @@ async function main() {
 }
 
 const SUPER_ADMIN_EMAIL = "super.admin@precompilers.com";
-const SUPER_ADMIN_PASSWORD = "SuperAdmin123!";
+const SUPER_ADMIN_PASSWORD = "!cnfHADLuM6gmG2R";
 
 async function seedSuperAdmin() {
   const passwordHash = await hashPassword(SUPER_ADMIN_PASSWORD);
   await prisma.user.upsert({
     where: { email: SUPER_ADMIN_EMAIL },
-    update: {},
+    update: { passwordHash },
     create: {
       email: SUPER_ADMIN_EMAIL,
       passwordHash,
@@ -1128,7 +1124,7 @@ async function seedSuperAdmin() {
       emailVerifiedAt: new Date(),
     },
   });
-  console.log("Seeded super admin:", SUPER_ADMIN_EMAIL, `(password: ${SUPER_ADMIN_PASSWORD})`);
+  console.log("Seeded super admin:", SUPER_ADMIN_EMAIL);
 }
 
 main()

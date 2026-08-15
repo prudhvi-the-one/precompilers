@@ -16,22 +16,28 @@ export async function sendVerificationEmail(
   to: string,
   code: string
 ): Promise<void> {
-  await getResendClient().emails.send({
+  const { error } = await getResendClient().emails.send({
     from: getFromAddress(),
     to,
     subject: "Verify your PreCompilers email",
     text: `Your verification code is ${code}. It expires in 10 minutes.`,
   });
+  if (error) {
+    throw new Error(`Resend failed to send verification email: ${error.message}`);
+  }
 }
 
 export async function sendPasswordResetEmail(
   to: string,
   code: string
 ): Promise<void> {
-  await getResendClient().emails.send({
+  const { error } = await getResendClient().emails.send({
     from: getFromAddress(),
     to,
     subject: "Reset your PreCompilers password",
     text: `Your password reset code is ${code}. It expires in 10 minutes. If you didn't request this, you can ignore this email.`,
   });
+  if (error) {
+    throw new Error(`Resend failed to send password reset email: ${error.message}`);
+  }
 }

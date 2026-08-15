@@ -1,5 +1,5 @@
-import Link from "next/link";
 import Logo from "@/components/Logo";
+import LoginMenu from "@/components/marketing/LoginMenu";
 
 const links = [
   { href: "#gap", label: "The gap" },
@@ -23,18 +23,13 @@ export default function Nav() {
         </div>
 
         <div className="flex items-center gap-5">
+          <LoginMenu />
           <a
-            href="https://student.precompilers.com/login"
-            className="hidden text-sm text-[#2A2A38] hover:text-[#0F1020] sm:inline"
-          >
-            Log in
-          </a>
-          <Link
-            href="#waitlist"
+            href="https://student.precompilers.com/register"
             className="rounded-lg bg-indigo-600 px-4 py-2 font-brand text-[13.5px] font-semibold text-white transition hover:bg-[#4338CA]"
           >
-            Join the waitlist
-          </Link>
+            Sign up free
+          </a>
         </div>
       </nav>
     </header>

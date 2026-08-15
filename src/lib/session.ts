@@ -52,12 +52,21 @@ export async function setSessionCookie(token: string): Promise<void> {
     sameSite: "lax",
     path: "/",
     maxAge: SESSION_DURATION_SECONDS,
+    // Scoped to the whole apex domain (not just the subdomain that set it) so
+    // a session survives navigating between portal subdomains and the root
+    // marketing domain. Left unset outside production since `.` -prefixed
+    // domains don't apply sensibly to localhost or *.vercel.app previews.
+    domain: process.env.NODE_ENV === "production" ? ".precompilers.com" : undefined,
   });
 }
 
 export async function clearSessionCookie(): Promise<void> {
   const cookieStore = await cookies();
-  cookieStore.delete(SESSION_COOKIE_NAME);
+  cookieStore.delete({
+    name: SESSION_COOKIE_NAME,
+    path: "/",
+    domain: process.env.NODE_ENV === "production" ? ".precompilers.com" : undefined,
+  });
 }
 
 export async function getSession(): Promise<SessionPayload | null> {
