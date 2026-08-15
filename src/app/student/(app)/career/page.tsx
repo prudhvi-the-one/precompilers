@@ -3,6 +3,7 @@ import { getCurrentUser } from "@/lib/session";
 import { requireTierAccess } from "@/lib/tier";
 import { prisma } from "@/lib/prisma";
 import LogApplicationButton from "@/components/career/LogApplicationButton";
+import { avatarColor, initialsFromName } from "@/lib/avatar";
 
 const STATUS_STYLE: Record<string, string> = {
   APPLIED: "bg-accent-soft text-indigo-600",
@@ -67,17 +68,25 @@ export default async function CareerPage() {
               return (
                 <div key={drive.id} className="px-5 py-4">
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-ink">
-                        {drive.companyName} · {drive.roleTitle}
-                      </p>
-                      <p className="text-xs text-ink-faint">
-                        {formatDate(drive.driveDate)}
-                        {drive.location ? ` · ${drive.location}` : ""}
-                        {drive.applyDeadline
-                          ? ` · apply by ${formatDate(drive.applyDeadline)}`
-                          : ""}
-                      </p>
+                    <div className="flex items-start gap-3">
+                      <span
+                        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg font-brand text-[13px] font-semibold text-white"
+                        style={{ backgroundColor: avatarColor(drive.companyName) }}
+                      >
+                        {initialsFromName(drive.companyName)}
+                      </span>
+                      <div>
+                        <p className="text-sm font-medium text-ink">
+                          {drive.companyName} · {drive.roleTitle}
+                        </p>
+                        <p className="text-xs text-ink-faint">
+                          {formatDate(drive.driveDate)}
+                          {drive.location ? ` · ${drive.location}` : ""}
+                          {drive.applyDeadline
+                            ? ` · apply by ${formatDate(drive.applyDeadline)}`
+                            : ""}
+                        </p>
+                      </div>
                     </div>
                     <div className="flex flex-wrap items-center gap-2 sm:shrink-0">
                       {drive.applyUrl ? (

@@ -1,27 +1,29 @@
+import { Video, BookOpen, FolderKanban, Mic } from "lucide-react";
+
 const ITEMS = [
   {
-    number: "01",
+    icon: Video,
     title: "Live classes",
     description:
       "Scheduled sessions with instructors, not a video library. Ask questions while you're stuck.",
     id: undefined as string | undefined,
   },
   {
-    number: "02",
+    icon: BookOpen,
     title: "Industry tracks",
     description:
       "SQL, AWS, Azure, React, Angular, backend systems. Chosen from what job posts actually ask for.",
     id: "tracks",
   },
   {
-    number: "03",
+    icon: FolderKanban,
     title: "Real projects",
     description:
       "Briefed like work, reviewed by mentors and peers. So you have something to describe in the room.",
     id: undefined,
   },
   {
-    number: "04",
+    icon: Mic,
     title: "Mock interviews",
     description:
       "With mentors and with peers. Every one ends in a scorecard you can act on.",
@@ -44,12 +46,12 @@ export default function HowWeCloseIt() {
         <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {ITEMS.map((item) => (
             <div
-              key={item.number}
+              key={item.title}
               id={item.id}
               className="rounded-xl border border-line p-6"
             >
-              <span className="flex h-8.5 w-8.5 items-center justify-center rounded-[9px] bg-accent-soft font-mono text-[12px] text-indigo-600">
-                {item.number}
+              <span className="flex h-8.5 w-8.5 items-center justify-center rounded-[9px] bg-accent-soft text-indigo-600">
+                <item.icon className="h-4.5 w-4.5" strokeWidth={2} />
               </span>
               <h3 className="mt-4 font-brand text-[17px] font-bold text-ink">
                 {item.title}

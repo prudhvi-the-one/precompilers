@@ -2,18 +2,18 @@ import { prisma } from "@/lib/prisma";
 
 const IST_TIME_ZONE = "Asia/Kolkata";
 
-function toISTDateKey(date: Date): string {
+export function toISTDateKey(date: Date): string {
   return date.toLocaleDateString("en-CA", { timeZone: IST_TIME_ZONE }); // YYYY-MM-DD
 }
 
-function daysBefore(dateKey: string, days: number): string {
+export function daysBefore(dateKey: string, days: number): string {
   const [year, month, day] = dateKey.split("-").map(Number);
   const d = new Date(Date.UTC(year, month - 1, day));
   d.setUTCDate(d.getUTCDate() - days);
   return d.toISOString().slice(0, 10);
 }
 
-export async function computeCurrentStreak(userId: string): Promise<number> {
+export async function computeActivityByDay(userId: string): Promise<Map<string, number>> {
   const [lectures, quizAttempts, projectSubmissions, submissions, liveClassAttendances] =
     await Promise.all([
       prisma.lectureProgress.findMany({
@@ -38,30 +38,38 @@ export async function computeCurrentStreak(userId: string): Promise<number> {
       }),
     ]);
 
-  const activeDays = new Set<string>();
+  const activityByDay = new Map<string, number>();
+  const bump = (key: string) => activityByDay.set(key, (activityByDay.get(key) ?? 0) + 1);
+
   for (const { completedAt } of lectures) {
-    if (completedAt) activeDays.add(toISTDateKey(completedAt));
+    if (completedAt) bump(toISTDateKey(completedAt));
   }
   for (const { submittedAt } of quizAttempts) {
-    if (submittedAt) activeDays.add(toISTDateKey(submittedAt));
+    if (submittedAt) bump(toISTDateKey(submittedAt));
   }
   for (const { submittedAt } of projectSubmissions) {
-    activeDays.add(toISTDateKey(submittedAt));
+    bump(toISTDateKey(submittedAt));
   }
   for (const { submittedAt } of submissions) {
-    activeDays.add(toISTDateKey(submittedAt));
+    bump(toISTDateKey(submittedAt));
   }
   for (const { joinedAt } of liveClassAttendances) {
-    activeDays.add(toISTDateKey(joinedAt));
+    bump(toISTDateKey(joinedAt));
   }
+
+  return activityByDay;
+}
+
+export async function computeCurrentStreak(userId: string): Promise<number> {
+  const activityByDay = await computeActivityByDay(userId);
 
   const todayKey = toISTDateKey(new Date());
   let cursor: string;
-  if (activeDays.has(todayKey)) {
+  if (activityByDay.has(todayKey)) {
     cursor = todayKey;
   } else {
     const yesterdayKey = daysBefore(todayKey, 1);
-    if (activeDays.has(yesterdayKey)) {
+    if (activityByDay.has(yesterdayKey)) {
       cursor = yesterdayKey;
     } else {
       return 0;
@@ -69,7 +77,7 @@ export async function computeCurrentStreak(userId: string): Promise<number> {
   }
 
   let streak = 0;
-  while (activeDays.has(cursor)) {
+  while (activityByDay.has(cursor)) {
     streak++;
     cursor = daysBefore(cursor, 1);
   }

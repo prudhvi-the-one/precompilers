@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { Building2 } from "lucide-react";
 import { getCurrentUser } from "@/lib/session";
 import { requireTierAccess } from "@/lib/tier";
 import { prisma } from "@/lib/prisma";
@@ -31,14 +32,32 @@ export default async function ProblemsPage({
 
   const { filter = "all", company = "all" } = await searchParams;
 
-  const [allProblems, acceptedSubmissions] = await Promise.all([
+  const [allProblems, acceptedSubmissions, submissionStats] = await Promise.all([
     prisma.problem.findMany({ where: { status: "PUBLISHED" }, orderBy: { order: "asc" } }),
     prisma.submission.findMany({
       where: { userId: user.id, verdict: "ACCEPTED" },
       select: { problemId: true },
     }),
+    prisma.submission.groupBy({
+      by: ["problemId", "verdict"],
+      _count: { _all: true },
+    }),
   ]);
   const solvedIds = new Set(acceptedSubmissions.map((s) => s.problemId));
+
+  const accuracyByProblem = new Map<string, number>();
+  {
+    const totals = new Map<string, { accepted: number; total: number }>();
+    for (const row of submissionStats) {
+      const entry = totals.get(row.problemId) ?? { accepted: 0, total: 0 };
+      entry.total += row._count._all;
+      if (row.verdict === "ACCEPTED") entry.accepted += row._count._all;
+      totals.set(row.problemId, entry);
+    }
+    for (const [problemId, { accepted, total }] of totals) {
+      if (total > 0) accuracyByProblem.set(problemId, Math.round((accepted / total) * 100));
+    }
+  }
 
   const companies = [...new Set(allProblems.flatMap((p) => p.companies))].sort();
 
@@ -88,6 +107,7 @@ export default async function ProblemsPage({
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {problems.map((problem) => {
           const solved = solvedIds.has(problem.id);
+          const accuracy = accuracyByProblem.get(problem.id);
           return (
             <Link
               key={problem.id}
@@ -101,6 +121,9 @@ export default async function ProblemsPage({
                   {problem.difficulty}
                 </span>
                 <span className="text-ink-faintest">{problem.category}</span>
+                {accuracy !== undefined ? (
+                  <span className="font-mono text-ink-faintest">{accuracy}% acc.</span>
+                ) : null}
                 {solved ? <span className="ml-auto text-success">✓ Solved</span> : null}
               </div>
               <h2 className="mt-2 font-brand text-base font-bold text-ink">
@@ -118,8 +141,9 @@ export default async function ProblemsPage({
                 {problem.companies.map((c) => (
                   <span
                     key={c}
-                    className="rounded-full bg-line-soft px-2 py-0.5 text-[11px] font-medium text-ink-muted"
+                    className="flex items-center gap-1 rounded-full bg-line-soft px-2 py-0.5 text-[11px] font-medium text-ink-muted"
                   >
+                    <Building2 className="h-3 w-3" strokeWidth={2} />
                     {c}
                   </span>
                 ))}

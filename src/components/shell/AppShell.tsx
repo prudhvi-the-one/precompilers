@@ -23,7 +23,12 @@ export default function AppShell({
 
   return (
     <div className="flex min-h-screen flex-1 flex-col bg-surface text-ink-secondary">
-      <Topbar user={user} currentStreak={currentStreak} onMenuClick={() => setDrawerOpen(true)} />
+      <Topbar
+        user={user}
+        currentStreak={currentStreak}
+        overallReadiness={overallReadiness}
+        onMenuClick={() => setDrawerOpen(true)}
+      />
       <div className="flex flex-1">
         <SidebarNav
           overallReadiness={overallReadiness}

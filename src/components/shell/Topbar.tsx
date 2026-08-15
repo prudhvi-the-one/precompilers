@@ -5,28 +5,20 @@ import Logo from "@/components/Logo";
 import LogoutButton from "@/components/auth/LogoutButton";
 import NotificationBell from "@/components/shell/NotificationBell";
 import ThemeToggle from "@/components/shell/ThemeToggle";
-
-function initials(name: string | null, email: string): string {
-  if (name) {
-    return name
-      .trim()
-      .split(/\s+/)
-      .slice(0, 2)
-      .map((part) => part[0]?.toUpperCase())
-      .join("");
-  }
-  return email[0]?.toUpperCase() ?? "?";
-}
+import { initialsFromName } from "@/lib/avatar";
 
 export default function Topbar({
   user,
   currentStreak,
+  overallReadiness,
   onMenuClick,
 }: {
   user: User;
   currentStreak: number;
+  overallReadiness: number | null;
   onMenuClick: () => void;
 }) {
+  const readinessPct = overallReadiness ?? 0;
   return (
     <header className="flex h-15 items-center gap-2 border-b border-line-soft bg-surface px-3 sm:px-6">
       <button
@@ -66,8 +58,16 @@ export default function Topbar({
         </span>
 
         <Link href="/profile" className="flex items-center gap-2">
-          <span className="flex h-7.5 w-7.5 shrink-0 items-center justify-center rounded-full bg-indigo-600 font-brand text-[12px] font-semibold text-white">
-            {initials(user.name, user.email)}
+          <span
+            title={overallReadiness !== null ? `Job readiness: ${overallReadiness}` : undefined}
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full"
+            style={{
+              background: `conic-gradient(var(--accent) 0 ${readinessPct}%, var(--line-soft) ${readinessPct}% 100%)`,
+            }}
+          >
+            <span className="flex h-7 w-7 items-center justify-center rounded-full bg-indigo-600 font-brand text-[12px] font-semibold text-white">
+              {initialsFromName(user.name, user.email)}
+            </span>
           </span>
           <span className="hidden text-sm text-ink-secondary lg:inline">
             {user.name ?? user.email}

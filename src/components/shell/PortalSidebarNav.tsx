@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import type { LucideIcon } from "lucide-react";
 import MobileDrawer from "@/components/shell/MobileDrawer";
 
-export type PortalNavItem = { label: string; href: string };
+export type PortalNavItem = { label: string; href: string; icon: LucideIcon };
 
 function PortalNavList({
   items,
@@ -19,6 +20,7 @@ function PortalNavList({
     <div className="flex flex-col gap-1">
       {items.map((item) => {
         const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
+        const Icon = item.icon;
         return (
           <Link
             key={item.href}
@@ -26,10 +28,15 @@ function PortalNavList({
             onClick={onNavigate}
             className={
               active
-                ? "rounded-[9px] bg-accent-soft px-3 py-2.5 text-sm font-semibold text-accent"
-                : "rounded-[9px] px-3 py-2.5 text-sm text-ink-muted hover:bg-line-soft"
+                ? "flex items-center gap-2.75 rounded-[9px] bg-accent-soft px-3 py-2.5 text-sm font-semibold text-accent"
+                : "flex items-center gap-2.75 rounded-[9px] px-3 py-2.5 text-sm text-ink-muted hover:bg-line-soft"
             }
           >
+            <Icon
+              className="h-4 w-4 shrink-0"
+              strokeWidth={active ? 2 : 1.5}
+              color={active ? "#4F46E5" : "#C6C6D4"}
+            />
             {item.label}
           </Link>
         );

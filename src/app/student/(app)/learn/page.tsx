@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { Lock } from "lucide-react";
 import { getCurrentUser } from "@/lib/session";
 import { requireTierAccess } from "@/lib/tier";
 import { prisma } from "@/lib/prisma";
@@ -120,7 +121,7 @@ export default async function LearnPage({
               key={track.id}
               className="rounded-xl border border-line bg-surface p-4"
             >
-              <TrackCoverPlaceholder label={track.name.toUpperCase()} />
+              <TrackCoverPlaceholder trackId={track.id} label={track.name.toUpperCase()} />
 
               <div className="mt-3 flex items-center gap-2 text-xs">
                 {isEnrolled ? (
@@ -128,8 +129,9 @@ export default async function LearnPage({
                     In progress
                   </span>
                 ) : locked ? (
-                  <span className="rounded-full bg-line-soft px-2.5 py-0.5 font-medium text-ink-faint">
-                    🔒 {track.requiredEntitlement === "INSTITUTION" ? "Institution" : "Plan"}
+                  <span className="flex items-center gap-1 rounded-full bg-line-soft px-2.5 py-0.5 font-medium text-ink-faint">
+                    <Lock className="h-3 w-3" strokeWidth={2} />
+                    {track.requiredEntitlement === "INSTITUTION" ? "Institution" : "Plan"}
                   </span>
                 ) : (
                   <span className="rounded-full bg-success-soft px-2.5 py-0.5 font-medium text-success">

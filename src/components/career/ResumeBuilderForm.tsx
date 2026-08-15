@@ -419,22 +419,39 @@ export default function ResumeBuilderForm({
       {error ? <p className="text-sm text-red-600">{error}</p> : null}
       {saved ? <p className="text-sm text-green-700">Saved.</p> : null}
 
-      <div className="flex items-center gap-3">
-        <button
-          type="button"
-          onClick={handleSave}
-          disabled={submitting || fullName.trim().length === 0}
-          className="rounded-md bg-ink px-4 py-2.5 text-sm font-semibold text-surface disabled:opacity-50"
-        >
-          {submitting ? "Saving…" : "Save"}
-        </button>
-        {hasResume ? (
-          <a
-            href="/api/profile/resume/pdf"
-            className="rounded-md border border-line px-4 py-2.5 text-sm font-semibold text-ink-secondary"
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={handleSave}
+            disabled={submitting || fullName.trim().length === 0}
+            className="rounded-md bg-ink px-4 py-2.5 text-sm font-semibold text-surface disabled:opacity-50"
           >
-            Download PDF
-          </a>
+            {submitting ? "Saving…" : "Save"}
+          </button>
+          {hasResume ? (
+            <a
+              href="/api/profile/resume/pdf"
+              className="rounded-md border border-line px-4 py-2.5 text-sm font-semibold text-ink-secondary"
+            >
+              Download PDF
+            </a>
+          ) : null}
+        </div>
+
+        {fullName.trim() ? (
+          <div className="w-full max-w-70 rounded-lg border border-line bg-surface p-4 shadow-[0_2px_10px_rgba(15,16,32,0.05)]">
+            <p className="font-mono text-[9px] tracking-[0.08em] text-ink-faintest uppercase">
+              Preview
+            </p>
+            <p className="mt-1.5 font-brand text-sm font-bold text-ink">{fullName}</p>
+            <p className="mt-0.5 text-[11px] text-ink-faint">
+              {[email, phone, location].filter(Boolean).join(" · ")}
+            </p>
+            {summary.trim() ? (
+              <p className="mt-2 line-clamp-3 text-[11.5px] text-ink-muted">{summary}</p>
+            ) : null}
+          </div>
         ) : null}
       </div>
     </div>

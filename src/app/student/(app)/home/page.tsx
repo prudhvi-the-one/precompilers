@@ -4,6 +4,9 @@ import { getCurrentUser } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { computeReadinessPillars } from "@/lib/readiness";
 import { computeBatchLeaderboard } from "@/lib/leaderboard";
+import { computeActivityByDay } from "@/lib/streak";
+import StreakHeatmap from "@/components/home/StreakHeatmap";
+import { avatarColor, initialsFromName } from "@/lib/avatar";
 
 function barColor(value: number): string {
   if (value < 40) return "#DB2777";
@@ -58,9 +61,10 @@ export default async function HomePage() {
     return mins >= 0 && mins <= 60;
   });
 
-  const [pillars, leaderboard] = await Promise.all([
+  const [pillars, leaderboard, activityByDay] = await Promise.all([
     computeReadinessPillars(user.id),
     computeBatchLeaderboard(user.id),
+    computeActivityByDay(user.id),
   ]);
 
   return (
@@ -175,6 +179,15 @@ export default async function HomePage() {
 
       <div className="rounded-xl border border-line bg-surface p-5">
         <h2 className="font-brand text-base font-bold text-ink">
+          Activity streak
+        </h2>
+        <div className="mt-3">
+          <StreakHeatmap activityByDay={activityByDay} />
+        </div>
+      </div>
+
+      <div className="rounded-xl border border-line bg-surface p-5">
+        <h2 className="font-brand text-base font-bold text-ink">
           Your batch
         </h2>
         {leaderboard ? (
@@ -205,20 +218,30 @@ export default async function HomePage() {
   );
 }
 
+const MEDALS: Record<number, string> = { 1: "🥇", 2: "🥈", 3: "🥉" };
+
 function LeaderboardRow({
   rank,
   entry,
 }: {
   rank: number;
-  entry: { name: string; score: number; isMe: boolean };
+  entry: { userId: string; name: string; score: number; isMe: boolean };
 }) {
   return (
     <div
       className={`flex items-center gap-3 rounded-lg px-3 py-2 ${
-        entry.isMe ? "bg-[#F6F5FF]" : ""
+        entry.isMe ? "bg-accent-soft" : ""
       }`}
     >
-      <span className="w-5 shrink-0 text-xs font-semibold text-ink-faintest">{rank}</span>
+      <span className="w-5 shrink-0 text-center text-xs font-semibold text-ink-faintest">
+        {MEDALS[rank] ?? rank}
+      </span>
+      <span
+        className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full font-brand text-[10px] font-semibold text-white"
+        style={{ backgroundColor: avatarColor(entry.userId) }}
+      >
+        {initialsFromName(entry.name)}
+      </span>
       <span className="flex-1 text-sm font-medium text-ink">
         {entry.isMe ? `${entry.name} (you)` : entry.name}
       </span>
