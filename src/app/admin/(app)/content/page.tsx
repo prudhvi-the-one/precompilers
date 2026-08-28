@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { requireRole } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
+import type { CompanyQuestionCategory, ContentStatus, Difficulty, Prisma } from "@prisma/client";
 import CreateTrackForm from "@/components/admin/CreateTrackForm";
 import CreateLectureForm from "@/components/admin/CreateLectureForm";
 import CreateNoteForm from "@/components/admin/CreateNoteForm";
@@ -20,30 +21,257 @@ const STATUS_LABEL: Record<string, string> = {
   REJECTED: "Rejected",
 };
 
-export default async function AdminContentPage() {
+const STATUS_OPTIONS: ContentStatus[] = ["DRAFT", "PENDING_REVIEW", "PUBLISHED", "REJECTED"];
+const DIFFICULTY_OPTIONS: Difficulty[] = ["EASY", "MEDIUM", "HARD"];
+const COMPANY_CATEGORY_OPTIONS: CompanyQuestionCategory[] = ["BEHAVIORAL", "TECHNICAL", "HR"];
+
+const PAGE_SIZE = 20;
+
+type Tab = "quizzes" | "problems" | "company-questions";
+const TABS: { key: Tab; label: string }[] = [
+  { key: "problems", label: "Problems" },
+  { key: "quizzes", label: "Quizzes" },
+  { key: "company-questions", label: "Company questions" },
+];
+
+type SearchParams = {
+  tab?: string;
+  status?: string;
+  category?: string;
+  difficulty?: string;
+  q?: string;
+  page?: string;
+};
+
+function tabHref(tab: Tab) {
+  return `/content?tab=${tab}`;
+}
+
+function pageHref(tab: Tab, params: SearchParams, page: number) {
+  const usp = new URLSearchParams();
+  usp.set("tab", tab);
+  if (params.status) usp.set("status", params.status);
+  if (params.category) usp.set("category", params.category);
+  if (params.difficulty) usp.set("difficulty", params.difficulty);
+  if (params.q) usp.set("q", params.q);
+  if (page > 1) usp.set("page", String(page));
+  return `/content?${usp.toString()}`;
+}
+
+function FilterForm({
+  tab,
+  q,
+  status,
+  categoryOptions,
+  category,
+  difficulty,
+  searchPlaceholder,
+}: {
+  tab: Tab;
+  q: string;
+  status: string;
+  categoryOptions: { value: string; label: string }[];
+  category: string;
+  difficulty?: string;
+  searchPlaceholder: string;
+}) {
+  return (
+    <form className="flex flex-wrap items-center gap-2 border-b border-line-soft px-5 py-4">
+      <input type="hidden" name="tab" value={tab} />
+      <input
+        name="q"
+        defaultValue={q}
+        placeholder={searchPlaceholder}
+        className="w-full max-w-xs rounded-md border border-line px-3 py-1.5 text-sm"
+      />
+      <select
+        name="status"
+        defaultValue={status}
+        className="rounded-md border border-line px-3 py-1.5 text-sm"
+      >
+        <option value="">All statuses</option>
+        {STATUS_OPTIONS.map((s) => (
+          <option key={s} value={s}>
+            {STATUS_LABEL[s]}
+          </option>
+        ))}
+      </select>
+      <select
+        name="category"
+        defaultValue={category}
+        className="rounded-md border border-line px-3 py-1.5 text-sm"
+      >
+        <option value="">All categories</option>
+        {categoryOptions.map((c) => (
+          <option key={c.value} value={c.value}>
+            {c.label}
+          </option>
+        ))}
+      </select>
+      {difficulty !== undefined ? (
+        <select
+          name="difficulty"
+          defaultValue={difficulty}
+          className="rounded-md border border-line px-3 py-1.5 text-sm"
+        >
+          <option value="">All difficulties</option>
+          {DIFFICULTY_OPTIONS.map((d) => (
+            <option key={d} value={d}>
+              {d.charAt(0) + d.slice(1).toLowerCase()}
+            </option>
+          ))}
+        </select>
+      ) : null}
+      <button className="rounded-md border border-line px-3 py-1.5 text-sm font-medium">
+        Filter
+      </button>
+    </form>
+  );
+}
+
+function Pagination({
+  tab,
+  params,
+  page,
+  totalPages,
+}: {
+  tab: Tab;
+  params: SearchParams;
+  page: number;
+  totalPages: number;
+}) {
+  if (totalPages <= 1) return null;
+  return (
+    <div className="flex items-center justify-between px-5 py-3 text-sm">
+      {page > 1 ? (
+        <Link href={pageHref(tab, params, page - 1)} className="font-medium text-accent">
+          ← Previous
+        </Link>
+      ) : (
+        <span />
+      )}
+      <span className="text-ink-faint">
+        Page {page} of {totalPages}
+      </span>
+      {page < totalPages ? (
+        <Link href={pageHref(tab, params, page + 1)} className="font-medium text-accent">
+          Next →
+        </Link>
+      ) : (
+        <span />
+      )}
+    </div>
+  );
+}
+
+export default async function AdminContentPage({
+  searchParams,
+}: {
+  searchParams: Promise<SearchParams>;
+}) {
   const admin = await requireRole(["ADMIN", "SUPER_ADMIN"]);
   if (!admin) {
     return null;
   }
 
-  const [tracks, quizzes, problems, companyQuestions] = await Promise.all([
+  const params = await searchParams;
+  const tab: Tab = TABS.some((t) => t.key === params.tab) ? (params.tab as Tab) : "problems";
+  const q = params.q?.trim() ?? "";
+  const status = params.status ?? "";
+  const category = params.category ?? "";
+  const difficulty = params.difficulty ?? "";
+  const page = Math.max(1, Number.parseInt(params.page ?? "1", 10) || 1);
+  const skip = (page - 1) * PAGE_SIZE;
+
+  const [tracks, quizCount, problemCount, companyQuestionCount] = await Promise.all([
     prisma.track.findMany({
       orderBy: { order: "asc" },
       include: { _count: { select: { lectures: true, notes: true } } },
     }),
-    prisma.quiz.findMany({
-      orderBy: { updatedAt: "desc" },
-      include: { author: { select: { name: true, email: true } } },
-    }),
-    prisma.problem.findMany({
-      orderBy: { updatedAt: "desc" },
-      include: { author: { select: { name: true, email: true } } },
-    }),
-    prisma.companyQuestion.findMany({
-      orderBy: { updatedAt: "desc" },
-      include: { author: { select: { name: true, email: true } } },
-    }),
+    prisma.quiz.count(),
+    prisma.problem.count(),
+    prisma.companyQuestion.count(),
   ]);
+
+  const authorSelect = { author: { select: { name: true, email: true } } } as const;
+
+  let quizzes: Prisma.QuizGetPayload<{ include: typeof authorSelect }>[] = [];
+  let quizTotal = 0;
+  let quizCategories: string[] = [];
+
+  let problems: Prisma.ProblemGetPayload<{ include: typeof authorSelect }>[] = [];
+  let problemTotal = 0;
+  let problemCategories: string[] = [];
+
+  let companyQuestions: Prisma.CompanyQuestionGetPayload<{ include: typeof authorSelect }>[] = [];
+  let companyQuestionTotal = 0;
+
+  if (tab === "quizzes") {
+    const where: Prisma.QuizWhereInput = {
+      ...(status ? { status: status as ContentStatus } : {}),
+      ...(category ? { topic: category } : {}),
+      ...(q ? { title: { contains: q, mode: "insensitive" } } : {}),
+    };
+    const [rows, total, distinctTopics] = await Promise.all([
+      prisma.quiz.findMany({
+        where,
+        orderBy: { updatedAt: "desc" },
+        include: authorSelect,
+        skip,
+        take: PAGE_SIZE,
+      }),
+      prisma.quiz.count({ where }),
+      prisma.quiz.findMany({ distinct: ["topic"], select: { topic: true }, orderBy: { topic: "asc" } }),
+    ]);
+    quizzes = rows;
+    quizTotal = total;
+    quizCategories = distinctTopics.map((t) => t.topic);
+  } else if (tab === "problems") {
+    const where: Prisma.ProblemWhereInput = {
+      ...(status ? { status: status as ContentStatus } : {}),
+      ...(category ? { category } : {}),
+      ...(difficulty ? { difficulty: difficulty as Difficulty } : {}),
+      ...(q ? { title: { contains: q, mode: "insensitive" } } : {}),
+    };
+    const [rows, total, distinctCategories] = await Promise.all([
+      prisma.problem.findMany({
+        where,
+        orderBy: { updatedAt: "desc" },
+        include: authorSelect,
+        skip,
+        take: PAGE_SIZE,
+      }),
+      prisma.problem.count({ where }),
+      prisma.problem.findMany({
+        distinct: ["category"],
+        select: { category: true },
+        orderBy: { category: "asc" },
+      }),
+    ]);
+    problems = rows;
+    problemTotal = total;
+    problemCategories = distinctCategories.map((c) => c.category);
+  } else {
+    const where: Prisma.CompanyQuestionWhereInput = {
+      ...(status ? { status: status as ContentStatus } : {}),
+      ...(category ? { category: category as CompanyQuestionCategory } : {}),
+      ...(q ? { companyName: { contains: q, mode: "insensitive" } } : {}),
+    };
+    const [rows, total] = await Promise.all([
+      prisma.companyQuestion.findMany({
+        where,
+        orderBy: { updatedAt: "desc" },
+        include: authorSelect,
+        skip,
+        take: PAGE_SIZE,
+      }),
+      prisma.companyQuestion.count({ where }),
+    ]);
+    companyQuestions = rows;
+    companyQuestionTotal = total;
+  }
+
+  const totalPages = (total: number) => Math.max(1, Math.ceil(total / PAGE_SIZE));
 
   return (
     <div className="mx-auto max-w-3xl space-y-10">
@@ -97,122 +325,169 @@ export default async function AdminContentPage() {
       </section>
 
       <section className="space-y-3">
-        <div className="flex items-center justify-between">
-          <h2 className="text-sm font-semibold text-ink">Quizzes</h2>
-          <Link
-            href="/content/quizzes/new"
-            className="rounded-md bg-ink px-3 py-1.5 text-xs font-semibold text-surface"
-          >
-            New quiz
-          </Link>
-        </div>
-        <div className="rounded-xl border border-line bg-surface">
-          {quizzes.length ? (
-            <div className="divide-y divide-line-soft">
-              {quizzes.map((quiz) => (
-                <div key={quiz.id} className="flex items-center justify-between gap-3 px-5 py-3.5">
-                  <div>
-                    <p className="text-sm font-medium text-ink">{quiz.title}</p>
-                    <p className="text-xs text-ink-faint">
-                      {quiz.topic} · by {quiz.author?.name ?? quiz.author?.email ?? "PreCompilers staff"}
-                    </p>
-                  </div>
-                  <span
-                    className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${STATUS_STYLE[quiz.status]}`}
-                  >
-                    {STATUS_LABEL[quiz.status]}
-                  </span>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="px-5 py-6 text-sm text-ink-faint">No quizzes yet.</p>
-          )}
-        </div>
-      </section>
-
-      <section className="space-y-3">
-        <div className="flex items-center justify-between">
-          <h2 className="text-sm font-semibold text-ink">Problems</h2>
-          <Link
-            href="/content/problems/new"
-            className="rounded-md bg-ink px-3 py-1.5 text-xs font-semibold text-surface"
-          >
-            New problem
-          </Link>
-        </div>
-        <div className="rounded-xl border border-line bg-surface">
-          {problems.length ? (
-            <div className="divide-y divide-line-soft">
-              {problems.map((problem) => (
-                <div key={problem.id} className="flex items-center justify-between gap-3 px-5 py-3.5">
-                  <div>
-                    <p className="text-sm font-medium text-ink">{problem.title}</p>
-                    <p className="text-xs text-ink-faint">
-                      {problem.difficulty} · by{" "}
-                      {problem.author?.name ?? problem.author?.email ?? "PreCompilers staff"}
-                    </p>
-                  </div>
-                  <div className="flex shrink-0 items-center gap-2">
-                    <span
-                      className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${STATUS_STYLE[problem.status]}`}
-                    >
-                      {STATUS_LABEL[problem.status]}
-                    </span>
-                    {problem.status === "DRAFT" && problem.referenceSolutionCode ? (
-                      <PublishDraftProblemButton problemId={problem.id} />
-                    ) : null}
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="px-5 py-6 text-sm text-ink-faint">No problems yet.</p>
-          )}
-        </div>
-      </section>
-
-      <section className="space-y-3">
-        <div className="flex items-center justify-between">
-          <h2 className="text-sm font-semibold text-ink">Company questions</h2>
-          <Link
-            href="/content/company-questions/new"
-            className="rounded-md bg-ink px-3 py-1.5 text-xs font-semibold text-surface"
-          >
-            New question
-          </Link>
-        </div>
-        <div className="rounded-xl border border-line bg-surface">
-          {companyQuestions.length ? (
-            <div className="divide-y divide-line-soft">
-              {companyQuestions.map((companyQuestion) => (
-                <div
-                  key={companyQuestion.id}
-                  className="flex items-center justify-between gap-3 px-5 py-3.5"
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex flex-wrap gap-2">
+            {TABS.map((t) => {
+              const count =
+                t.key === "problems"
+                  ? problemCount
+                  : t.key === "quizzes"
+                    ? quizCount
+                    : companyQuestionCount;
+              return (
+                <Link
+                  key={t.key}
+                  href={tabHref(t.key)}
+                  className={`rounded-full px-3.5 py-1.5 text-[13px] font-medium ${
+                    tab === t.key ? "bg-ink text-surface" : "border border-line text-ink-secondary"
+                  }`}
                 >
-                  <div>
-                    <p className="text-sm font-medium text-ink">
-                      {companyQuestion.companyName}
-                    </p>
-                    <p className="text-xs text-ink-faint">
-                      {companyQuestion.category} · by{" "}
-                      {companyQuestion.author?.name ??
-                        companyQuestion.author?.email ??
-                        "PreCompilers staff"}
-                    </p>
-                  </div>
-                  <span
-                    className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${STATUS_STYLE[companyQuestion.status]}`}
-                  >
-                    {STATUS_LABEL[companyQuestion.status]}
-                  </span>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="px-5 py-6 text-sm text-ink-faint">No company questions yet.</p>
-          )}
+                  {t.label} ({count})
+                </Link>
+              );
+            })}
+          </div>
+          <Link
+            href={
+              tab === "problems"
+                ? "/content/problems/new"
+                : tab === "quizzes"
+                  ? "/content/quizzes/new"
+                  : "/content/company-questions/new"
+            }
+            className="rounded-md bg-ink px-3 py-1.5 text-xs font-semibold text-surface"
+          >
+            {tab === "problems" ? "New problem" : tab === "quizzes" ? "New quiz" : "New question"}
+          </Link>
         </div>
+
+        {tab === "problems" ? (
+          <div className="rounded-xl border border-line bg-surface">
+            <FilterForm
+              tab="problems"
+              q={q}
+              status={status}
+              category={category}
+              difficulty={difficulty}
+              categoryOptions={problemCategories.map((c) => ({ value: c, label: c }))}
+              searchPlaceholder="Search problems by title…"
+            />
+            {problems.length ? (
+              <div className="divide-y divide-line-soft">
+                {problems.map((problem) => (
+                  <div key={problem.id} className="flex items-center justify-between gap-3 px-5 py-3.5">
+                    <div>
+                      <p className="text-sm font-medium text-ink">{problem.title}</p>
+                      <p className="text-xs text-ink-faint">
+                        {problem.category} · {problem.difficulty} · by{" "}
+                        {problem.author?.name ?? problem.author?.email ?? "PreCompilers staff"}
+                      </p>
+                    </div>
+                    <div className="flex shrink-0 items-center gap-2">
+                      <span
+                        className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${STATUS_STYLE[problem.status]}`}
+                      >
+                        {STATUS_LABEL[problem.status]}
+                      </span>
+                      {problem.status === "DRAFT" && problem.referenceSolutionCode ? (
+                        <PublishDraftProblemButton problemId={problem.id} />
+                      ) : null}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="px-5 py-6 text-sm text-ink-faint">No problems match these filters.</p>
+            )}
+            <Pagination tab="problems" params={params} page={page} totalPages={totalPages(problemTotal)} />
+          </div>
+        ) : null}
+
+        {tab === "quizzes" ? (
+          <div className="rounded-xl border border-line bg-surface">
+            <FilterForm
+              tab="quizzes"
+              q={q}
+              status={status}
+              category={category}
+              categoryOptions={quizCategories.map((c) => ({ value: c, label: c }))}
+              searchPlaceholder="Search quizzes by title…"
+            />
+            {quizzes.length ? (
+              <div className="divide-y divide-line-soft">
+                {quizzes.map((quiz) => (
+                  <div key={quiz.id} className="flex items-center justify-between gap-3 px-5 py-3.5">
+                    <div>
+                      <p className="text-sm font-medium text-ink">{quiz.title}</p>
+                      <p className="text-xs text-ink-faint">
+                        {quiz.topic} · by {quiz.author?.name ?? quiz.author?.email ?? "PreCompilers staff"}
+                      </p>
+                    </div>
+                    <span
+                      className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${STATUS_STYLE[quiz.status]}`}
+                    >
+                      {STATUS_LABEL[quiz.status]}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="px-5 py-6 text-sm text-ink-faint">No quizzes match these filters.</p>
+            )}
+            <Pagination tab="quizzes" params={params} page={page} totalPages={totalPages(quizTotal)} />
+          </div>
+        ) : null}
+
+        {tab === "company-questions" ? (
+          <div className="rounded-xl border border-line bg-surface">
+            <FilterForm
+              tab="company-questions"
+              q={q}
+              status={status}
+              category={category}
+              categoryOptions={COMPANY_CATEGORY_OPTIONS.map((c) => ({
+                value: c,
+                label: c.charAt(0) + c.slice(1).toLowerCase(),
+              }))}
+              searchPlaceholder="Search by company name…"
+            />
+            {companyQuestions.length ? (
+              <div className="divide-y divide-line-soft">
+                {companyQuestions.map((companyQuestion) => (
+                  <div
+                    key={companyQuestion.id}
+                    className="flex items-center justify-between gap-3 px-5 py-3.5"
+                  >
+                    <div>
+                      <p className="text-sm font-medium text-ink">
+                        {companyQuestion.companyName}
+                      </p>
+                      <p className="text-xs text-ink-faint">
+                        {companyQuestion.category} · by{" "}
+                        {companyQuestion.author?.name ??
+                          companyQuestion.author?.email ??
+                          "PreCompilers staff"}
+                      </p>
+                    </div>
+                    <span
+                      className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${STATUS_STYLE[companyQuestion.status]}`}
+                    >
+                      {STATUS_LABEL[companyQuestion.status]}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="px-5 py-6 text-sm text-ink-faint">No company questions match these filters.</p>
+            )}
+            <Pagination
+              tab="company-questions"
+              params={params}
+              page={page}
+              totalPages={totalPages(companyQuestionTotal)}
+            />
+          </div>
+        ) : null}
       </section>
     </div>
   );
