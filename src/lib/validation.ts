@@ -443,6 +443,10 @@ export const problemAuthorSchema = z
     constraints: z.string().trim().max(2000).default(""),
     hints: z.string().trim().max(2000).default(""),
     solutionExplanation: z.string().trim().max(5000).default(""),
+    referenceSolutionLanguage: z
+      .enum(["PYTHON3", "JAVASCRIPT", "JAVA", "CPP", "C"])
+      .optional(),
+    referenceSolutionCode: z.string().trim().max(20000).default(""),
     requiredEntitlement: z.enum(["FREE", "INDIVIDUAL", "INSTITUTION"]).default("FREE"),
     order: z.number().int().min(0).default(0),
     submit: z.boolean(),
@@ -464,6 +468,14 @@ export const problemAuthorSchema = z
         code: "custom",
         path: ["category"],
         message: "Category is required before submitting for review",
+      });
+    }
+    if (!data.referenceSolutionLanguage || !data.referenceSolutionCode.trim()) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["referenceSolutionCode"],
+        message:
+          "A reference solution and language are required before submitting for review — it's run against your test cases to catch mistakes before a reviewer sees them",
       });
     }
     if (data.testCases.length === 0) {

@@ -541,6 +541,8 @@ model Problem {
   constraints         String
   hints               String
   solutionExplanation String
+  referenceSolutionLanguage String?
+  referenceSolutionCode     String?
   requiredEntitlement Entitlement @default(FREE)
   order               Int         @default(0)
 
