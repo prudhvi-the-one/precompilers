@@ -27,8 +27,9 @@ const COMPANY_CATEGORY_OPTIONS: CompanyQuestionCategory[] = ["BEHAVIORAL", "TECH
 
 const PAGE_SIZE = 20;
 
-type Tab = "quizzes" | "problems" | "company-questions";
+type Tab = "tracks" | "quizzes" | "problems" | "company-questions";
 const TABS: { key: Tab; label: string }[] = [
+  { key: "tracks", label: "Tracks & videos" },
   { key: "problems", label: "Problems" },
   { key: "quizzes", label: "Quizzes" },
   { key: "company-questions", label: "Company questions" },
@@ -183,17 +184,18 @@ export default async function AdminContentPage({
   const page = Math.max(1, Number.parseInt(params.page ?? "1", 10) || 1);
   const skip = (page - 1) * PAGE_SIZE;
 
-  const [tracks, quizCount, problemCount, companyQuestionCount] = await Promise.all([
-    prisma.track.findMany({
-      orderBy: { order: "asc" },
-      include: { _count: { select: { lectures: true, notes: true } } },
-    }),
+  const [trackCount, quizCount, problemCount, companyQuestionCount] = await Promise.all([
+    prisma.track.count(),
     prisma.quiz.count(),
     prisma.problem.count(),
     prisma.companyQuestion.count(),
   ]);
 
   const authorSelect = { author: { select: { name: true, email: true } } } as const;
+
+  let tracks: Prisma.TrackGetPayload<{
+    include: { _count: { select: { lectures: true; notes: true } } };
+  }>[] = [];
 
   let quizzes: Prisma.QuizGetPayload<{ include: typeof authorSelect }>[] = [];
   let quizTotal = 0;
@@ -206,7 +208,12 @@ export default async function AdminContentPage({
   let companyQuestions: Prisma.CompanyQuestionGetPayload<{ include: typeof authorSelect }>[] = [];
   let companyQuestionTotal = 0;
 
-  if (tab === "quizzes") {
+  if (tab === "tracks") {
+    tracks = await prisma.track.findMany({
+      orderBy: { order: "asc" },
+      include: { _count: { select: { lectures: true, notes: true } } },
+    });
+  } else if (tab === "quizzes") {
     const where: Prisma.QuizWhereInput = {
       ...(status ? { status: status as ContentStatus } : {}),
       ...(category ? { topic: category } : {}),
@@ -285,55 +292,18 @@ export default async function AdminContentPage({
         </p>
       </div>
 
-      <section className="space-y-4">
-        <h2 className="text-sm font-semibold text-ink">Tracks &amp; videos</h2>
-        <div className="rounded-xl border border-line bg-surface">
-          {tracks.length ? (
-            <div className="divide-y divide-line-soft">
-              {tracks.map((track) => (
-                <div key={track.id} className="px-5 py-3.5">
-                  <p className="text-sm font-medium text-ink">{track.name}</p>
-                  <p className="text-xs text-ink-faint">
-                    {track._count.lectures} lecture{track._count.lectures === 1 ? "" : "s"} ·{" "}
-                    {track._count.notes} note{track._count.notes === 1 ? "" : "s"}
-                  </p>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="px-5 py-6 text-sm text-ink-faint">No tracks yet.</p>
-          )}
-        </div>
-
-        <div className="rounded-xl border border-line bg-surface p-4">
-          <h3 className="mb-3 text-sm font-semibold text-ink">New track</h3>
-          <CreateTrackForm />
-        </div>
-
-        {tracks.length ? (
-          <>
-            <div className="rounded-xl border border-line bg-surface p-4">
-              <h3 className="mb-3 text-sm font-semibold text-ink">New lecture</h3>
-              <CreateLectureForm tracks={tracks.map((t) => ({ id: t.id, name: t.name }))} />
-            </div>
-            <div className="rounded-xl border border-line bg-surface p-4">
-              <h3 className="mb-3 text-sm font-semibold text-ink">New note</h3>
-              <CreateNoteForm tracks={tracks.map((t) => ({ id: t.id, name: t.name }))} />
-            </div>
-          </>
-        ) : null}
-      </section>
-
       <section className="space-y-3">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex flex-wrap gap-2">
             {TABS.map((t) => {
               const count =
-                t.key === "problems"
-                  ? problemCount
-                  : t.key === "quizzes"
-                    ? quizCount
-                    : companyQuestionCount;
+                t.key === "tracks"
+                  ? trackCount
+                  : t.key === "problems"
+                    ? problemCount
+                    : t.key === "quizzes"
+                      ? quizCount
+                      : companyQuestionCount;
               return (
                 <Link
                   key={t.key}
@@ -347,19 +317,61 @@ export default async function AdminContentPage({
               );
             })}
           </div>
-          <Link
-            href={
-              tab === "problems"
-                ? "/content/problems/new"
-                : tab === "quizzes"
-                  ? "/content/quizzes/new"
-                  : "/content/company-questions/new"
-            }
-            className="rounded-md bg-ink px-3 py-1.5 text-xs font-semibold text-surface"
-          >
-            {tab === "problems" ? "New problem" : tab === "quizzes" ? "New quiz" : "New question"}
-          </Link>
+          {tab !== "tracks" ? (
+            <Link
+              href={
+                tab === "problems"
+                  ? "/content/problems/new"
+                  : tab === "quizzes"
+                    ? "/content/quizzes/new"
+                    : "/content/company-questions/new"
+              }
+              className="rounded-md bg-ink px-3 py-1.5 text-xs font-semibold text-surface"
+            >
+              {tab === "problems" ? "New problem" : tab === "quizzes" ? "New quiz" : "New question"}
+            </Link>
+          ) : null}
         </div>
+
+        {tab === "tracks" ? (
+          <div className="space-y-4">
+            <div className="rounded-xl border border-line bg-surface">
+              {tracks.length ? (
+                <div className="divide-y divide-line-soft">
+                  {tracks.map((track) => (
+                    <div key={track.id} className="px-5 py-3.5">
+                      <p className="text-sm font-medium text-ink">{track.name}</p>
+                      <p className="text-xs text-ink-faint">
+                        {track._count.lectures} lecture{track._count.lectures === 1 ? "" : "s"} ·{" "}
+                        {track._count.notes} note{track._count.notes === 1 ? "" : "s"}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="px-5 py-6 text-sm text-ink-faint">No tracks yet.</p>
+              )}
+            </div>
+
+            <div className="rounded-xl border border-line bg-surface p-4">
+              <h3 className="mb-3 text-sm font-semibold text-ink">New track</h3>
+              <CreateTrackForm />
+            </div>
+
+            {tracks.length ? (
+              <>
+                <div className="rounded-xl border border-line bg-surface p-4">
+                  <h3 className="mb-3 text-sm font-semibold text-ink">New lecture</h3>
+                  <CreateLectureForm tracks={tracks.map((t) => ({ id: t.id, name: t.name }))} />
+                </div>
+                <div className="rounded-xl border border-line bg-surface p-4">
+                  <h3 className="mb-3 text-sm font-semibold text-ink">New note</h3>
+                  <CreateNoteForm tracks={tracks.map((t) => ({ id: t.id, name: t.name }))} />
+                </div>
+              </>
+            ) : null}
+          </div>
+        ) : null}
 
         {tab === "problems" ? (
           <div className="rounded-xl border border-line bg-surface">
