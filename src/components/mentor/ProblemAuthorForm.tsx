@@ -2,9 +2,27 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Editor from "@monaco-editor/react";
 
 type ExampleDraft = { input: string; output: string; explanation: string };
 type TestCaseDraft = { input: string; expectedOutput: string; isSample: boolean };
+type ReferenceSolutionLanguage = "PYTHON3" | "JAVASCRIPT" | "JAVA" | "CPP" | "C";
+
+type CaseResult = {
+  input: string;
+  expectedOutput: string;
+  actualOutput: string;
+  passed: boolean;
+  isSample: boolean;
+};
+
+const MONACO_LANGUAGE: Record<ReferenceSolutionLanguage, string> = {
+  PYTHON3: "python",
+  JAVASCRIPT: "javascript",
+  JAVA: "java",
+  CPP: "cpp",
+  C: "c",
+};
 
 export type ProblemAuthorInitialData = {
   title: string;
@@ -17,6 +35,8 @@ export type ProblemAuthorInitialData = {
   constraints: string;
   hints: string;
   solutionExplanation: string;
+  referenceSolutionLanguage: ReferenceSolutionLanguage | null;
+  referenceSolutionCode: string;
   requiredEntitlement: "FREE" | "INDIVIDUAL" | "INSTITUTION";
   testCases: TestCaseDraft[];
 };
@@ -55,8 +75,14 @@ export default function ProblemAuthorForm({
   const [testCases, setTestCases] = useState<TestCaseDraft[]>(
     initialData?.testCases ?? [{ input: "", expectedOutput: "", isSample: true }]
   );
+  const [referenceSolutionLanguage, setReferenceSolutionLanguage] =
+    useState<ReferenceSolutionLanguage>(initialData?.referenceSolutionLanguage ?? "PYTHON3");
+  const [referenceSolutionCode, setReferenceSolutionCode] = useState(
+    initialData?.referenceSolutionCode ?? ""
+  );
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [failedCases, setFailedCases] = useState<CaseResult[] | null>(null);
 
   function updateExample(index: number, patch: Partial<ExampleDraft>) {
     setExamples((prev) => prev.map((e, i) => (i === index ? { ...e, ...patch } : e)));
@@ -82,6 +108,7 @@ export default function ProblemAuthorForm({
     title.trim().length > 0 &&
     category.trim().length > 0 &&
     statement.trim().length > 0 &&
+    referenceSolutionCode.trim().length > 0 &&
     testCases.length > 0 &&
     testCases.some((t) => t.isSample) &&
     testCases.every((t) => t.input.trim().length > 0 && t.expectedOutput.trim().length > 0);
@@ -89,6 +116,7 @@ export default function ProblemAuthorForm({
   async function handleSave(submit: boolean) {
     setSubmitting(true);
     setError(null);
+    setFailedCases(null);
     const payload = {
       title: title.trim(),
       difficulty,
@@ -108,6 +136,8 @@ export default function ProblemAuthorForm({
       constraints: constraints.trim(),
       hints: hints.trim(),
       solutionExplanation: solutionExplanation.trim(),
+      referenceSolutionLanguage,
+      referenceSolutionCode,
       requiredEntitlement,
       order: 0,
       submit,
@@ -129,6 +159,9 @@ export default function ProblemAuthorForm({
     setSubmitting(false);
     if (!res.ok) {
       setError(data.error ?? "Something went wrong");
+      if (data.verification?.results) {
+        setFailedCases(data.verification.results.filter((r: CaseResult) => !r.passed));
+      }
       return;
     }
     router.push("/content");
@@ -329,7 +362,59 @@ export default function ProblemAuthorForm({
         </button>
       </div>
 
-      {error ? <p className="text-sm text-red-600">{error}</p> : null}
+      <div className="space-y-2">
+        <div className="flex items-center justify-between">
+          <p className="text-sm font-medium text-ink">Reference solution</p>
+          <select
+            value={referenceSolutionLanguage}
+            onChange={(e) =>
+              setReferenceSolutionLanguage(e.target.value as ReferenceSolutionLanguage)
+            }
+            className="rounded-md border border-line p-1.5 text-xs focus:border-black focus:outline-none"
+          >
+            <option value="PYTHON3">Python 3</option>
+            <option value="JAVASCRIPT">JavaScript</option>
+            <option value="JAVA">Java</option>
+            <option value="CPP">C++</option>
+            <option value="C">C</option>
+          </select>
+        </div>
+        <p className="text-xs text-ink-faint">
+          Run against every test case before this can be submitted — catches a wrong hidden
+          test case before a reviewer ever sees it.
+        </p>
+        <div className="h-64 overflow-hidden rounded-md border border-line">
+          <Editor
+            height="100%"
+            theme="vs-dark"
+            language={MONACO_LANGUAGE[referenceSolutionLanguage]}
+            value={referenceSolutionCode}
+            onChange={(v) => setReferenceSolutionCode(v ?? "")}
+            options={{
+              fontFamily: "var(--font-geist-mono), monospace",
+              fontSize: 13,
+              minimap: { enabled: false },
+            }}
+          />
+        </div>
+      </div>
+
+      {error ? (
+        <div className="space-y-2">
+          <p className="text-sm text-red-600">{error}</p>
+          {failedCases && failedCases.length > 0 ? (
+            <div className="space-y-1.5 rounded-lg border border-red-200 bg-red-50 p-3">
+              {failedCases.map((c, i) => (
+                <div key={i} className="text-xs text-red-700">
+                  <span className="font-semibold">Input:</span> {c.input || "(empty)"} ·{" "}
+                  <span className="font-semibold">Expected:</span> {c.expectedOutput} ·{" "}
+                  <span className="font-semibold">Got:</span> {c.actualOutput || "(nothing)"}
+                </div>
+              ))}
+            </div>
+          ) : null}
+        </div>
+      ) : null}
 
       <div className="flex gap-3">
         {variant === "mentor" ? (

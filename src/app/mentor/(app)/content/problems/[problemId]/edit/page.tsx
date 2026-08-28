@@ -59,6 +59,15 @@ export default async function EditProblemPage({
           constraints: problem.constraints,
           hints: problem.hints,
           solutionExplanation: problem.solutionExplanation,
+          referenceSolutionLanguage:
+            (problem.referenceSolutionLanguage as
+              | "PYTHON3"
+              | "JAVASCRIPT"
+              | "JAVA"
+              | "CPP"
+              | "C"
+              | null) ?? null,
+          referenceSolutionCode: problem.referenceSolutionCode ?? "",
           requiredEntitlement: problem.requiredEntitlement,
           testCases: problem.testCases.map((t) => ({
             input: t.input,

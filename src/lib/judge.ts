@@ -10,10 +10,12 @@ export type CaseResult = {
   isSample: boolean;
 };
 
-async function runTestCases(
+type JudgeableTestCase = Pick<TestCase, "input" | "expectedOutput" | "isSample">;
+
+export async function runTestCases(
   languageKey: string,
   sourceCode: string,
-  testCases: TestCase[]
+  testCases: JudgeableTestCase[]
 ): Promise<{ results: CaseResult[]; compileError: boolean; runtimeError: boolean }> {
   const results: CaseResult[] = [];
   let compileError = false;
@@ -57,6 +59,31 @@ function deriveVerdict(
   if (compileError) return "COMPILE_ERROR";
   if (runtimeError) return "RUNTIME_ERROR";
   return results.every((r) => r.passed) ? "ACCEPTED" : "WRONG_ANSWER";
+}
+
+export type ReferenceSolutionVerification = {
+  passed: boolean;
+  results: CaseResult[];
+  compileError: boolean;
+  runtimeError: boolean;
+};
+
+export async function verifyReferenceSolution(
+  languageKey: string,
+  sourceCode: string,
+  testCases: JudgeableTestCase[]
+): Promise<ReferenceSolutionVerification> {
+  const { results, compileError, runtimeError } = await runTestCases(
+    languageKey,
+    sourceCode,
+    testCases
+  );
+  return {
+    passed: !compileError && !runtimeError && results.every((r) => r.passed),
+    results,
+    compileError,
+    runtimeError,
+  };
 }
 
 export async function submitSolution(

@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { requireRole } from "@/lib/session";
 import { problemAuthorSchema } from "@/lib/validation";
 import { uniqueSlug } from "@/lib/slugify";
+import { verifyReferenceSolution } from "@/lib/judge";
 
 export async function POST(request: Request) {
   const admin = await requireRole(["ADMIN", "SUPER_ADMIN"]);
@@ -21,6 +22,30 @@ export async function POST(request: Request) {
 
   const { submit, testCases, examples, ...scalars } = parsed.data;
   void submit;
+
+  if (!scalars.referenceSolutionLanguage || !scalars.referenceSolutionCode.trim()) {
+    return NextResponse.json(
+      { error: "A reference solution and language are required before publishing." },
+      { status: 400 }
+    );
+  }
+
+  const verification = await verifyReferenceSolution(
+    scalars.referenceSolutionLanguage,
+    scalars.referenceSolutionCode,
+    testCases
+  );
+  if (!verification.passed) {
+    return NextResponse.json(
+      {
+        error:
+          "Your reference solution didn't pass all test cases — fix the solution or the test cases before publishing.",
+        verification,
+      },
+      { status: 422 }
+    );
+  }
+
   const slug = await uniqueSlug(scalars.title, async (candidate) => {
     const existing = await prisma.problem.findUnique({ where: { slug: candidate } });
     return existing !== null;
