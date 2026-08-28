@@ -21,29 +21,41 @@ export async function POST(request: Request) {
   }
 
   const { submit, testCases, examples, ...scalars } = parsed.data;
-  void submit;
 
-  if (!scalars.referenceSolutionLanguage || !scalars.referenceSolutionCode.trim()) {
-    return NextResponse.json(
-      { error: "A reference solution and language are required before publishing." },
-      { status: 400 }
-    );
-  }
+  if (submit) {
+    if (!scalars.referenceSolutionLanguage || !scalars.referenceSolutionCode.trim()) {
+      return NextResponse.json(
+        { error: "A reference solution and language are required before publishing." },
+        { status: 400 }
+      );
+    }
 
-  const verification = await verifyReferenceSolution(
-    scalars.referenceSolutionLanguage,
-    scalars.referenceSolutionCode,
-    testCases
-  );
-  if (!verification.passed) {
-    return NextResponse.json(
-      {
-        error:
-          "Your reference solution didn't pass all test cases — fix the solution or the test cases before publishing.",
-        verification,
-      },
-      { status: 422 }
-    );
+    let verification;
+    try {
+      verification = await verifyReferenceSolution(
+        scalars.referenceSolutionLanguage,
+        scalars.referenceSolutionCode,
+        testCases
+      );
+    } catch (err) {
+      return NextResponse.json(
+        {
+          error: "The judge service is temporarily unavailable (likely rate-limited) — try again later, or save as a draft.",
+          detail: (err as Error).message,
+        },
+        { status: 503 }
+      );
+    }
+    if (!verification.passed) {
+      return NextResponse.json(
+        {
+          error:
+            "Your reference solution didn't pass all test cases — fix the solution or the test cases before publishing.",
+          verification,
+        },
+        { status: 422 }
+      );
+    }
   }
 
   const slug = await uniqueSlug(scalars.title, async (candidate) => {
@@ -56,7 +68,7 @@ export async function POST(request: Request) {
       ...scalars,
       slug,
       examples,
-      status: "PUBLISHED",
+      status: submit ? "PUBLISHED" : "DRAFT",
       authorId: admin.id,
       testCases: {
         create: testCases.map((testCase, index) => ({

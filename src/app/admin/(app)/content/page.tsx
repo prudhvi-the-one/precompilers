@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import CreateTrackForm from "@/components/admin/CreateTrackForm";
 import CreateLectureForm from "@/components/admin/CreateLectureForm";
 import CreateNoteForm from "@/components/admin/CreateNoteForm";
+import PublishDraftProblemButton from "@/components/admin/PublishDraftProblemButton";
 
 const STATUS_STYLE: Record<string, string> = {
   DRAFT: "bg-line-soft text-ink-muted",
@@ -152,11 +153,16 @@ export default async function AdminContentPage() {
                       {problem.author?.name ?? problem.author?.email ?? "PreCompilers staff"}
                     </p>
                   </div>
-                  <span
-                    className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${STATUS_STYLE[problem.status]}`}
-                  >
-                    {STATUS_LABEL[problem.status]}
-                  </span>
+                  <div className="flex shrink-0 items-center gap-2">
+                    <span
+                      className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${STATUS_STYLE[problem.status]}`}
+                    >
+                      {STATUS_LABEL[problem.status]}
+                    </span>
+                    {problem.status === "DRAFT" && problem.referenceSolutionCode ? (
+                      <PublishDraftProblemButton problemId={problem.id} />
+                    ) : null}
+                  </div>
                 </div>
               ))}
             </div>

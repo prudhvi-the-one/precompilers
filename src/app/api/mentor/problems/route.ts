@@ -29,11 +29,22 @@ export async function POST(request: Request) {
         { status: 400 }
       );
     }
-    const verification = await verifyReferenceSolution(
-      scalars.referenceSolutionLanguage,
-      scalars.referenceSolutionCode,
-      testCases
-    );
+    let verification;
+    try {
+      verification = await verifyReferenceSolution(
+        scalars.referenceSolutionLanguage,
+        scalars.referenceSolutionCode,
+        testCases
+      );
+    } catch (err) {
+      return NextResponse.json(
+        {
+          error: "The judge service is temporarily unavailable (likely rate-limited) — try again later, or save as a draft.",
+          detail: (err as Error).message,
+        },
+        { status: 503 }
+      );
+    }
     if (!verification.passed) {
       return NextResponse.json(
         {
