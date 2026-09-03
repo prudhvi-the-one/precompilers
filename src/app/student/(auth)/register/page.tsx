@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import AuthCard from "@/components/auth/AuthCard";
 import PasswordStrength from "@/components/auth/PasswordStrength";
@@ -11,18 +11,27 @@ const inputClass =
   "w-full rounded-md border border-line px-3 py-2 text-sm focus:border-ink-faint focus:outline-none focus:ring-1 focus:ring-line";
 const labelClass = "mb-1 block text-sm font-medium text-ink-secondary";
 
-export default function RegisterPage() {
+function RegisterForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const vendorSlug = searchParams.get("vendor");
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [name, setName] = useState("");
+  const [rollNumber, setRollNumber] = useState("");
+  const [branch, setBranch] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   const passwordValid = isPasswordValid(password);
   const passwordsMatch = confirmPassword.length > 0 && password === confirmPassword;
-  const canSubmit = email.length > 0 && passwordValid && passwordsMatch;
+  const canSubmit =
+    email.length > 0 &&
+    passwordValid &&
+    passwordsMatch &&
+    (!vendorSlug || (rollNumber.trim().length > 0 && branch.trim().length > 0));
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -41,7 +50,14 @@ export default function RegisterPage() {
     const res = await fetch("/api/auth/register", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password, name: name || undefined }),
+      body: JSON.stringify({
+        email,
+        password,
+        name: name || undefined,
+        vendorSlug: vendorSlug || undefined,
+        rollNumber: vendorSlug ? rollNumber : undefined,
+        branch: vendorSlug ? branch : undefined,
+      }),
     });
     const data = await res.json();
 
@@ -85,6 +101,36 @@ export default function RegisterPage() {
             onChange={(e) => setEmail(e.target.value)}
           />
         </div>
+        {vendorSlug ? (
+          <>
+            <div>
+              <label className={labelClass} htmlFor="rollNumber">
+                Roll number
+              </label>
+              <input
+                id="rollNumber"
+                type="text"
+                required
+                className={inputClass}
+                value={rollNumber}
+                onChange={(e) => setRollNumber(e.target.value)}
+              />
+            </div>
+            <div>
+              <label className={labelClass} htmlFor="branch">
+                Branch
+              </label>
+              <input
+                id="branch"
+                type="text"
+                required
+                className={inputClass}
+                value={branch}
+                onChange={(e) => setBranch(e.target.value)}
+              />
+            </div>
+          </>
+        ) : null}
         <div>
           <label className={labelClass} htmlFor="password">
             Password
@@ -137,5 +183,13 @@ export default function RegisterPage() {
         </Link>
       </p>
     </AuthCard>
+  );
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense fallback={null}>
+      <RegisterForm />
+    </Suspense>
   );
 }

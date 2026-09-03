@@ -6,14 +6,20 @@ import Logo from "@/components/Logo";
 import LogoutButton from "@/components/auth/LogoutButton";
 import ThemeToggle from "@/components/shell/ThemeToggle";
 import PortalSidebarNav from "@/components/shell/PortalSidebarNav";
-import { MENTOR_NAV, ADMIN_NAV, INSTITUTION_ADMIN_NAV } from "@/components/shell/portalNavItems";
+import {
+  MENTOR_NAV,
+  ADMIN_NAV,
+  INSTITUTION_ADMIN_NAV,
+  VENDOR_ADMIN_NAV,
+} from "@/components/shell/portalNavItems";
 
-export type PortalNavKey = "mentor" | "admin" | "institution-admin" | "none";
+export type PortalNavKey = "mentor" | "admin" | "institution-admin" | "vendor-admin" | "none";
 
 const NAV_BY_KEY = {
   mentor: MENTOR_NAV,
   admin: ADMIN_NAV,
   "institution-admin": INSTITUTION_ADMIN_NAV,
+  "vendor-admin": VENDOR_ADMIN_NAV,
   none: [],
 };
 

@@ -11,13 +11,29 @@ export default async function QuizzesPage() {
   if (!user) {
     redirect("/login");
   }
-  await requireTierAccess(user, "PRACTICE");
 
-  const quizzes = await prisma.quiz.findMany({
-    where: { kind: "TOPIC_QUIZ", status: "PUBLISHED" },
-    orderBy: { order: "asc" },
-    include: { sections: { include: { questions: true } } },
-  });
+  let quizzes;
+  let closesAtByQuiz = new Map<string, Date>();
+  if (user.vendorId) {
+    // Vendor students see only their currently-open scheduled releases —
+    // a separate access mode, not the FREE/INDIVIDUAL/INSTITUTION paywall.
+    const releases = await prisma.scheduledRelease.findMany({
+      where: { vendorId: user.vendorId, quizId: { not: null }, closesAt: { gt: new Date() } },
+      include: { quiz: { include: { sections: { include: { questions: true } } } } },
+      orderBy: { releasedAt: "desc" },
+    });
+    quizzes = releases
+      .map((r) => r.quiz)
+      .filter((q): q is NonNullable<typeof q> => q !== null && q.status === "PUBLISHED");
+    closesAtByQuiz = new Map(releases.map((r) => [r.quizId as string, r.closesAt]));
+  } else {
+    await requireTierAccess(user, "PRACTICE");
+    quizzes = await prisma.quiz.findMany({
+      where: { kind: "TOPIC_QUIZ", status: "PUBLISHED" },
+      orderBy: { order: "asc" },
+      include: { sections: { include: { questions: true } } },
+    });
+  }
 
   const attempts = await prisma.quizAttempt.findMany({
     where: {
@@ -59,8 +75,11 @@ export default async function QuizzesPage() {
             (n, s) => n + s.questions.length,
             0
           );
-          const locked = !meetsEntitlement(user.entitlement, quiz.requiredEntitlement);
+          const locked = user.vendorId
+            ? false
+            : !meetsEntitlement(user.entitlement, quiz.requiredEntitlement);
           const lastScore = lastScoreByQuiz.get(quiz.id);
+          const closesAt = closesAtByQuiz.get(quiz.id);
 
           return (
             <div key={quiz.id} className="flex items-center justify-between gap-3 px-5 py-4">
@@ -70,6 +89,7 @@ export default async function QuizzesPage() {
                   {totalQuestions} questions
                   {lastScore !== undefined ? ` · last score ${lastScore}%` : ""}
                   {locked ? " · 🔒 Plan" : ""}
+                  {closesAt ? ` · closes ${closesAt.toLocaleString("en-US", { day: "numeric", month: "short", hour: "numeric", minute: "2-digit", hourCycle: "h23" })}` : ""}
                 </p>
               </div>
               {locked ? (

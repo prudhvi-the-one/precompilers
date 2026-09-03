@@ -3,6 +3,7 @@ import {
   FileEdit,
   Users,
   Building2,
+  Handshake,
   Layers,
   ClipboardCheck,
   Briefcase,
@@ -20,6 +21,7 @@ export const MENTOR_NAV: PortalNavItem[] = [
 export const ADMIN_NAV: PortalNavItem[] = [
   { label: "Users", href: "/users", icon: Users },
   { label: "Institutions", href: "/institutions", icon: Building2 },
+  { label: "Vendors", href: "/vendors", icon: Handshake },
   { label: "Batches", href: "/batches", icon: Layers },
   { label: "Content", href: "/content", icon: FileEdit },
   { label: "Content Review", href: "/content-review", icon: ClipboardCheck },
@@ -30,4 +32,8 @@ export const INSTITUTION_ADMIN_NAV: PortalNavItem[] = [
   { label: "Cohort", href: "/cohort", icon: LayoutDashboard },
   { label: "Faculty", href: "/faculty", icon: GraduationCap },
   { label: "Mentors", href: "/mentors", icon: UserCog },
+];
+
+export const VENDOR_ADMIN_NAV: PortalNavItem[] = [
+  { label: "Dashboard", href: "/vendor-dashboard", icon: LayoutDashboard },
 ];

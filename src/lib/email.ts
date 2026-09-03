@@ -41,3 +41,30 @@ export async function sendPasswordResetEmail(
     throw new Error(`Resend failed to send password reset email: ${error.message}`);
   }
 }
+
+const RESEND_BATCH_LIMIT = 100;
+
+// Bulk roster uploads create many accounts in one request — looping
+// sendPasswordResetEmail per account would be hundreds of sequential HTTP
+// calls. Resend's batch endpoint accepts up to 100 emails per call, so a
+// 1,000-row upload is ~10 calls instead of 1,000.
+export async function sendPasswordResetEmailBatch(
+  recipients: { to: string; code: string }[]
+): Promise<void> {
+  const client = getResendClient();
+  const from = getFromAddress();
+  for (let i = 0; i < recipients.length; i += RESEND_BATCH_LIMIT) {
+    const chunk = recipients.slice(i, i + RESEND_BATCH_LIMIT);
+    const { error } = await client.batch.send(
+      chunk.map(({ to, code }) => ({
+        from,
+        to,
+        subject: "Reset your PreCompilers password",
+        text: `Your password reset code is ${code}. It expires in 10 minutes. If you didn't request this, you can ignore this email.`,
+      }))
+    );
+    if (error) {
+      throw new Error(`Resend failed to send a batch of password reset emails: ${error.message}`);
+    }
+  }
+}

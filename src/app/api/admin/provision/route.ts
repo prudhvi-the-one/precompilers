@@ -18,7 +18,9 @@ export async function POST(request: Request) {
     name: body.name,
     role: body.role,
     institutionId: body.institutionId,
+    vendorId: body.vendorId,
     facultyBatchId: body.facultyBatchId,
+    rollNumber: body.rollNumber,
   });
 
   if (!result.ok) {

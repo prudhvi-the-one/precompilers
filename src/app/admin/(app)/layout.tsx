@@ -7,7 +7,13 @@ export default async function AdminAppLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const user = await requireRole(["ADMIN", "SUPER_ADMIN", "INSTITUTION_ADMIN", "FACULTY"]);
+  const user = await requireRole([
+    "ADMIN",
+    "SUPER_ADMIN",
+    "INSTITUTION_ADMIN",
+    "VENDOR_ADMIN",
+    "FACULTY",
+  ]);
   if (!user) {
     redirect("/login");
   }
@@ -17,7 +23,9 @@ export default async function AdminAppLayout({
       ? "admin"
       : user.role === "INSTITUTION_ADMIN"
         ? "institution-admin"
-        : "none";
+        : user.role === "VENDOR_ADMIN"
+          ? "vendor-admin"
+          : "none";
 
   return (
     <PortalAppShell navKey={navKey} userLabel={user.name ?? user.email}>

@@ -7,18 +7,24 @@ export default function ProvisionUserForm({
   role,
   roleLabel,
   institutionOptions,
+  vendorOptions,
   batchOptions,
+  showRollNumber,
 }: {
   role: string;
   roleLabel: string;
   institutionOptions?: { id: string; name: string }[];
+  vendorOptions?: { id: string; name: string }[];
   batchOptions?: { id: string; name: string }[];
+  showRollNumber?: boolean;
 }) {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [institutionId, setInstitutionId] = useState(institutionOptions?.[0]?.id ?? "");
+  const [vendorId, setVendorId] = useState(vendorOptions?.[0]?.id ?? "");
   const [facultyBatchId, setFacultyBatchId] = useState(batchOptions?.[0]?.id ?? "");
+  const [rollNumber, setRollNumber] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -37,7 +43,9 @@ export default function ProvisionUserForm({
         name,
         role,
         institutionId: institutionOptions ? institutionId : undefined,
+        vendorId: vendorOptions ? vendorId : undefined,
         facultyBatchId: batchOptions ? facultyBatchId : undefined,
+        rollNumber: showRollNumber ? rollNumber : undefined,
       }),
     });
     const data = await res.json();
@@ -48,6 +56,7 @@ export default function ProvisionUserForm({
     }
     setEmail("");
     setName("");
+    setRollNumber("");
     setSuccess(true);
     router.refresh();
   }
@@ -87,6 +96,33 @@ export default function ProvisionUserForm({
               </option>
             ))}
           </select>
+        </div>
+      ) : null}
+      {vendorOptions ? (
+        <div>
+          <label className="mb-1 block text-xs font-medium text-ink-secondary">Vendor</label>
+          <select
+            value={vendorId}
+            onChange={(e) => setVendorId(e.target.value)}
+            className="rounded-md border border-line px-3 py-2 text-sm"
+          >
+            {vendorOptions.map((vendor) => (
+              <option key={vendor.id} value={vendor.id}>
+                {vendor.name}
+              </option>
+            ))}
+          </select>
+        </div>
+      ) : null}
+      {showRollNumber ? (
+        <div>
+          <label className="mb-1 block text-xs font-medium text-ink-secondary">Roll number</label>
+          <input
+            required
+            value={rollNumber}
+            onChange={(e) => setRollNumber(e.target.value)}
+            className="rounded-md border border-line px-3 py-2 text-sm"
+          />
         </div>
       ) : null}
       {batchOptions ? (

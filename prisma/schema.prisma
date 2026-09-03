@@ -13,6 +13,7 @@ enum Role {
   MENTOR
   FACULTY
   INSTITUTION_ADMIN
+  VENDOR_ADMIN
   ADMIN
   SUPER_ADMIN
 }
@@ -116,6 +117,7 @@ model User {
   name            String?
   college         String?
   branch          String?
+  rollNumber      String?
   gradYear        Int?
   cgpa            Float?
   backlogCount    Int?        @default(0)
@@ -135,6 +137,8 @@ model User {
 
   institutionId  String?
   institution    Institution? @relation(fields: [institutionId], references: [id])
+  vendorId       String?
+  vendor         Vendor?      @relation(fields: [vendorId], references: [id], onDelete: SetNull)
   facultyBatchId String?
   facultyBatch   Batch?       @relation("BatchFaculty", fields: [facultyBatchId], references: [id])
 
@@ -167,8 +171,13 @@ model User {
   subscriptions     Subscription[]
   readinessSnapshots ReadinessSnapshot[]
   driveEligibilityWatches DriveEligibilityWatch[]
+  externalJudgeAccounts ExternalJudgeAccount[]
+  loginEvents LoginEvent[]
+  certificates Certificate[]
 
   @@index([institutionId, role])
+  @@index([vendorId, role])
+  @@unique([vendorId, rollNumber])
 }
 
 model ReadinessSnapshot {
@@ -231,6 +240,8 @@ model Batch {
 
   institutionId String?
   institution   Institution? @relation(fields: [institutionId], references: [id])
+  vendorId      String?
+  vendor        Vendor?      @relation(fields: [vendorId], references: [id], onDelete: SetNull)
 
   enrollments Enrollment[]
   liveClasses LiveClass[]
@@ -238,6 +249,7 @@ model Batch {
 
   @@index([trackId])
   @@index([institutionId])
+  @@index([vendorId])
 }
 
 model Enrollment {
@@ -324,6 +336,7 @@ model Quiz {
 
   sections QuizSection[]
   attempts QuizAttempt[]
+  scheduledReleases ScheduledRelease[]
 
   @@index([status])
   @@index([authorId])
@@ -558,6 +571,7 @@ model Problem {
   updatedAt       DateTime      @updatedAt
 
   testCases   TestCase[]
+  scheduledReleases ScheduledRelease[]
   submissions Submission[]
   comments    Comment[]
 
@@ -686,6 +700,129 @@ model Institution {
   users   User[]
   batches Batch[]
   preferredMentors InstitutionPreferredMentor[]
+}
+
+model Vendor {
+  id                   String   @id @default(cuid())
+  name                 String
+  contactEmail         String
+  ratePaisePerStudent  Int
+  certificateCriteria  Json?
+  selfSignupEnabled    Boolean  @default(false)
+  signupSlug           String?  @unique
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  users     User[]
+  batches   Batch[]
+  releases  ScheduledRelease[]
+  billingRecords VendorBillingRecord[]
+  certificates   Certificate[]
+}
+
+enum VendorBillingStatus {
+  FINALIZED
+  INVOICED
+}
+
+model VendorBillingRecord {
+  id                  String              @id @default(cuid())
+  vendorId            String
+  vendor              Vendor              @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  periodMonth         String
+  activeStudentCount  Int
+  ratePaisePerStudent Int
+  totalAmountPaise    Int
+  status              VendorBillingStatus @default(FINALIZED)
+  finalizedAt         DateTime            @default(now())
+
+  @@unique([vendorId, periodMonth])
+}
+
+model LoginEvent {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  loggedInAt DateTime @default(now())
+
+  @@index([userId, loggedInAt])
+}
+
+model ScheduledRelease {
+  id            String   @id @default(cuid())
+  vendorId      String
+  vendor        Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  quizId        String?
+  quiz          Quiz?    @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  problemId     String?
+  problem       Problem? @relation(fields: [problemId], references: [id], onDelete: Cascade)
+
+  externalPlatform     ExternalJudgePlatform?
+  externalProblemSlug  String?
+  externalProblemTitle String?
+
+  releasedAt    DateTime @default(now())
+  windowMinutes Int      @default(720)
+  closesAt      DateTime
+  createdAt     DateTime @default(now())
+
+  @@index([vendorId, closesAt])
+  @@index([quizId])
+  @@index([problemId])
+}
+
+enum ExternalJudgePlatform {
+  LEETCODE
+  CODECHEF
+}
+
+enum ExternalTrackingStatus {
+  UNVERIFIED
+  ACTIVE
+  BLOCKED_OR_PRIVATE
+}
+
+model ExternalJudgeAccount {
+  id                   String                 @id @default(cuid())
+  userId               String
+  user                 User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  platform             ExternalJudgePlatform
+  handle               String
+  verificationCode     String?
+  verifiedAt           DateTime?
+  trackingStatus       ExternalTrackingStatus @default(UNVERIFIED)
+  lastPolledAt         DateTime?
+  lastSuccessfulPollAt DateTime?
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
+
+  submissions ExternalSubmissionRecord[]
+
+  @@unique([userId, platform])
+}
+
+model ExternalSubmissionRecord {
+  id                     String               @id @default(cuid())
+  externalJudgeAccountId String
+  externalJudgeAccount   ExternalJudgeAccount @relation(fields: [externalJudgeAccountId], references: [id], onDelete: Cascade)
+  problemSlug            String
+  problemTitle           String
+  submittedAt            DateTime
+  firstSeenAt            DateTime             @default(now())
+
+  @@unique([externalJudgeAccountId, problemSlug, submittedAt])
+  @@index([externalJudgeAccountId])
+}
+
+model Certificate {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  vendorId  String
+  vendor    Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  issuedAt  DateTime @default(now())
+
+  @@unique([userId, vendorId])
 }
 
 model Drive {
