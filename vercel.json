@@ -10,11 +10,11 @@
     },
     {
       "path": "/api/cron/release-window-sweep",
-      "schedule": "*/15 * * * *"
+      "schedule": "0 5 * * *"
     },
     {
       "path": "/api/cron/poll-external-judges",
-      "schedule": "0 */4 * * *"
+      "schedule": "0 6 * * *"
     }
   ]
 }
