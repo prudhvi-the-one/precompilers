@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
 import { requireTierAccess } from "@/lib/tier";
@@ -43,7 +42,7 @@ export default async function QuizHistoryPage() {
           {attempts.map((attempt) => {
             const verified = attempt.proctored && !attempt.endedByViolation;
             return (
-              <Link
+              <a
                 key={attempt.id}
                 href={`/practice/results/${attempt.id}`}
                 className="flex items-center justify-between gap-3 px-5 py-3.5 hover:bg-surface-sunk"
@@ -68,16 +67,16 @@ export default async function QuizHistoryPage() {
                 <span className="font-brand text-lg font-bold text-ink">
                   {attempt.score}%
                 </span>
-              </Link>
+              </a>
             );
           })}
         </div>
       ) : (
         <div className="rounded-xl border border-line bg-surface p-6 text-center text-sm text-ink-muted">
           No attempts yet.{" "}
-          <Link href="/practice/quizzes" className="font-semibold text-indigo-600 hover:underline">
+          <a href="/practice/quizzes" className="font-semibold text-indigo-600 hover:underline">
             Take your first quiz
-          </Link>
+          </a>
           .
         </div>
       )}

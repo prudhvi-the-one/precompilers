@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { redirect, notFound } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
@@ -32,19 +31,19 @@ export default async function StudentMentorSessionPage({
     <>
       <header className="flex items-center justify-between border-b border-[#23243D] px-6 py-3">
         <div>
-          <Link href="/prove/mocks" className="text-xs text-[#7A7A96] hover:text-[#C6C6DC]">
+          <a href="/prove/mocks" className="text-xs text-[#7A7A96] hover:text-[#C6C6DC]">
             ← Prove / Mentors
-          </Link>
+          </a>
           <p className="font-brand text-sm font-bold text-[#E4E4F0]">
             {KIND_LABEL[mentorSession.kind]} with {mentorSession.mentor.user.name ?? "your mentor"}
           </p>
         </div>
-        <Link
+        <a
           href="/prove/mocks"
           className="rounded-lg bg-error px-4 py-2 text-sm font-semibold text-white hover:bg-error"
         >
           Leave
-        </Link>
+        </a>
       </header>
 
       {mentorSession.roomUrl ? (

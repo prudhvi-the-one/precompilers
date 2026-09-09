@@ -1,5 +1,3 @@
-import Link from "next/link";
-
 export default function ReadinessWidget({ score }: { score: number | null }) {
   const pct = score ?? 0;
 
@@ -21,12 +19,15 @@ export default function ReadinessWidget({ score }: { score: number | null }) {
       <div className="mt-0.5 text-xs text-ink-faint">
         {score !== null ? "Overall score" : "Not assessed yet"}
       </div>
-      <Link
+      {/* A plain <a>, not next/link's <Link>: a client-side transition can
+          lose the race against the still-in-flight prefetch on a slow
+          destination page and silently fail to navigate. */}
+      <a
         href="/career/report"
         className="mt-2 inline-block text-xs font-medium text-accent hover:underline"
       >
         See full report
-      </Link>
+      </a>
     </div>
   );
 }

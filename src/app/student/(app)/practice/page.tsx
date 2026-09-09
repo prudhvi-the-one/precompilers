@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
@@ -27,7 +26,7 @@ export default async function PracticePage() {
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <Link
+        <a
           href="/practice/quizzes"
           className="rounded-xl border border-line bg-surface p-5 hover:bg-surface-sunk"
         >
@@ -35,8 +34,8 @@ export default async function PracticePage() {
           <p className="mt-1 text-sm text-ink-muted">
             {quizCount} quizzes across core CS &amp; AIML topics.
           </p>
-        </Link>
-        <Link
+        </a>
+        <a
           href="/practice/aptitude"
           className="rounded-xl border border-line bg-surface p-5 hover:bg-surface-sunk"
         >
@@ -44,8 +43,8 @@ export default async function PracticePage() {
           <p className="mt-1 text-sm text-ink-muted">
             {paperCount} full sectional paper{paperCount === 1 ? "" : "s"}, proctored or practice.
           </p>
-        </Link>
-        <Link
+        </a>
+        <a
           href="/practice/problems"
           className="rounded-xl border border-line bg-surface p-5 hover:bg-surface-sunk"
         >
@@ -53,7 +52,7 @@ export default async function PracticePage() {
           <p className="mt-1 text-sm text-ink-muted">
             {problemCount} problem{problemCount === 1 ? "" : "s"} across core topics.
           </p>
-        </Link>
+        </a>
       </div>
     </div>
   );

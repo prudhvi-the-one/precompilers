@@ -1,61 +1,65 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRef, useState } from "react";
 
+// Real <form> POSTs, not fetch()-then-navigate — see the route for why: a
+// JS-triggered navigation after an awaited async gap (the camera check, or
+// just the fetch itself) can lose the click's user-activation and get
+// silently blocked by the browser. The proctored form's submit is
+// intercepted once to run the camera check, then resubmitted for real.
 export default function StartAptitudePaperButtons({ paperId }: { paperId: string }) {
-  const router = useRouter();
-  const [loading, setLoading] = useState<"proctored" | "practice" | null>(null);
+  const proctoredFormRef = useRef<HTMLFormElement>(null);
+  const cameraChecked = useRef(false);
+  const [checking, setChecking] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  async function start(proctored: boolean) {
+  async function handleProctoredSubmit(e: React.FormEvent<HTMLFormElement>) {
+    if (cameraChecked.current) return;
+    e.preventDefault();
     setError(null);
-    setLoading(proctored ? "proctored" : "practice");
-
-    if (proctored) {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-        stream.getTracks().forEach((track) => track.stop());
-      } catch {
-        setError(
-          "Camera permission is required for a proctored attempt. Allow camera access, or start in practice mode instead."
-        );
-        setLoading(null);
-        return;
-      }
+    setChecking(true);
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      stream.getTracks().forEach((track) => track.stop());
+    } catch {
+      setError(
+        "Camera permission is required for a proctored attempt. Allow camera access, or start in practice mode instead."
+      );
+      setChecking(false);
+      return;
     }
-
-    const res = await fetch(`/api/quizzes/${paperId}/start`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ proctored }),
-    });
-    const data = (await res.json()) as { attemptId?: string };
-    setLoading(null);
-    if (data.attemptId) {
-      router.push(`/quiz-attempt/${data.attemptId}`);
-    }
+    setChecking(false);
+    cameraChecked.current = true;
+    proctoredFormRef.current?.requestSubmit();
   }
 
   return (
     <div className="space-y-1.5">
       <div className="flex gap-2">
-        <button
-          type="button"
-          onClick={() => start(true)}
-          disabled={loading !== null}
-          className="shrink-0 rounded-lg bg-indigo-600 px-3.5 py-2 text-[13px] font-semibold text-white hover:bg-accent-hover disabled:opacity-50"
+        <form
+          ref={proctoredFormRef}
+          action={`/api/quizzes/${paperId}/start`}
+          method="POST"
+          onSubmit={handleProctoredSubmit}
         >
-          {loading === "proctored" ? "Starting…" : "Start proctored"}
-        </button>
-        <button
-          type="button"
-          onClick={() => start(false)}
-          disabled={loading !== null}
-          className="shrink-0 rounded-lg border border-[#DDDDE7] px-3.5 py-2 text-[13px] font-semibold text-ink hover:bg-surface-sunk disabled:opacity-50"
-        >
-          {loading === "practice" ? "Starting…" : "Start practice"}
-        </button>
+          <input type="hidden" name="proctored" value="true" />
+          <button
+            type="submit"
+            disabled={checking}
+            className="shrink-0 rounded-lg bg-indigo-600 px-3.5 py-2 text-[13px] font-semibold text-white hover:bg-accent-hover disabled:opacity-50"
+          >
+            {checking ? "Requesting camera…" : "Start proctored"}
+          </button>
+        </form>
+        <form action={`/api/quizzes/${paperId}/start`} method="POST">
+          <input type="hidden" name="proctored" value="false" />
+          <button
+            type="submit"
+            className="shrink-0 rounded-lg border border-[#DDDDE7] px-3.5 py-2 text-[13px] font-semibold text-ink hover:bg-surface-sunk disabled:opacity-50"
+          >
+            Start practice
+          </button>
+        </form>
       </div>
       {error ? <p className="max-w-xs text-xs text-pillar-pink">{error}</p> : null}
     </div>

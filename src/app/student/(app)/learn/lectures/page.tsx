@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
 import { requireTierAccess } from "@/lib/tier";
@@ -47,7 +46,7 @@ export default async function LecturesPage() {
       {enrollment ? (
         <div className="divide-y divide-line-soft rounded-xl border border-line bg-surface">
           {enrollment.track.lectures.map((lecture) => (
-            <Link
+            <a
               key={lecture.id}
               href={`/learn/lectures/${lecture.id}`}
               className="flex items-center gap-3 px-5 py-3.5 hover:bg-surface-sunk"
@@ -68,16 +67,16 @@ export default async function LecturesPage() {
               <span className="text-xs text-ink-faintest">
                 {lecture.durationMinutes} min
               </span>
-            </Link>
+            </a>
           ))}
         </div>
       ) : (
-        <Link
+        <a
           href="/onboarding"
           className="text-sm font-semibold text-indigo-600 hover:underline"
         >
           Set your track
-        </Link>
+        </a>
       )}
     </div>
   );

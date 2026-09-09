@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
 import { requireTierAccess } from "@/lib/tier";
@@ -48,7 +47,7 @@ export default async function ProblemSubmissionHistoryPage() {
       {submissions.length ? (
         <div className="divide-y divide-line-soft rounded-xl border border-line bg-surface">
           {submissions.map((submission) => (
-            <Link
+            <a
               key={submission.id}
               href={`/practice/problems/${submission.problemId}`}
               className="flex items-center justify-between gap-3 px-5 py-3.5 hover:bg-surface-sunk"
@@ -67,15 +66,15 @@ export default async function ProblemSubmissionHistoryPage() {
               >
                 {submission.verdict.replaceAll("_", " ")}
               </span>
-            </Link>
+            </a>
           ))}
         </div>
       ) : (
         <div className="rounded-xl border border-line bg-surface p-6 text-center text-sm text-ink-muted">
           No submissions yet.{" "}
-          <Link href="/practice/problems" className="font-semibold text-indigo-600 hover:underline">
+          <a href="/practice/problems" className="font-semibold text-indigo-600 hover:underline">
             Solve your first problem
-          </Link>
+          </a>
           .
         </div>
       )}

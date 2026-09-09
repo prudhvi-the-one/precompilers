@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Lock } from "lucide-react";
 import { getCurrentUser } from "@/lib/session";
@@ -92,7 +91,7 @@ export default async function LearnPage({
         </div>
         <div className="flex gap-2">
           {FILTERS.map((f) => (
-            <Link
+            <a
               key={f.key}
               href={f.key === "all" ? "/learn" : `/learn?filter=${f.key}`}
               className={`rounded-full px-3.5 py-1.5 text-[13px] font-medium ${
@@ -102,7 +101,7 @@ export default async function LearnPage({
               }`}
             >
               {f.label}
-            </Link>
+            </a>
           ))}
         </div>
       </div>
@@ -186,7 +185,7 @@ export default async function LearnPage({
             {enrollment.track.lectures.map((lecture) => {
               const completed = completedIds.has(lecture.id);
               return (
-                <Link
+                <a
                   key={lecture.id}
                   href={`/learn/lectures/${lecture.id}`}
                   className="flex items-center gap-3 px-5 py-3.5 hover:bg-surface-sunk"
@@ -207,11 +206,11 @@ export default async function LearnPage({
                   <span className="text-xs text-ink-faintest">
                     {lecture.durationMinutes} min
                   </span>
-                </Link>
+                </a>
               );
             })}
             {enrollment.batch?.liveClasses.map((liveClass) => (
-              <Link
+              <a
                 key={liveClass.id}
                 href={`/live/${liveClass.id}`}
                 className="flex items-center gap-3 px-5 py-3.5 hover:bg-surface-sunk"
@@ -223,7 +222,7 @@ export default async function LearnPage({
                 <span className="rounded-full bg-accent-soft px-2 py-0.5 font-mono text-[10px] text-indigo-600">
                   {formatClassChip(liveClass.scheduledAt)}
                 </span>
-              </Link>
+              </a>
             ))}
           </div>
         </div>
@@ -232,12 +231,12 @@ export default async function LearnPage({
           <p className="text-sm text-ink-muted">
             You haven&apos;t started a track yet.
           </p>
-          <Link
+          <a
             href="/onboarding"
             className="mt-2 inline-block text-sm font-semibold text-indigo-600 hover:underline"
           >
             Set your track
-          </Link>
+          </a>
         </div>
       )}
     </div>

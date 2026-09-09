@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { FolderKanban, ClipboardCheck, Mic, Users } from "lucide-react";
 import { getCurrentUser } from "@/lib/session";
@@ -58,7 +57,7 @@ export default async function ProvePage() {
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <Link
+        <a
           href="/prove/projects"
           className="rounded-xl border border-line bg-surface p-5 hover:bg-surface-sunk"
         >
@@ -69,8 +68,8 @@ export default async function ProvePage() {
               ? `${mySubmissionCount} submitted`
               : "Pick a brief and ship it"}
           </p>
-        </Link>
-        <Link
+        </a>
+        <a
           href="/prove/review-queue"
           className="rounded-xl border border-line bg-surface p-5 hover:bg-surface-sunk"
         >
@@ -81,8 +80,8 @@ export default async function ProvePage() {
               ? `${pendingReviewCount} awaiting review`
               : "Nothing to review right now"}
           </p>
-        </Link>
-        <Link
+        </a>
+        <a
           href="/prove/mocks"
           className="rounded-xl border border-line bg-surface p-5 hover:bg-surface-sunk"
         >
@@ -96,8 +95,8 @@ export default async function ProvePage() {
               ? "You have a paired mock"
               : "Join the peer pool, free and unlimited"}
           </p>
-        </Link>
-        <Link
+        </a>
+        <a
           href="/prove/group-discussions"
           className="rounded-xl border border-line bg-surface p-5 hover:bg-surface-sunk"
         >
@@ -111,7 +110,7 @@ export default async function ProvePage() {
               ? `Next: "${upcomingGd.topic}"`
               : "No sessions scheduled"}
           </p>
-        </Link>
+        </a>
       </div>
     </div>
   );

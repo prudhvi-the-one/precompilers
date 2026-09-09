@@ -1,6 +1,5 @@
 import type { User } from "@prisma/client";
-import Link from "next/link";
-import { Search, Flame, Menu } from "lucide-react";
+import { Search, Flame, Menu, Zap } from "lucide-react";
 import Logo from "@/components/Logo";
 import LogoutButton from "@/components/auth/LogoutButton";
 import NotificationBell from "@/components/shell/NotificationBell";
@@ -11,11 +10,15 @@ export default function Topbar({
   user,
   currentStreak,
   overallReadiness,
+  level,
+  totalXp,
   onMenuClick,
 }: {
   user: User;
   currentStreak: number;
   overallReadiness: number | null;
+  level: number;
+  totalXp: number;
   onMenuClick: () => void;
 }) {
   const readinessPct = overallReadiness ?? 0;
@@ -52,12 +55,20 @@ export default function Topbar({
         <ThemeToggle />
         <NotificationBell />
 
+        <span className="hidden items-center gap-1 rounded-full bg-accent-soft px-2.5 py-1 font-mono text-[12.5px] text-accent sm:flex">
+          <Zap className="h-3.5 w-3.5" />
+          Lvl {level} &middot; {totalXp} XP
+        </span>
+
         <span className="hidden items-center gap-1 rounded-full bg-warn-soft px-2.5 py-1 font-mono text-[12.5px] text-warn sm:flex">
           <Flame className="h-3.5 w-3.5" />
           {currentStreak}-day streak
         </span>
 
-        <Link href="/profile" className="flex items-center gap-2">
+        {/* A plain <a>, not next/link's <Link>: a client-side transition can
+            lose the race against the still-in-flight prefetch on a slow
+            destination page and silently fail to navigate. */}
+        <a href="/profile" className="flex items-center gap-2">
           <span
             title={overallReadiness !== null ? `Job readiness: ${overallReadiness}` : undefined}
             className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full"
@@ -72,7 +83,7 @@ export default function Topbar({
           <span className="hidden text-sm text-ink-secondary lg:inline">
             {user.name ?? user.email}
           </span>
-        </Link>
+        </a>
 
         <LogoutButton />
       </div>

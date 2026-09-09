@@ -1,5 +1,3 @@
-import Link from "next/link";
-
 function BoltBracketIcon({ compact }: { compact: boolean }) {
   return (
     <span
@@ -36,7 +34,8 @@ export default function Logo({
 }) {
   const compact = size === "compact";
   return (
-    <Link
+    // eslint-disable-next-line @next/next/no-html-link-for-pages -- plain <a> used intentionally instead of next/link (see SidebarNav.tsx for why)
+    <a
       href="/"
       className={`flex items-center gap-2 font-brand ${className}`}
     >
@@ -51,6 +50,6 @@ export default function Logo({
         <span className="text-indigo-600">Pre</span>
         <span className="text-ink">Compilers</span>
       </span>
-    </Link>
+    </a>
   );
 }

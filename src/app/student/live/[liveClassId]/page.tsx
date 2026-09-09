@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { redirect, notFound } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
 import { requireTierAccess } from "@/lib/tier";
@@ -37,22 +36,22 @@ export default async function LiveClassPage({
     <>
       <header className="flex items-center justify-between border-b border-[#23243D] px-6 py-3">
         <div>
-          <Link
+          <a
             href="/learn/live-classes"
             className="text-xs text-[#7A7A96] hover:text-[#C6C6DC]"
           >
             ← {liveClass.batch.track.name}
-          </Link>
+          </a>
           <p className="font-brand text-sm font-bold text-[#E4E4F0]">
             {liveClass.title}
           </p>
         </div>
-        <Link
+        <a
           href="/learn/live-classes"
           className="rounded-lg bg-error px-4 py-2 text-sm font-semibold text-white hover:bg-error"
         >
           Leave
-        </Link>
+        </a>
       </header>
 
       <LiveClassRoom

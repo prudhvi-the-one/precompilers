@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { requireRole } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import type { CompanyQuestionCategory, ContentStatus, Difficulty, Prisma } from "@prisma/client";
@@ -6,6 +5,9 @@ import CreateTrackForm from "@/components/admin/CreateTrackForm";
 import CreateLectureForm from "@/components/admin/CreateLectureForm";
 import CreateNoteForm from "@/components/admin/CreateNoteForm";
 import PublishDraftProblemButton from "@/components/admin/PublishDraftProblemButton";
+import SubjectForm from "@/components/admin/SubjectForm";
+import TopicForm from "@/components/admin/TopicForm";
+import { subjectIcon } from "@/lib/subjectIcons";
 
 const STATUS_STYLE: Record<string, string> = {
   DRAFT: "bg-line-soft text-ink-muted",
@@ -27,12 +29,13 @@ const COMPANY_CATEGORY_OPTIONS: CompanyQuestionCategory[] = ["BEHAVIORAL", "TECH
 
 const PAGE_SIZE = 20;
 
-type Tab = "tracks" | "quizzes" | "problems" | "company-questions";
+type Tab = "tracks" | "quizzes" | "problems" | "company-questions" | "learning-paths";
 const TABS: { key: Tab; label: string }[] = [
   { key: "tracks", label: "Tracks & videos" },
   { key: "problems", label: "Problems" },
   { key: "quizzes", label: "Quizzes" },
   { key: "company-questions", label: "Company questions" },
+  { key: "learning-paths", label: "Learning paths" },
 ];
 
 type SearchParams = {
@@ -42,6 +45,7 @@ type SearchParams = {
   difficulty?: string;
   q?: string;
   page?: string;
+  subjectId?: string;
 };
 
 function tabHref(tab: Tab) {
@@ -145,9 +149,9 @@ function Pagination({
   return (
     <div className="flex items-center justify-between px-5 py-3 text-sm">
       {page > 1 ? (
-        <Link href={pageHref(tab, params, page - 1)} className="font-medium text-accent">
+        <a href={pageHref(tab, params, page - 1)} className="font-medium text-accent">
           ← Previous
-        </Link>
+        </a>
       ) : (
         <span />
       )}
@@ -155,9 +159,9 @@ function Pagination({
         Page {page} of {totalPages}
       </span>
       {page < totalPages ? (
-        <Link href={pageHref(tab, params, page + 1)} className="font-medium text-accent">
+        <a href={pageHref(tab, params, page + 1)} className="font-medium text-accent">
           Next →
-        </Link>
+        </a>
       ) : (
         <span />
       )}
@@ -184,11 +188,12 @@ export default async function AdminContentPage({
   const page = Math.max(1, Number.parseInt(params.page ?? "1", 10) || 1);
   const skip = (page - 1) * PAGE_SIZE;
 
-  const [trackCount, quizCount, problemCount, companyQuestionCount] = await Promise.all([
+  const [trackCount, quizCount, problemCount, companyQuestionCount, subjectCount] = await Promise.all([
     prisma.track.count(),
     prisma.quiz.count(),
     prisma.problem.count(),
     prisma.companyQuestion.count(),
+    prisma.subject.count(),
   ]);
 
   const authorSelect = { author: { select: { name: true, email: true } } } as const;
@@ -207,6 +212,11 @@ export default async function AdminContentPage({
 
   let companyQuestions: Prisma.CompanyQuestionGetPayload<{ include: typeof authorSelect }>[] = [];
   let companyQuestionTotal = 0;
+
+  let subjects: Prisma.SubjectGetPayload<{ include: { _count: { select: { topics: true } } } }>[] = [];
+  let selectedSubjectId = "";
+  let subjectTopics: Prisma.TopicGetPayload<{ include: { linkedQuiz: { select: { title: true } } } }>[] = [];
+  let topicQuizOptions: { id: string; title: string }[] = [];
 
   if (tab === "tracks") {
     tracks = await prisma.track.findMany({
@@ -258,6 +268,27 @@ export default async function AdminContentPage({
     problems = rows;
     problemTotal = total;
     problemCategories = distinctCategories.map((c) => c.category);
+  } else if (tab === "learning-paths") {
+    subjects = await prisma.subject.findMany({
+      orderBy: { order: "asc" },
+      include: { _count: { select: { topics: true } } },
+    });
+    selectedSubjectId = params.subjectId ?? subjects[0]?.id ?? "";
+    if (selectedSubjectId) {
+      [subjectTopics, topicQuizOptions] = await Promise.all([
+        prisma.topic.findMany({
+          where: { subjectId: selectedSubjectId },
+          orderBy: { order: "asc" },
+          include: { linkedQuiz: { select: { title: true } } },
+        }),
+        prisma.quiz
+          .findMany({
+            where: { kind: "TOPIC_QUIZ", status: "PUBLISHED" },
+            orderBy: { title: "asc" },
+            select: { id: true, title: true },
+          }),
+      ]);
+    }
   } else {
     const where: Prisma.CompanyQuestionWhereInput = {
       ...(status ? { status: status as ContentStatus } : {}),
@@ -303,9 +334,15 @@ export default async function AdminContentPage({
                     ? problemCount
                     : t.key === "quizzes"
                       ? quizCount
-                      : companyQuestionCount;
+                      : t.key === "learning-paths"
+                        ? subjectCount
+                        : companyQuestionCount;
               return (
-                <Link
+                // A plain <a>, not next/link's <Link>: this page's data fetch is slow
+                // enough that a client-side transition can lose the race against the
+                // still-in-flight prefetch and silently fail to navigate. A full
+                // navigation always renders correctly, so it's the reliable choice here.
+                <a
                   key={t.key}
                   href={tabHref(t.key)}
                   className={`rounded-full px-3.5 py-1.5 text-[13px] font-medium ${
@@ -313,12 +350,12 @@ export default async function AdminContentPage({
                   }`}
                 >
                   {t.label} ({count})
-                </Link>
+                </a>
               );
             })}
           </div>
-          {tab !== "tracks" ? (
-            <Link
+          {tab !== "tracks" && tab !== "learning-paths" ? (
+            <a
               href={
                 tab === "problems"
                   ? "/content/problems/new"
@@ -329,7 +366,7 @@ export default async function AdminContentPage({
               className="rounded-md bg-ink px-3 py-1.5 text-xs font-semibold text-surface"
             >
               {tab === "problems" ? "New problem" : tab === "quizzes" ? "New quiz" : "New question"}
-            </Link>
+            </a>
           ) : null}
         </div>
 
@@ -367,6 +404,107 @@ export default async function AdminContentPage({
                 <div className="rounded-xl border border-line bg-surface p-4">
                   <h3 className="mb-3 text-sm font-semibold text-ink">New note</h3>
                   <CreateNoteForm tracks={tracks.map((t) => ({ id: t.id, name: t.name }))} />
+                </div>
+              </>
+            ) : null}
+          </div>
+        ) : null}
+
+        {tab === "learning-paths" ? (
+          <div className="space-y-4">
+            <div className="rounded-xl border border-line bg-surface">
+              {subjects.length ? (
+                <div className="divide-y divide-line-soft">
+                  {subjects.map((subject) => {
+                    const Icon = subjectIcon(subject.iconKey);
+                    return (
+                      <a
+                        key={subject.id}
+                        href={`/content?tab=learning-paths&subjectId=${subject.id}`}
+                        className={`flex items-center justify-between gap-3 px-5 py-3.5 ${
+                          selectedSubjectId === subject.id ? "bg-surface-sunk" : ""
+                        }`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <span
+                            className="flex h-9 w-9 items-center justify-center rounded-lg"
+                            style={{ backgroundColor: `${subject.accentColor}1a` }}
+                          >
+                            <Icon className="h-4.5 w-4.5" style={{ color: subject.accentColor }} />
+                          </span>
+                          <div>
+                            <p className="text-sm font-medium text-ink">{subject.name}</p>
+                            <p className="text-xs text-ink-faint">
+                              {subject._count.topics} topic{subject._count.topics === 1 ? "" : "s"}
+                            </p>
+                          </div>
+                        </div>
+                        <span
+                          className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${STATUS_STYLE[subject.status]}`}
+                        >
+                          {STATUS_LABEL[subject.status]}
+                        </span>
+                      </a>
+                    );
+                  })}
+                </div>
+              ) : (
+                <p className="px-5 py-6 text-sm text-ink-faint">No subjects yet.</p>
+              )}
+            </div>
+
+            <div className="rounded-xl border border-line bg-surface p-4">
+              <h3 className="mb-3 text-sm font-semibold text-ink">New subject</h3>
+              <SubjectForm />
+            </div>
+
+            {selectedSubjectId ? (
+              <>
+                <div className="rounded-xl border border-line bg-surface">
+                  <div className="border-b border-line-soft px-5 py-4">
+                    <h3 className="text-sm font-semibold text-ink">
+                      Topics — {subjects.find((s) => s.id === selectedSubjectId)?.name}
+                    </h3>
+                  </div>
+                  {subjectTopics.length ? (
+                    <div className="divide-y divide-line-soft">
+                      {subjectTopics.map((topic) => (
+                        <div key={topic.id} className="flex items-center justify-between gap-3 px-5 py-3.5">
+                          <div>
+                            <p className="text-sm font-medium text-ink">
+                              #{topic.order} &middot; {topic.name}
+                              {topic.unitLabel ? (
+                                <span className="ml-2 text-xs font-normal text-ink-faint">
+                                  {topic.unitLabel}
+                                </span>
+                              ) : null}
+                            </p>
+                            <p className="text-xs text-ink-faint">
+                              {topic.xpReward} XP ·{" "}
+                              {topic.linkedQuiz ? `Quiz: ${topic.linkedQuiz.title}` : "No quiz linked"} ·{" "}
+                              {topic.simulatorKey ? `Simulator: ${topic.simulatorKey}` : "No simulator"}
+                            </p>
+                          </div>
+                          <span
+                            className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${STATUS_STYLE[topic.status]}`}
+                          >
+                            {STATUS_LABEL[topic.status]}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="px-5 py-6 text-sm text-ink-faint">No topics yet.</p>
+                  )}
+                </div>
+
+                <div className="rounded-xl border border-line bg-surface p-4">
+                  <h3 className="mb-3 text-sm font-semibold text-ink">New topic</h3>
+                  <TopicForm
+                    subjectId={selectedSubjectId}
+                    nextOrder={subjectTopics.length}
+                    quizOptions={topicQuizOptions}
+                  />
                 </div>
               </>
             ) : null}

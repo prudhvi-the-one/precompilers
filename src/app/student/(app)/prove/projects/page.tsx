@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
 import { requireTierAccess } from "@/lib/tier";
@@ -25,9 +24,9 @@ export default async function ProjectsPage() {
 
   return (
     <div className="max-w-3xl space-y-4">
-      <Link href="/prove" className="text-sm text-ink-faint hover:text-ink">
+      <a href="/prove" className="text-sm text-ink-faint hover:text-ink">
         ← Prove
-      </Link>
+      </a>
       <div>
         <h1 className="font-brand text-[25px] font-bold tracking-[-0.02em] text-ink">
           Project briefs
@@ -77,12 +76,12 @@ export default async function ProjectsPage() {
                   {submission ? (
                     <p className="mt-2 text-xs text-ink-faint">
                       {submission._count.reviews} of 2 reviews received ·{" "}
-                      <Link
+                      <a
                         href="/prove/feedback-received"
                         className="font-semibold text-indigo-600 hover:underline"
                       >
                         View feedback
-                      </Link>
+                      </a>
                     </p>
                   ) : null}
                 </div>

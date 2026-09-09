@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { requireRole } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
@@ -79,9 +78,9 @@ export default async function UsersPage({
                 <span className="rounded-full bg-line-soft px-2.5 py-0.5 text-xs font-semibold text-ink-muted">
                   {u.role.replaceAll("_", " ")}
                 </span>
-                <Link href={`/users/${u.id}`} className="text-xs font-medium text-accent hover:underline">
+                <a href={`/users/${u.id}`} className="text-xs font-medium text-accent hover:underline">
                   Edit
-                </Link>
+                </a>
               </div>
             </div>
           ))}

@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
 import { requireTierAccess } from "@/lib/tier";
@@ -57,7 +56,7 @@ export default async function CompanyQuestionsPage({
             if (company !== "all") params.set("company", company);
             const query = params.toString();
             return (
-              <Link
+              <a
                 key={f.key}
                 href={query ? `/career/questions?${query}` : "/career/questions"}
                 className={`rounded-full px-3.5 py-1.5 text-[13px] font-medium ${
@@ -67,7 +66,7 @@ export default async function CompanyQuestionsPage({
                 }`}
               >
                 {f.label}
-              </Link>
+              </a>
             );
           })}
           {companies.length ? (

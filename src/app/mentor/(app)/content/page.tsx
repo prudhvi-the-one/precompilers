@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { requireRole } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 
@@ -51,12 +50,12 @@ export default async function MentorContentPage() {
       <section className="space-y-3">
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-semibold text-ink">My quizzes</h2>
-          <Link
+          <a
             href="/content/quizzes/new"
             className="rounded-md bg-ink px-3 py-1.5 text-xs font-semibold text-surface"
           >
             New quiz
-          </Link>
+          </a>
         </div>
         <div className="rounded-xl border border-line bg-surface">
           {quizzes.length ? (
@@ -79,12 +78,12 @@ export default async function MentorContentPage() {
                       {STATUS_LABEL[quiz.status]}
                     </span>
                     {quiz.status === "DRAFT" || quiz.status === "REJECTED" ? (
-                      <Link
+                      <a
                         href={`/content/quizzes/${quiz.id}/edit`}
                         className="rounded-md border border-line px-3 py-1.5 text-xs font-semibold text-ink-secondary hover:bg-surface-sunk"
                       >
                         Edit
-                      </Link>
+                      </a>
                     ) : null}
                   </div>
                 </div>
@@ -99,12 +98,12 @@ export default async function MentorContentPage() {
       <section className="space-y-3">
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-semibold text-ink">My problems</h2>
-          <Link
+          <a
             href="/content/problems/new"
             className="rounded-md bg-ink px-3 py-1.5 text-xs font-semibold text-surface"
           >
             New problem
-          </Link>
+          </a>
         </div>
         <div className="rounded-xl border border-line bg-surface">
           {problems.length ? (
@@ -127,12 +126,12 @@ export default async function MentorContentPage() {
                       {STATUS_LABEL[problem.status]}
                     </span>
                     {problem.status === "DRAFT" || problem.status === "REJECTED" ? (
-                      <Link
+                      <a
                         href={`/content/problems/${problem.id}/edit`}
                         className="rounded-md border border-line px-3 py-1.5 text-xs font-semibold text-ink-secondary hover:bg-surface-sunk"
                       >
                         Edit
-                      </Link>
+                      </a>
                     ) : null}
                   </div>
                 </div>
@@ -147,12 +146,12 @@ export default async function MentorContentPage() {
       <section className="space-y-3">
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-semibold text-ink">My company questions</h2>
-          <Link
+          <a
             href="/content/company-questions/new"
             className="rounded-md bg-ink px-3 py-1.5 text-xs font-semibold text-surface"
           >
             New question
-          </Link>
+          </a>
         </div>
         <div className="rounded-xl border border-line bg-surface">
           {companyQuestions.length ? (
@@ -180,12 +179,12 @@ export default async function MentorContentPage() {
                       {STATUS_LABEL[companyQuestion.status]}
                     </span>
                     {companyQuestion.status === "DRAFT" || companyQuestion.status === "REJECTED" ? (
-                      <Link
+                      <a
                         href={`/content/company-questions/${companyQuestion.id}/edit`}
                         className="rounded-md border border-line px-3 py-1.5 text-xs font-semibold text-ink-secondary hover:bg-surface-sunk"
                       >
                         Edit
-                      </Link>
+                      </a>
                     ) : null}
                   </div>
                 </div>

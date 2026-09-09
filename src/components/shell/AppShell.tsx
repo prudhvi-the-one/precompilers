@@ -11,12 +11,16 @@ export default function AppShell({
   overallReadiness,
   currentStreak,
   unlockedSections,
+  level,
+  totalXp,
   children,
 }: {
   user: User;
   overallReadiness: number | null;
   currentStreak: number;
   unlockedSections: Section[];
+  level: number;
+  totalXp: number;
   children: React.ReactNode;
 }) {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -27,6 +31,8 @@ export default function AppShell({
         user={user}
         currentStreak={currentStreak}
         overallReadiness={overallReadiness}
+        level={level}
+        totalXp={totalXp}
         onMenuClick={() => setDrawerOpen(true)}
       />
       <div className="flex flex-1">

@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { redirect, notFound } from "next/navigation";
 import { Lock } from "lucide-react";
 import { getCurrentUser } from "@/lib/session";
@@ -39,12 +38,12 @@ export default async function LectureDetailPage({
 
   return (
     <div className="max-w-3xl space-y-4">
-      <Link
+      <a
         href="/learn"
         className="text-sm text-ink-faint hover:text-ink"
       >
         ← {lecture.track.name}
-      </Link>
+      </a>
 
       <h1 className="font-brand text-[22px] font-bold text-ink">
         {formatOrder(lecture.order)} · {lecture.title}
@@ -77,12 +76,12 @@ export default async function LectureDetailPage({
             The first lesson in every track is free to preview — this one
             unlocks with the Individual or Institution plan.
           </p>
-          <Link
+          <a
             href="/learn"
             className="mt-4 inline-block text-sm font-semibold text-indigo-600 hover:underline"
           >
             Back to Skill tracks
-          </Link>
+          </a>
         </div>
       )}
     </div>

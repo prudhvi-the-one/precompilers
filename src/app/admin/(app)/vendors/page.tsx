@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { requireRole } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
@@ -73,12 +72,12 @@ export default async function VendorsPage() {
                     {(vendor.ratePaisePerStudent / 100).toFixed(0)}/student/month
                   </p>
                 </div>
-                <Link
+                <a
                   href={`/vendors/${vendor.id}`}
                   className="text-sm font-medium text-accent hover:underline"
                 >
                   Manage releases
-                </Link>
+                </a>
               </div>
             ))}
           </div>

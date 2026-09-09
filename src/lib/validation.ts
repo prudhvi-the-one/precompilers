@@ -129,6 +129,66 @@ export const vendorSelfSignupSchema = z.object({
   enabled: z.boolean(),
 });
 
+export const subjectAuthorSchema = z.object({
+  name: z.string().trim().min(1, "Name is required").max(100),
+  iconKey: z.string().trim().min(1),
+  accentColor: z
+    .string()
+    .trim()
+    .regex(/^#[0-9a-fA-F]{6}$/, "Enter a hex color like #4f46e5"),
+  order: z.number().int().min(0),
+  submit: z.boolean(),
+});
+
+export const topicAuthorSchema = z.object({
+  subjectId: z.string().min(1, "Subject is required"),
+  name: z.string().trim().min(1, "Name is required").max(120),
+  description: z.string().trim().min(1, "Description is required").max(2000),
+  unitLabel: z.string().trim().max(100).optional(),
+  order: z.number().int().min(0),
+  xpReward: z.number().int().min(1).max(1000),
+  linkedQuizId: z.string().trim().min(1).nullable().optional(),
+  simulatorKey: z
+    .enum([
+      "sorting-comparison",
+      "array-vs-list-insert",
+      "stack-vs-queue",
+      "bst-traversal",
+      "graph-bfs-dfs",
+      "recursion-and-dp",
+      "sql-join-comparison",
+      "sql-query-plan-deepdive",
+      "sql-isolation-comparison",
+      "git-commit-graph",
+      "git-merge-vs-rebase",
+      "git-conflict-detection",
+      "python-mutability",
+      "python-generator-vs-list",
+      "python-decorator-stack",
+      "api-auth-flow",
+      "api-rate-limit-pagination",
+      "api-idempotency",
+      "sd-consistent-hashing",
+      "sd-caching-comparison",
+      "sd-cap-theorem",
+      "containers-vs-vms",
+      "cicd-pipeline",
+      "k8s-scheduling",
+      "react-rerender-tree",
+      "react-list-keys",
+      "react-store-reducer",
+      "gradient-descent",
+      "nn-forward-pass",
+      "overfitting-comparison",
+      "ml-data-pipeline",
+      "ml-drift-detection",
+      "ml-canary-rollout",
+    ])
+    .nullable()
+    .optional(),
+  submit: z.boolean(),
+});
+
 export const projectSubmissionSchema = z.object({
   submissionUrl: z.string().trim().url("Enter a valid URL"),
   description: z

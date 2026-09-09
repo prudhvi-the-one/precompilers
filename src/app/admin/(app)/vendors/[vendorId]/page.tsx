@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { requireRole } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
@@ -180,12 +179,12 @@ export default async function VendorDetailPage({
                     {(record.ratePaisePerStudent / 100).toFixed(0)} ={" "}
                     ₹{(record.totalAmountPaise / 100).toLocaleString("en-IN")}
                   </p>
-                  <Link
+                  <a
                     href={`/api/admin/vendors/${vendorId}/billing/${record.id}/invoice`}
                     className="text-xs font-medium text-accent hover:underline"
                   >
                     Download invoice
-                  </Link>
+                  </a>
                 </div>
                 <div className="flex shrink-0 items-center gap-2">
                   <span

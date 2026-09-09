@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import Editor from "@monaco-editor/react";
 import type { Comment, Problem, TestCase, User } from "@prisma/client";
 
@@ -141,9 +140,9 @@ export default function ProblemEditorClient({
         <p className="text-sm text-ink-muted">
           🔒 This problem needs a plan upgrade.
         </p>
-        <Link href="/practice/problems" className="mt-2 inline-block text-sm font-semibold text-indigo-600 hover:underline">
+        <a href="/practice/problems" className="mt-2 inline-block text-sm font-semibold text-indigo-600 hover:underline">
           Back to problems
-        </Link>
+        </a>
       </div>
     );
   }
@@ -154,9 +153,9 @@ export default function ProblemEditorClient({
     <div className="flex h-[calc(100vh-3rem)] flex-col overflow-hidden rounded-[14px] border border-line bg-surface shadow-sm">
       {/* Header */}
       <div className="flex h-auto shrink-0 flex-wrap items-center gap-3 border-b border-line-soft px-3.5 py-2.5 sm:h-14 sm:px-5.5 sm:py-0">
-        <Link href="/practice/problems" className="text-sm text-ink-faint hover:text-ink">
+        <a href="/practice/problems" className="text-sm text-ink-faint hover:text-ink">
           ← Practice / {problem.category}
-        </Link>
+        </a>
         <span className="font-brand text-[15px] font-semibold text-ink">
           {problem.title}
         </span>
@@ -367,12 +366,12 @@ export default function ProblemEditorClient({
                 </span>
               ) : null}
               {verdict === "ACCEPTED" ? (
-                <Link
+                <a
                   href="/prove/review-queue"
                   className="ml-auto text-xs font-medium text-indigo-600 hover:underline"
                 >
                   Ask a peer to review this solution
-                </Link>
+                </a>
               ) : null}
             </div>
 

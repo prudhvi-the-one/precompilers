@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { requireRole } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 
@@ -64,12 +63,12 @@ export default async function RecordingsPage() {
                   >
                     {attempt.endedByViolation ? "Flagged" : "Clean"}
                   </span>
-                  <Link
+                  <a
                     href={`/recordings/${attempt.id}`}
                     className="rounded-md bg-ink px-3 py-1.5 text-xs font-semibold text-surface"
                   >
                     Review
-                  </Link>
+                  </a>
                 </div>
               </div>
             ))}

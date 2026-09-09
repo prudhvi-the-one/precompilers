@@ -2,7 +2,6 @@
 
 import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import Link from "next/link";
 import AuthCard from "@/components/auth/AuthCard";
 import PasswordStrength from "@/components/auth/PasswordStrength";
 import { isPasswordValid } from "@/lib/passwordPolicy";
@@ -178,9 +177,9 @@ function RegisterForm() {
       </form>
       <p className="text-center text-sm text-ink-faint">
         Already have an account?{" "}
-        <Link href="/login" className="font-medium text-ink underline">
+        <a href="/login" className="font-medium text-ink underline">
           Log in
-        </Link>
+        </a>
       </p>
     </AuthCard>
   );

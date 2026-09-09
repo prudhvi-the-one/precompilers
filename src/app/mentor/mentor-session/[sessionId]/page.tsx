@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { redirect, notFound } from "next/navigation";
 import { requireRole } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
@@ -32,20 +31,21 @@ export default async function MentorMentorSessionPage({
     <>
       <header className="flex items-center justify-between border-b border-[#23243D] px-6 py-3">
         <div>
-          <Link href="/" className="text-xs text-[#7A7A96] hover:text-[#C6C6DC]">
+          {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- plain <a> used intentionally instead of next/link (see SidebarNav.tsx for why) */}
+          <a href="/" className="text-xs text-[#7A7A96] hover:text-[#C6C6DC]">
             ← Dashboard
-          </Link>
+          </a>
           <p className="font-brand text-sm font-bold text-[#E4E4F0]">
             {KIND_LABEL[mentorSession.kind]} with{" "}
             {mentorSession.student.name ?? mentorSession.student.email}
           </p>
         </div>
-        <Link
+        <a
           href={`/sessions/${mentorSession.id}/wrap-up`}
           className="rounded-lg bg-error px-4 py-2 text-sm font-semibold text-white hover:bg-error"
         >
           End &amp; submit {mentorSession.kind === "COUNSELLING" ? "notes" : "scorecard"}
-        </Link>
+        </a>
       </header>
 
       {mentorSession.roomUrl ? (

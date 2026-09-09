@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
 import { requireTierAccess } from "@/lib/tier";
@@ -59,12 +58,12 @@ export default async function LiveClassesPage() {
                   {liveClass.durationMinutes} min
                 </p>
               </div>
-              <Link
+              <a
                 href={`/live/${liveClass.id}`}
                 className="shrink-0 rounded-lg bg-indigo-600 px-4 py-2 font-brand text-[13px] font-semibold text-white hover:bg-accent-hover"
               >
                 Join class
-              </Link>
+              </a>
             </div>
           ))}
         </div>
