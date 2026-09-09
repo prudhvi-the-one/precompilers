@@ -35,5 +35,5 @@ export const INSTITUTION_ADMIN_NAV: PortalNavItem[] = [
 ];
 
 export const VENDOR_ADMIN_NAV: PortalNavItem[] = [
-  { label: "Dashboard", href: "/vendor-dashboard", icon: LayoutDashboard },
+  { label: "Dashboard", href: "/", icon: LayoutDashboard },
 ];

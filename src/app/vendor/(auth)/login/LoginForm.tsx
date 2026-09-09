@@ -7,7 +7,6 @@ import AuthCard from "@/components/auth/AuthCard";
 const inputClass =
   "w-full rounded-md border border-line px-3 py-2 text-sm focus:border-ink-faint focus:outline-none focus:ring-1 focus:ring-line";
 const labelClass = "mb-1 block text-sm font-medium text-ink-secondary";
-const ALLOWED_ROLES = ["ADMIN", "SUPER_ADMIN", "INSTITUTION_ADMIN", "FACULTY"];
 
 export default function LoginForm() {
   const router = useRouter();
@@ -33,8 +32,8 @@ export default function LoginForm() {
       setError(data.error ?? "Something went wrong");
       return;
     }
-    if (!ALLOWED_ROLES.includes(data.role)) {
-      setError("This account doesn't have access to the admin portal.");
+    if (data.role !== "VENDOR_ADMIN") {
+      setError("This account isn't a vendor admin account.");
       return;
     }
 
@@ -42,7 +41,7 @@ export default function LoginForm() {
   }
 
   return (
-    <AuthCard title="Admin log in">
+    <AuthCard title="Vendor log in">
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label className={labelClass} htmlFor="email">

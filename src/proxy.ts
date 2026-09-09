@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-const PORTALS = ["student", "admin", "mentor"] as const;
+const PORTALS = ["student", "admin", "mentor", "vendor"] as const;
 type Portal = (typeof PORTALS)[number];
 
 function isPortal(value: string | null): value is Portal {
@@ -15,7 +15,8 @@ function portalFromHostname(hostname: string): Portal | null {
 // The ?portal= override exists only to preview portals on hosts that can't
 // have a real subdomain: localhost and Vercel's *.vercel.app preview URLs.
 // It must never activate on the real production domain, where the actual
-// subdomains (student./admin./mentor.precompilers.com) are the only way in.
+// subdomains (student./admin./mentor./vendor.precompilers.com) are the only
+// way in.
 function allowsOverride(hostname: string): boolean {
   return (
     hostname === "localhost" ||
