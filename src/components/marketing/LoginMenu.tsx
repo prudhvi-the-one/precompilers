@@ -6,11 +6,13 @@ const PORTAL_LOGINS = [
   { label: "Student", href: "https://student.precompilers.com/login" },
   { label: "Mentor", href: "https://mentor.precompilers.com/login" },
   { label: "Institution", href: "https://admin.precompilers.com/login" },
+  { label: "Vendor", href: "https://vendor.precompilers.com/login" },
 ];
 
 function dashboardHref(role: string): string {
   if (role === "STUDENT") return "https://student.precompilers.com/home";
   if (role === "MENTOR") return "https://mentor.precompilers.com/";
+  if (role === "VENDOR_ADMIN") return "https://vendor.precompilers.com/";
   return "https://admin.precompilers.com/";
 }
 

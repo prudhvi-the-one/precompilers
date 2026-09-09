@@ -19,6 +19,7 @@ const PORTAL_LOGINS = [
   { label: "Student login", href: "https://student.precompilers.com/login" },
   { label: "Mentor login", href: "https://mentor.precompilers.com/login" },
   { label: "Institution login", href: "https://admin.precompilers.com/login" },
+  { label: "Vendor login", href: "https://vendor.precompilers.com/login" },
 ];
 
 export default function Nav() {
