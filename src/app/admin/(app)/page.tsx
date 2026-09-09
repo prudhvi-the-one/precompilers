@@ -2,7 +2,13 @@ import { redirect } from "next/navigation";
 import { requireRole } from "@/lib/session";
 
 export default async function AdminRootPage() {
-  const user = await requireRole(["ADMIN", "SUPER_ADMIN", "INSTITUTION_ADMIN", "FACULTY"]);
+  const user = await requireRole([
+    "ADMIN",
+    "SUPER_ADMIN",
+    "INSTITUTION_ADMIN",
+    "VENDOR_ADMIN",
+    "FACULTY",
+  ]);
   if (!user) {
     redirect("/login");
   }
@@ -12,6 +18,9 @@ export default async function AdminRootPage() {
   }
   if (user.role === "INSTITUTION_ADMIN") {
     redirect("/cohort");
+  }
+  if (user.role === "VENDOR_ADMIN") {
+    redirect("/vendor-dashboard");
   }
   redirect("/my-batch");
 }

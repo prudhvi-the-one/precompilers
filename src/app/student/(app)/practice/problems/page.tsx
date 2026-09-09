@@ -28,12 +28,71 @@ export default async function ProblemsPage({
   if (!user) {
     redirect("/login");
   }
-  await requireTierAccess(user, "PRACTICE");
 
   const { filter = "all", company = "all" } = await searchParams;
 
-  const [allProblems, acceptedSubmissions, submissionStats] = await Promise.all([
-    prisma.problem.findMany({ where: { status: "PUBLISHED" }, orderBy: { order: "asc" } }),
+  let allProblems;
+  let closesAtByProblem = new Map<string, Date>();
+  let externalReleases: {
+    id: string;
+    externalProblemSlug: string;
+    externalProblemTitle: string | null;
+    releasedAt: Date;
+    closesAt: Date;
+    solved: boolean;
+  }[] = [];
+  let leetCodeAccountStatus: "ACTIVE" | "UNVERIFIED" | "BLOCKED_OR_PRIVATE" | "NOT_LINKED" = "NOT_LINKED";
+  if (user.vendorId) {
+    // Vendor students see only their currently-open scheduled releases —
+    // a separate access mode, not the FREE/INDIVIDUAL/INSTITUTION paywall.
+    const [releases, externalReleaseRows, externalAccount] = await Promise.all([
+      prisma.scheduledRelease.findMany({
+        where: { vendorId: user.vendorId, problemId: { not: null }, closesAt: { gt: new Date() } },
+        include: { problem: true },
+        orderBy: { releasedAt: "desc" },
+      }),
+      prisma.scheduledRelease.findMany({
+        where: {
+          vendorId: user.vendorId,
+          externalProblemSlug: { not: null },
+          closesAt: { gt: new Date() },
+        },
+        orderBy: { releasedAt: "desc" },
+      }),
+      prisma.externalJudgeAccount.findUnique({
+        where: { userId_platform: { userId: user.id, platform: "LEETCODE" } },
+        include: { submissions: true },
+      }),
+    ]);
+    allProblems = releases
+      .map((r) => r.problem)
+      .filter((p): p is NonNullable<typeof p> => p !== null && p.status === "PUBLISHED");
+    closesAtByProblem = new Map(releases.map((r) => [r.problemId as string, r.closesAt]));
+    externalReleases = externalReleaseRows.map((r) => ({
+      id: r.id,
+      externalProblemSlug: r.externalProblemSlug as string,
+      externalProblemTitle: r.externalProblemTitle,
+      releasedAt: r.releasedAt,
+      closesAt: r.closesAt,
+      solved: Boolean(
+        externalAccount?.submissions.some(
+          (s) =>
+            s.problemSlug === r.externalProblemSlug &&
+            s.submittedAt >= r.releasedAt &&
+            s.submittedAt <= r.closesAt
+        )
+      ),
+    }));
+    leetCodeAccountStatus = externalAccount?.trackingStatus ?? "NOT_LINKED";
+  } else {
+    await requireTierAccess(user, "PRACTICE");
+    allProblems = await prisma.problem.findMany({
+      where: { status: "PUBLISHED" },
+      orderBy: { order: "asc" },
+    });
+  }
+
+  const [acceptedSubmissions, submissionStats] = await Promise.all([
     prisma.submission.findMany({
       where: { userId: user.id, verdict: "ACCEPTED" },
       select: { problemId: true },
@@ -108,6 +167,7 @@ export default async function ProblemsPage({
         {problems.map((problem) => {
           const solved = solvedIds.has(problem.id);
           const accuracy = accuracyByProblem.get(problem.id);
+          const closesAt = closesAtByProblem.get(problem.id);
           return (
             <Link
               key={problem.id}
@@ -126,6 +186,18 @@ export default async function ProblemsPage({
                 ) : null}
                 {solved ? <span className="ml-auto text-success">✓ Solved</span> : null}
               </div>
+              {closesAt ? (
+                <p className="mt-1 text-[11px] text-ink-faint">
+                  Closes{" "}
+                  {closesAt.toLocaleString("en-US", {
+                    day: "numeric",
+                    month: "short",
+                    hour: "numeric",
+                    minute: "2-digit",
+                    hourCycle: "h23",
+                  })}
+                </p>
+              ) : null}
               <h2 className="mt-2 font-brand text-base font-bold text-ink">
                 {problem.title}
               </h2>
@@ -152,6 +224,55 @@ export default async function ProblemsPage({
           );
         })}
       </div>
+
+      {externalReleases.length ? (
+        <div className="space-y-3">
+          <h2 className="font-brand text-lg font-bold text-ink">LeetCode problems</h2>
+          {leetCodeAccountStatus !== "ACTIVE" ? (
+            <p className="rounded-lg border border-line bg-warn-soft px-4 py-2.5 text-sm text-warn">
+              {leetCodeAccountStatus === "BLOCKED_OR_PRIVATE"
+                ? "We lost track of your LeetCode activity — check your submission-history privacy setting on LeetCode, then re-verify on your "
+                : "Link your LeetCode account on your "}
+              <Link href="/profile" className="underline">
+                profile
+              </Link>{" "}
+              to get credit for these.
+            </p>
+          ) : null}
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {externalReleases.map((release) => (
+              <a
+                key={release.id}
+                href={`https://leetcode.com/problems/${release.externalProblemSlug}/`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-xl border border-line bg-surface p-4 hover:bg-surface-sunk"
+              >
+                <div className="flex items-center gap-2 text-xs">
+                  <span className="rounded-full bg-line-soft px-2.5 py-0.5 font-mono uppercase text-ink-muted">
+                    LeetCode
+                  </span>
+                  {release.solved ? <span className="ml-auto text-success">✓ Solved</span> : null}
+                </div>
+                <p className="mt-1 text-[11px] text-ink-faint">
+                  Closes{" "}
+                  {release.closesAt.toLocaleString("en-US", {
+                    day: "numeric",
+                    month: "short",
+                    hour: "numeric",
+                    minute: "2-digit",
+                    hourCycle: "h23",
+                  })}
+                </p>
+                <h2 className="mt-2 font-brand text-base font-bold text-ink">
+                  {release.externalProblemTitle ?? release.externalProblemSlug}
+                </h2>
+                <p className="mt-2 text-xs font-medium text-accent">Solve on LeetCode ↗</p>
+              </a>
+            ))}
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }

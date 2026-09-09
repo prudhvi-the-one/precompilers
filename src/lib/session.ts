@@ -60,6 +60,14 @@ export async function setSessionCookie(token: string): Promise<void> {
   });
 }
 
+// Append-only login log — the source of truth for vendor billing's
+// "active this month" count. A single mutable lastLoginAt field wouldn't
+// work here: a later login would overwrite the only evidence an earlier
+// month's login happened, making that month's bill unreconstructable.
+export async function recordLoginEvent(userId: string): Promise<void> {
+  await prisma.loginEvent.create({ data: { userId } });
+}
+
 export async function clearSessionCookie(): Promise<void> {
   const cookieStore = await cookies();
   cookieStore.delete({

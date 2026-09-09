@@ -7,6 +7,14 @@
     {
       "path": "/api/cron/readiness-snapshot",
       "schedule": "0 4 * * *"
+    },
+    {
+      "path": "/api/cron/release-window-sweep",
+      "schedule": "0 5 * * *"
+    },
+    {
+      "path": "/api/cron/poll-external-judges",
+      "schedule": "0 6 * * *"
     }
   ]
 }

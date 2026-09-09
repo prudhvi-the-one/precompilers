@@ -56,6 +56,28 @@ export async function createOtp(
   return { ok: true, code };
 }
 
+// For freshly created accounts only (bulk roster upload) — skips the
+// per-user cooldown lookup createOtp does, since a brand-new user can never
+// be in cooldown, and batches the inserts into one round trip.
+export async function createOtpBatch(
+  userIds: string[],
+  purpose: OtpPurpose
+): Promise<{ userId: string; code: string }[]> {
+  const expiresAt = new Date(Date.now() + EXPIRY_MINUTES * 60 * 1000);
+  const entries = userIds.map((userId) => ({ userId, code: generateCode() }));
+
+  await prisma.otp.createMany({
+    data: entries.map(({ userId, code }) => ({
+      userId,
+      purpose,
+      codeHash: hashCode(code),
+      expiresAt,
+    })),
+  });
+
+  return entries;
+}
+
 export type VerifyOtpResult =
   | { ok: true }
   | { ok: false; reason: "invalid" | "expired" | "too_many_attempts" };

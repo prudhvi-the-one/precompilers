@@ -14,9 +14,23 @@ export default async function ProblemDetailPage({
   if (!user) {
     redirect("/login");
   }
-  await requireTierAccess(user, "PRACTICE");
 
   const { problemId } = await params;
+
+  let locked: boolean;
+  if (user.vendorId) {
+    const openRelease = await prisma.scheduledRelease.findFirst({
+      where: { vendorId: user.vendorId, problemId, closesAt: { gt: new Date() } },
+    });
+    if (!openRelease) {
+      notFound();
+    }
+    locked = false;
+  } else {
+    await requireTierAccess(user, "PRACTICE");
+    locked = false; // set below once the problem is loaded
+  }
+
   const problem = await prisma.problem.findUnique({
     where: { id: problemId },
     include: {
@@ -31,7 +45,9 @@ export default async function ProblemDetailPage({
     notFound();
   }
 
-  const locked = !meetsEntitlement(user.entitlement, problem.requiredEntitlement);
+  if (!user.vendorId) {
+    locked = !meetsEntitlement(user.entitlement, problem.requiredEntitlement);
+  }
 
   return <ProblemEditorClient problem={problem} locked={locked} />;
 }

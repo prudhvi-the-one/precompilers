@@ -6,9 +6,10 @@ import { createOtp } from "@/lib/otp";
 import { sendPasswordResetEmail } from "@/lib/email";
 
 const ALLOWED_TARGETS: Record<Role, Role[]> = {
-  SUPER_ADMIN: ["ADMIN", "INSTITUTION_ADMIN", "MENTOR", "STUDENT"],
-  ADMIN: ["INSTITUTION_ADMIN", "MENTOR", "STUDENT"],
+  SUPER_ADMIN: ["ADMIN", "INSTITUTION_ADMIN", "VENDOR_ADMIN", "MENTOR", "STUDENT"],
+  ADMIN: ["INSTITUTION_ADMIN", "VENDOR_ADMIN", "MENTOR", "STUDENT"],
   INSTITUTION_ADMIN: ["FACULTY", "STUDENT"],
+  VENDOR_ADMIN: [],
   FACULTY: [],
   MENTOR: [],
   STUDENT: [],
@@ -19,7 +20,9 @@ export type ProvisionInput = {
   name: string;
   role: Role;
   institutionId?: string;
+  vendorId?: string;
   facultyBatchId?: string;
+  rollNumber?: string;
 };
 
 export type ProvisionResult =
@@ -44,6 +47,15 @@ export async function provisionUser(
     return { ok: false, error: "Faculty must be assigned to a batch" };
   }
 
+  if (input.vendorId && input.rollNumber) {
+    const duplicateRollNumber = await prisma.user.findUnique({
+      where: { vendorId_rollNumber: { vendorId: input.vendorId, rollNumber: input.rollNumber } },
+    });
+    if (duplicateRollNumber) {
+      return { ok: false, error: "A student with that roll number already exists for this vendor" };
+    }
+  }
+
   // Institution admins can only provision within their own institution —
   // never trust a client-supplied institutionId for this actor role.
   const institutionId =
@@ -60,6 +72,8 @@ export async function provisionUser(
       passwordHash,
       emailVerifiedAt: new Date(),
       institutionId: institutionId ?? null,
+      vendorId: input.vendorId ?? null,
+      rollNumber: input.vendorId ? input.rollNumber ?? null : null,
       facultyBatchId: input.role === "FACULTY" ? input.facultyBatchId : null,
       entitlement: input.role === "STUDENT" && institutionId ? "INSTITUTION" : undefined,
     },

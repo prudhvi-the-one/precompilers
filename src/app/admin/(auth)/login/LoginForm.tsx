@@ -7,7 +7,7 @@ import AuthCard from "@/components/auth/AuthCard";
 const inputClass =
   "w-full rounded-md border border-line px-3 py-2 text-sm focus:border-ink-faint focus:outline-none focus:ring-1 focus:ring-line";
 const labelClass = "mb-1 block text-sm font-medium text-ink-secondary";
-const ALLOWED_ROLES = ["ADMIN", "SUPER_ADMIN", "INSTITUTION_ADMIN", "FACULTY"];
+const ALLOWED_ROLES = ["ADMIN", "SUPER_ADMIN", "INSTITUTION_ADMIN", "VENDOR_ADMIN", "FACULTY"];
 
 export default function LoginForm() {
   const router = useRouter();

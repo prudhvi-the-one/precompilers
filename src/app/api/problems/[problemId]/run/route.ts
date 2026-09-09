@@ -18,11 +18,22 @@ export async function POST(
   if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  if (!(await hasTierAccess(user, "PRACTICE"))) {
-    return NextResponse.json({ error: "Upgrade required" }, { status: 403 });
-  }
 
   const { problemId } = await params;
+
+  if (user.vendorId) {
+    const openRelease = await prisma.scheduledRelease.findFirst({
+      where: { vendorId: user.vendorId, problemId, closesAt: { gt: new Date() } },
+    });
+    if (!openRelease) {
+      return NextResponse.json({ error: "Not found" }, { status: 404 });
+    }
+  } else {
+    if (!(await hasTierAccess(user, "PRACTICE"))) {
+      return NextResponse.json({ error: "Upgrade required" }, { status: 403 });
+    }
+  }
+
   const body = await request.json().catch(() => null);
   const parsed = runSubmitSchema.safeParse(body);
   if (!parsed.success) {

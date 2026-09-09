@@ -11,7 +11,31 @@ export async function POST(request: Request) {
   if ("error" in parsed) {
     return NextResponse.json({ error: parsed.error }, { status: 400 });
   }
-  const { email, password, name, college, branch, gradYear } = parsed.data;
+  const { email, password, name, college, branch, gradYear, vendorSlug, rollNumber } = parsed.data;
+
+  let vendorId: string | undefined;
+  if (vendorSlug) {
+    const vendor = await prisma.vendor.findUnique({ where: { signupSlug: vendorSlug } });
+    if (!vendor || !vendor.selfSignupEnabled) {
+      return NextResponse.json(
+        { error: "This signup link is no longer valid. Ask your training provider for a new one." },
+        { status: 400 }
+      );
+    }
+    if (!rollNumber) {
+      return NextResponse.json({ error: "Roll number is required" }, { status: 400 });
+    }
+    vendorId = vendor.id;
+    const duplicateRollNumber = await prisma.user.findUnique({
+      where: { vendorId_rollNumber: { vendorId, rollNumber } },
+    });
+    if (duplicateRollNumber) {
+      return NextResponse.json(
+        { error: "An account with that roll number already exists for this training provider" },
+        { status: 409 }
+      );
+    }
+  }
 
   const existing = await prisma.user.findUnique({ where: { email } });
 
@@ -27,10 +51,10 @@ export async function POST(request: Request) {
   const user = existing
     ? await prisma.user.update({
         where: { id: existing.id },
-        data: { passwordHash, name, college, branch, gradYear },
+        data: { passwordHash, name, college, branch, gradYear, vendorId, rollNumber },
       })
     : await prisma.user.create({
-        data: { email, passwordHash, name, college, branch, gradYear },
+        data: { email, passwordHash, name, college, branch, gradYear, vendorId, rollNumber },
       });
 
   const otpResult = await createOtp(user.id, "EMAIL_VERIFY");

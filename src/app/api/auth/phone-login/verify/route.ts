@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { verifyOtp } from "@/lib/otp";
-import { createSessionToken, setSessionCookie } from "@/lib/session";
+import { createSessionToken, setSessionCookie, recordLoginEvent } from "@/lib/session";
 import { phoneLoginVerifySchema } from "@/lib/validation";
 import { parseBody } from "@/lib/api";
 import { isPhoneLoginEnabled } from "@/lib/featureFlags";
@@ -34,6 +34,7 @@ export async function POST(request: Request) {
 
   const token = await createSessionToken({ userId: user.id, role: user.role });
   await setSessionCookie(token);
+  await recordLoginEvent(user.id);
 
   return NextResponse.json({ success: true, role: user.role });
 }

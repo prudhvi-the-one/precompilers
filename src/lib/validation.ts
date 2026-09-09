@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { isPasswordValid, PASSWORD_SPECIAL_CHARS } from "./passwordPolicy";
 
-const email = z.string().trim().toLowerCase().email();
+export const email = z.string().trim().toLowerCase().email();
 const password = z
   .string()
   .max(72, "Password must be at most 72 characters")
@@ -9,7 +9,7 @@ const password = z
     message: `Password must be at least 8 characters and include a letter, a number, and a special character (${PASSWORD_SPECIAL_CHARS})`,
   });
 const otpCode = z.string().regex(/^\d{6}$/, "Code must be 6 digits");
-const phoneNumber = z
+export const phoneNumber = z
   .string()
   .trim()
   .regex(/^\+?[1-9]\d{7,14}$/, "Enter a valid phone number with country code");
@@ -21,6 +21,9 @@ export const registerSchema = z.object({
   college: z.string().trim().min(1).optional(),
   branch: z.string().trim().min(1).optional(),
   gradYear: z.number().int().min(2000).max(2100).optional(),
+  // Present only when registering through a vendor's self-signup link.
+  vendorSlug: z.string().trim().min(1).optional(),
+  rollNumber: z.string().trim().min(1).optional(),
 });
 
 export const loginSchema = z.object({
@@ -90,6 +93,40 @@ export const onboardingSchema = z.object({
   ]),
   gradYear: z.number().int().min(2000).max(2100).nullable().optional(),
   weeklyHours: z.string().max(20).nullable().optional(),
+});
+
+export const adminEditStudentSchema = z.object({
+  name: z.string().trim().max(100).optional(),
+  email: z.string().trim().email().optional(),
+  college: z.string().trim().max(150).nullable().optional(),
+  branch: z.string().trim().max(100).nullable().optional(),
+  rollNumber: z.string().trim().max(50).nullable().optional(),
+  gradYear: z.number().int().min(2000).max(2100).nullable().optional(),
+  cgpa: z.number().min(0).max(10).nullable().optional(),
+  backlogCount: z.number().int().min(0).nullable().optional(),
+  weeklyHours: z.string().max(20).nullable().optional(),
+  targetRole: z
+    .enum([
+      "SOFTWARE_ENGINEER",
+      "DATA_ML_ENGINEER",
+      "FRONTEND_ENGINEER",
+      "CLOUD_DEVOPS",
+      "HIGHER_STUDIES",
+      "NOT_SURE",
+    ])
+    .nullable()
+    .optional(),
+  phoneNumber: phoneNumber.nullable().optional(),
+  whatsappOptIn: z.boolean().optional(),
+  vendorId: z.string().nullable().optional(),
+});
+
+export const certificateCriteriaSchema = z.object({
+  minCompletionPercent: z.number().int().min(1).max(100),
+});
+
+export const vendorSelfSignupSchema = z.object({
+  enabled: z.boolean(),
 });
 
 export const projectSubmissionSchema = z.object({
@@ -501,3 +538,26 @@ export const problemAuthorSchema = z
       }
     }
   });
+
+export const scheduledReleaseSchema = z
+  .object({
+    quizId: z.string().trim().min(1).optional(),
+    problemId: z.string().trim().min(1).optional(),
+    externalProblemSlug: z.string().trim().min(1).max(200).optional(),
+    windowMinutes: z.number().int().min(1).max(10080).default(720),
+  })
+  .superRefine((data, ctx) => {
+    const targets = [data.quizId, data.problemId, data.externalProblemSlug].filter(Boolean);
+    if (targets.length !== 1) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["quizId"],
+        message: "Release exactly one of quizId, problemId, or externalProblemSlug",
+      });
+    }
+  });
+
+export const externalJudgeLinkSchema = z.object({
+  platform: z.enum(["LEETCODE", "CODECHEF"]),
+  handle: z.string().trim().min(1).max(100),
+});
