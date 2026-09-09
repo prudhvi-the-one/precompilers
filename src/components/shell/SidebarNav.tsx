@@ -1,13 +1,12 @@
 "use client";
 
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Home, BookOpen, Code2, Award, Briefcase, type LucideIcon } from "lucide-react";
 import ReadinessWidget from "@/components/shell/ReadinessWidget";
 import MobileDrawer from "@/components/shell/MobileDrawer";
 import type { Section } from "@/lib/tier";
 
-type SubItem = { label: string; href: string; section?: Section };
+type SubItem = { label: string; href: string; section?: Section; matchPrefix?: boolean };
 
 type NavItem = {
   label: string;
@@ -23,6 +22,7 @@ const LEARN_SUB_ITEMS: SubItem[] = [
   { label: "Lectures", href: "/learn/lectures" },
   { label: "Live classes", href: "/learn/live-classes", section: "LIVE" },
   { label: "Notes & resources", href: "/learn/notes" },
+  { label: "Learning paths", href: "/learn/paths", matchPrefix: true },
 ];
 
 const PRACTICE_SUB_ITEMS: SubItem[] = [
@@ -90,14 +90,16 @@ function NavList({
           );
           if (locked) {
             return (
-              <Link
+              // A plain <a>, not next/link's <Link>: see the note on the main
+              // nav <a> below — same slow-page/lost-race navigation failure.
+              <a
                 key={item.href}
                 href="/upgrade"
                 onClick={onNavigate}
                 className="flex items-center gap-2.75 rounded-[9px] px-3 py-2.5 text-sm text-ink-faintest hover:bg-line-soft"
               >
                 {content}
-              </Link>
+              </a>
             );
           }
           return (
@@ -112,7 +114,12 @@ function NavList({
 
         return (
           <div key={item.href}>
-            <Link
+            {/* A plain <a>, not next/link's <Link>: this app's slower pages
+                can lose the race against the still-in-flight prefetch and a
+                client-side transition silently fails to navigate. A full
+                navigation always renders correctly, so it's the reliable
+                choice for every link in this sidebar. */}
+            <a
               href={item.href}
               onClick={onNavigate}
               className={
@@ -127,7 +134,7 @@ function NavList({
                 color={active ? "#4F46E5" : "#C6C6D4"}
               />
               {item.label}
-            </Link>
+            </a>
 
             {active && item.subItems ? (
               <div className="mt-1 flex flex-col gap-2.25 pl-9.75">
@@ -137,7 +144,7 @@ function NavList({
                     : false;
                   if (subLocked) {
                     return (
-                      <Link
+                      <a
                         key={sub.label}
                         href="/upgrade"
                         onClick={onNavigate}
@@ -147,12 +154,14 @@ function NavList({
                         <span className="rounded-full bg-line-soft px-1.5 py-0.5 font-mono text-[9px] text-ink-faintest">
                           Upgrade
                         </span>
-                      </Link>
+                      </a>
                     );
                   }
-                  const subActive = pathname === sub.href;
+                  const subActive = sub.matchPrefix
+                    ? pathname === sub.href || pathname.startsWith(`${sub.href}/`)
+                    : pathname === sub.href;
                   return (
-                    <Link
+                    <a
                       key={sub.href}
                       href={sub.href}
                       onClick={onNavigate}
@@ -163,7 +172,7 @@ function NavList({
                       }
                     >
                       {sub.label}
-                    </Link>
+                    </a>
                   );
                 })}
               </div>

@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { redirect, notFound } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
@@ -52,9 +51,9 @@ export default async function AttemptResultsPage({
 
   return (
     <div className="max-w-3xl space-y-5">
-      <Link href={isPaper ? "/practice/aptitude" : "/practice/quizzes"} className="text-sm text-ink-faint hover:text-ink">
+      <a href={isPaper ? "/practice/aptitude" : "/practice/quizzes"} className="text-sm text-ink-faint hover:text-ink">
         ← {isPaper ? "Aptitude papers" : "Topic quizzes"}
-      </Link>
+      </a>
 
       <div className="rounded-xl border border-line bg-surface p-6">
         <div className="flex items-center gap-2">

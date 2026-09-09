@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { requireRole } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import AddAvailabilityForm from "@/components/mentor/AddAvailabilityForm";
@@ -78,19 +77,19 @@ export default async function MentorDashboardPage() {
                 </div>
                 <div className="flex items-center gap-3">
                   {s.roomUrl ? (
-                    <Link
+                    <a
                       href={`/mentor-session/${s.id}`}
                       className="rounded-md bg-ink px-3 py-1.5 text-xs font-semibold text-surface"
                     >
                       Join room
-                    </Link>
+                    </a>
                   ) : null}
-                  <Link
+                  <a
                     href={`/sessions/${s.id}/wrap-up`}
                     className="text-xs font-semibold text-indigo-600 hover:underline"
                   >
                     {s.kind === "COUNSELLING" ? "Add notes" : "Submit scorecard"}
-                  </Link>
+                  </a>
                 </div>
               </div>
             ))}

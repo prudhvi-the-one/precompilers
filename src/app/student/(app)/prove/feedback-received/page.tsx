@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
 import { requireTierAccess } from "@/lib/tier";
@@ -25,9 +24,9 @@ export default async function FeedbackReceivedPage() {
 
   return (
     <div className="max-w-3xl space-y-4">
-      <Link href="/prove" className="text-sm text-ink-faint hover:text-ink">
+      <a href="/prove" className="text-sm text-ink-faint hover:text-ink">
         ← Prove
-      </Link>
+      </a>
       <div>
         <h1 className="font-brand text-[25px] font-bold tracking-[-0.02em] text-ink">
           Feedback received
@@ -40,9 +39,9 @@ export default async function FeedbackReceivedPage() {
       {submissions.length === 0 ? (
         <div className="rounded-xl border border-line bg-surface p-6 text-center text-sm text-ink-muted">
           You haven&apos;t submitted a project yet.{" "}
-          <Link href="/prove/projects" className="font-semibold text-indigo-600 hover:underline">
+          <a href="/prove/projects" className="font-semibold text-indigo-600 hover:underline">
             Pick a brief
-          </Link>
+          </a>
           .
         </div>
       ) : (

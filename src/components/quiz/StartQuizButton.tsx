@@ -1,8 +1,25 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useFormStatus } from "react-dom";
 
+function SubmitButton({ label }: { label: string }) {
+  const { pending } = useFormStatus();
+  return (
+    <button
+      type="submit"
+      disabled={pending}
+      className="shrink-0 rounded-lg bg-indigo-600 px-4 py-2 font-brand text-[13px] font-semibold text-white hover:bg-accent-hover disabled:opacity-50"
+    >
+      {pending ? "Starting…" : label}
+    </button>
+  );
+}
+
+// A real <form> POST, not a fetch()-then-navigate: the API redirects
+// straight to the new attempt, so the whole thing is one continuous,
+// browser-native navigation off the click — see the route for why
+// (a JS-triggered navigation after an awaited fetch can lose the click's
+// user-activation on a slow response and get silently blocked).
 export default function StartQuizButton({
   quizId,
   label = "Start quiz",
@@ -10,27 +27,9 @@ export default function StartQuizButton({
   quizId: string;
   label?: string;
 }) {
-  const router = useRouter();
-  const [loading, setLoading] = useState(false);
-
-  async function handleClick() {
-    setLoading(true);
-    const res = await fetch(`/api/quizzes/${quizId}/start`, { method: "POST" });
-    const data = (await res.json()) as { attemptId?: string };
-    setLoading(false);
-    if (data.attemptId) {
-      router.push(`/quiz-attempt/${data.attemptId}`);
-    }
-  }
-
   return (
-    <button
-      type="button"
-      onClick={handleClick}
-      disabled={loading}
-      className="shrink-0 rounded-lg bg-indigo-600 px-4 py-2 font-brand text-[13px] font-semibold text-white hover:bg-accent-hover disabled:opacity-50"
-    >
-      {loading ? "Starting…" : label}
-    </button>
+    <form action={`/api/quizzes/${quizId}/start`} method="POST">
+      <SubmitButton label={label} />
+    </form>
   );
 }

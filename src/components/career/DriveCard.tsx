@@ -1,4 +1,3 @@
-import Link from "next/link";
 import type { Application, Drive } from "@prisma/client";
 import { avatarColor, initialsFromName } from "@/lib/avatar";
 import type { EligibilityResult } from "@/lib/driveEligibility";
@@ -178,9 +177,9 @@ export default function DriveCard({
       ) : null}
 
       <div className="mt-3 flex items-center justify-between text-xs text-ink-faint">
-        <Link href={`/career/questions?company=${encodeURIComponent(drive.companyName)}`} className="font-medium text-accent hover:underline">
+        <a href={`/career/questions?company=${encodeURIComponent(drive.companyName)}`} className="font-medium text-accent hover:underline">
           Question bank
-        </Link>
+        </a>
         {batchAppliedCount !== null && batchAppliedCount > 0 ? (
           <span>
             {batchAppliedCount} from your batch applied

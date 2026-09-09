@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
 import { computeOverallReadiness } from "@/lib/readiness";
 import { computeCurrentStreak } from "@/lib/streak";
+import { computeTotalXp, levelForXp } from "@/lib/skillTree";
 import { getUnlockedSections } from "@/lib/tier";
 import AppShell from "@/components/shell/AppShell";
 
@@ -15,10 +16,11 @@ export default async function AppLayout({
     redirect("/login");
   }
 
-  const [overallReadiness, currentStreak, unlockedSections] = await Promise.all([
+  const [overallReadiness, currentStreak, unlockedSections, totalXp] = await Promise.all([
     computeOverallReadiness(user.id),
     computeCurrentStreak(user.id),
     getUnlockedSections(user),
+    computeTotalXp(user.id),
   ]);
 
   return (
@@ -27,6 +29,8 @@ export default async function AppLayout({
       overallReadiness={overallReadiness}
       currentStreak={currentStreak}
       unlockedSections={unlockedSections}
+      level={levelForXp(totalXp)}
+      totalXp={totalXp}
     >
       {children}
     </AppShell>

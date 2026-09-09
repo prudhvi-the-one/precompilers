@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { LucideIcon } from "lucide-react";
 import MobileDrawer from "@/components/shell/MobileDrawer";
@@ -22,7 +21,11 @@ function PortalNavList({
         const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
         const Icon = item.icon;
         return (
-          <Link
+          // A plain <a>, not next/link's <Link>: on a slow-rendering destination
+          // page, a client-side transition can lose the race against the
+          // still-in-flight prefetch and silently fail to navigate. A full
+          // navigation always renders correctly, so it's the reliable choice here.
+          <a
             key={item.href}
             href={item.href}
             onClick={onNavigate}
@@ -38,7 +41,7 @@ function PortalNavList({
               color={active ? "#4F46E5" : "#C6C6D4"}
             />
             {item.label}
-          </Link>
+          </a>
         );
       })}
     </div>

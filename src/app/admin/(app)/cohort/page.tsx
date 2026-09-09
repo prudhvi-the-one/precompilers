@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { requireRole } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
@@ -55,16 +54,16 @@ export default async function CohortPage({
         </div>
 
         <div className="flex flex-wrap gap-2">
-          <Link
+          <a
             href="/cohort"
             className={`rounded-full px-3.5 py-1.5 text-[13px] font-medium ${
               batchFilter === "all" ? "bg-ink text-surface" : "border border-line text-ink-secondary"
             }`}
           >
             All batches
-          </Link>
+          </a>
           {batches.map((b) => (
-            <Link
+            <a
               key={b.id}
               href={`/cohort?batch=${b.id}`}
               className={`rounded-full px-3.5 py-1.5 text-[13px] font-medium ${
@@ -72,7 +71,7 @@ export default async function CohortPage({
               }`}
             >
               {b.name}
-            </Link>
+            </a>
           ))}
         </div>
 

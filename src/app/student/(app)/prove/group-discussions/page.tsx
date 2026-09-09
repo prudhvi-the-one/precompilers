@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
 import { requireTierAccess } from "@/lib/tier";
@@ -29,9 +28,9 @@ export default async function GroupDiscussionsPage() {
 
   return (
     <div className="max-w-3xl space-y-4">
-      <Link href="/prove" className="text-sm text-ink-faint hover:text-ink">
+      <a href="/prove" className="text-sm text-ink-faint hover:text-ink">
         ← Prove
-      </Link>
+      </a>
       <div>
         <h1 className="font-brand text-[25px] font-bold tracking-[-0.02em] text-ink">
           Group discussions
@@ -53,12 +52,12 @@ export default async function GroupDiscussionsPage() {
                 so far · starts with {session.minParticipants} or more
               </p>
             </div>
-            <Link
+            <a
               href={`/gd-room/${session.id}`}
               className="shrink-0 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-accent-hover"
             >
               Join
-            </Link>
+            </a>
           </div>
         ))}
       </div>

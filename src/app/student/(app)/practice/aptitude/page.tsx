@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
 import { requireTierAccess } from "@/lib/tier";
@@ -47,12 +46,12 @@ export default async function AptitudePapersPage() {
             Sectional, timed papers patterned after real company tests.
           </p>
         </div>
-        <Link
+        <a
           href="/practice/quizzes/history"
           className="text-sm font-semibold text-indigo-600 hover:underline"
         >
           History
-        </Link>
+        </a>
       </div>
 
       <div className="space-y-3">

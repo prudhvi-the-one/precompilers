@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Building2 } from "lucide-react";
 import { getCurrentUser } from "@/lib/session";
@@ -144,7 +143,7 @@ export default async function ProblemsPage({
             if (company !== "all") params.set("company", company);
             const query = params.toString();
             return (
-              <Link
+              <a
                 key={f.key}
                 href={query ? `/practice/problems?${query}` : "/practice/problems"}
                 className={`rounded-full px-3.5 py-1.5 text-[13px] font-medium ${
@@ -154,7 +153,7 @@ export default async function ProblemsPage({
                 }`}
               >
                 {f.label}
-              </Link>
+              </a>
             );
           })}
           {companies.length ? (
@@ -169,7 +168,7 @@ export default async function ProblemsPage({
           const accuracy = accuracyByProblem.get(problem.id);
           const closesAt = closesAtByProblem.get(problem.id);
           return (
-            <Link
+            <a
               key={problem.id}
               href={`/practice/problems/${problem.id}`}
               className="rounded-xl border border-line bg-surface p-4 hover:bg-surface-sunk"
@@ -220,7 +219,7 @@ export default async function ProblemsPage({
                   </span>
                 ))}
               </div>
-            </Link>
+            </a>
           );
         })}
       </div>
@@ -233,9 +232,9 @@ export default async function ProblemsPage({
               {leetCodeAccountStatus === "BLOCKED_OR_PRIVATE"
                 ? "We lost track of your LeetCode activity — check your submission-history privacy setting on LeetCode, then re-verify on your "
                 : "Link your LeetCode account on your "}
-              <Link href="/profile" className="underline">
+              <a href="/profile" className="underline">
                 profile
-              </Link>{" "}
+              </a>{" "}
               to get credit for these.
             </p>
           ) : null}

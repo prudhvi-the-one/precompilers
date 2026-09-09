@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
 
 type OptionView = { id: string; label: string; text: string };
 type QuestionView = {
@@ -52,8 +51,6 @@ export default function QuizAttemptClient({
   initialViolationCount: number;
   resultsHref: string;
 }) {
-  const router = useRouter();
-
   const [sectionAttempts, setSectionAttempts] = useState(initialSectionAttempts);
   const [responses, setResponses] = useState<Record<string, ResponseView>>(
     Object.fromEntries(initialResponses.map((r) => [r.questionId, r]))
@@ -68,6 +65,10 @@ export default function QuizAttemptClient({
   const streamRef = useRef<MediaStream | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const recordedChunksRef = useRef<Blob[]>([]);
+  // A real <form> submit, not window.location.href: a JS-triggered
+  // navigation after an awaited fetch can lose the click's user-activation
+  // and get silently blocked by the browser — see StartQuizButton.tsx.
+  const resultsFormRef = useRef<HTMLFormElement>(null);
 
   const activeSectionAttempt = sectionAttempts.find((sa) => !sa.submittedAt);
   const activeSection =
@@ -182,8 +183,7 @@ export default function QuizAttemptClient({
               finalizeRecording();
               setEnded(true);
               setTimeout(() => {
-                router.push(resultsHref);
-                router.refresh();
+                resultsFormRef.current?.requestSubmit();
               }, 2500);
             }
           })
@@ -193,7 +193,7 @@ export default function QuizAttemptClient({
     document.addEventListener("visibilitychange", handleVisibilityChange);
     return () =>
       document.removeEventListener("visibilitychange", handleVisibilityChange);
-  }, [proctored, ended, attemptId, resultsHref, router, finalizeRecording]);
+  }, [proctored, ended, attemptId, resultsHref, finalizeRecording]);
 
   // Mark the current question seen (fire-and-forget, no re-render needed).
   const seenPinged = useRef<Set<string>>(new Set());
@@ -257,8 +257,7 @@ export default function QuizAttemptClient({
       };
       if (data.attemptSubmitted) {
         finalizeRecording();
-        router.push(resultsHref);
-        router.refresh();
+        resultsFormRef.current?.requestSubmit();
         return;
       }
       setSectionAttempts((prev) => [
@@ -317,6 +316,7 @@ export default function QuizAttemptClient({
 
   return (
     <div className={isPaper ? "min-h-screen bg-[#0F1020]" : "min-h-screen bg-[#FBFBFD]"}>
+      <form ref={resultsFormRef} action={resultsHref} method="GET" hidden />
       {/* Topbar */}
       <div
         className={

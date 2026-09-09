@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { GetObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
@@ -33,9 +32,9 @@ export default async function RecordingReviewPage({
 
   return (
     <div className="mx-auto max-w-2xl space-y-6">
-      <Link href="/recordings" className="text-sm text-ink-faint hover:text-ink">
+      <a href="/recordings" className="text-sm text-ink-faint hover:text-ink">
         ← Recordings
-      </Link>
+      </a>
 
       <div>
         <h1 className="font-brand text-xl font-bold text-ink">

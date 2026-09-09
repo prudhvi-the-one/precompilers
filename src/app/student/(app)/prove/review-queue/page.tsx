@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
 import { requireTierAccess } from "@/lib/tier";
@@ -29,9 +28,9 @@ export default async function ReviewQueuePage() {
 
   return (
     <div className="max-w-3xl space-y-4">
-      <Link href="/prove" className="text-sm text-ink-faint hover:text-ink">
+      <a href="/prove" className="text-sm text-ink-faint hover:text-ink">
         ← Prove
-      </Link>
+      </a>
 
       {next ? (
         <>

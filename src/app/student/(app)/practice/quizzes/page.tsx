@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
 import { requireTierAccess } from "@/lib/tier";
@@ -61,12 +60,12 @@ export default async function QuizzesPage() {
             Short, timed quizzes across core CS &amp; AIML topics.
           </p>
         </div>
-        <Link
+        <a
           href="/practice/quizzes/history"
           className="text-sm font-semibold text-indigo-600 hover:underline"
         >
           History
-        </Link>
+        </a>
       </div>
 
       <div className="divide-y divide-line-soft rounded-xl border border-line bg-surface">

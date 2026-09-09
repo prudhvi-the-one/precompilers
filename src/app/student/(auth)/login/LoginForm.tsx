@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import AuthCard from "@/components/auth/AuthCard";
 import PhoneLoginForm from "./PhoneLoginForm";
 
@@ -114,12 +113,12 @@ export default function LoginForm({
       )}
 
       <div className="mt-4 flex justify-between text-sm text-ink-faint">
-        <Link href="/register" className="underline">
+        <a href="/register" className="underline">
           Create account
-        </Link>
-        <Link href="/forgot-password" className="underline">
+        </a>
+        <a href="/forgot-password" className="underline">
           Forgot password?
-        </Link>
+        </a>
       </div>
     </AuthCard>
   );

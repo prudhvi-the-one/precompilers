@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
@@ -97,12 +96,12 @@ export default async function HomePage() {
               </p>
             </div>
           </div>
-          <Link
+          <a
             href={`/live/${soonLiveClass.id}`}
             className="shrink-0 rounded-lg bg-indigo-600 px-4 py-2 font-brand text-[13px] font-semibold text-white hover:bg-accent-hover"
           >
             Join class
-          </Link>
+          </a>
         </div>
       ) : null}
 
@@ -275,12 +274,12 @@ function NextActionRow({
         <div className="text-sm font-medium text-ink">{title}</div>
         <div className="text-xs text-ink-faint">{description}</div>
       </div>
-      <Link
+      <a
         href={href}
         className="shrink-0 rounded-md border border-[#DDD9FB] px-3 py-1.5 text-xs font-semibold text-indigo-600 hover:bg-surface"
       >
         {cta}
-      </Link>
+      </a>
     </div>
   );
 }

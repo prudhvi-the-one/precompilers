@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
 import { requireTierAccess } from "@/lib/tier";
@@ -96,7 +95,7 @@ export default async function CareerPage({
                   ? appliedDrives.length
                   : drives.length;
             return (
-              <Link
+              <a
                 key={f.key}
                 href={`/career?filter=${f.key}`}
                 className={`rounded-full px-3.5 py-1.5 text-[13px] font-medium ${
@@ -106,7 +105,7 @@ export default async function CareerPage({
                 }`}
               >
                 {f.label} · {count}
-              </Link>
+              </a>
             );
           })}
         </div>
@@ -133,12 +132,12 @@ export default async function CareerPage({
               </p>
             </div>
           </div>
-          <Link
+          <a
             href={`/practice/problems?company=${encodeURIComponent(featuredDrive.companyName)}`}
             className="shrink-0 rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-accent-hover"
           >
             Prepare for this drive
-          </Link>
+          </a>
         </div>
       ) : null}
 

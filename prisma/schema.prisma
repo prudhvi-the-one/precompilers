@@ -174,6 +174,7 @@ model User {
   externalJudgeAccounts ExternalJudgeAccount[]
   loginEvents LoginEvent[]
   certificates Certificate[]
+  topicProgress TopicProgress[]
 
   @@index([institutionId, role])
   @@index([vendorId, role])
@@ -289,6 +290,55 @@ model LectureProgress {
   @@unique([userId, lectureId])
 }
 
+model Subject {
+  id          String        @id @default(cuid())
+  slug        String        @unique
+  name        String
+  iconKey     String
+  accentColor String
+  order       Int           @default(0)
+  status      ContentStatus @default(DRAFT)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  topics Topic[]
+}
+
+model Topic {
+  id           String        @id @default(cuid())
+  slug         String        @unique
+  subjectId    String
+  subject      Subject       @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  name         String
+  description  String
+  unitLabel    String?
+  order        Int           @default(0)
+  xpReward     Int           @default(100)
+  simulatorKey String?
+  linkedQuizId String?
+  linkedQuiz   Quiz?         @relation(fields: [linkedQuizId], references: [id], onDelete: SetNull)
+  status       ContentStatus @default(DRAFT)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  progress TopicProgress[]
+
+  @@unique([subjectId, order])
+}
+
+model TopicProgress {
+  id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  topicId     String
+  topic       Topic     @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  startedAt   DateTime?
+  completedAt DateTime?
+  xpEarned    Int       @default(0)
+
+  @@unique([userId, topicId])
+}
+
 model LiveClass {
   id              String   @id @default(cuid())
   batchId         String
@@ -337,6 +387,7 @@ model Quiz {
   sections QuizSection[]
   attempts QuizAttempt[]
   scheduledReleases ScheduledRelease[]
+  linkedTopics Topic[]
 
   @@index([status])
   @@index([authorId])

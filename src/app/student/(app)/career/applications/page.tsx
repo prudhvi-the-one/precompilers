@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
 import { requireTierAccess } from "@/lib/tier";
@@ -59,7 +58,7 @@ export default async function ApplicationsPage({
         </div>
         <div className="flex flex-wrap items-center gap-2">
           {FILTERS.map((f) => (
-            <Link
+            <a
               key={f.key}
               href={f.key === "all" ? "/career/applications" : `/career/applications?filter=${f.key}`}
               className={`rounded-full px-3.5 py-1.5 text-[13px] font-medium ${
@@ -69,7 +68,7 @@ export default async function ApplicationsPage({
               }`}
             >
               {f.label}
-            </Link>
+            </a>
           ))}
         </div>
       </div>
