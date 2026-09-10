@@ -54,26 +54,24 @@ export default function Pricing() {
         </div>
 
         <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-3">
-          {TIERS.map((tier) => {
+          {TIERS.map((tier, i) => {
             const price = billing === "monthly" ? tier.monthlyPaise : tier.annualPaise;
             const displayMonthly = billing === "monthly" ? price : Math.round(price / 12);
 
-            return (
+            const card = (
               <div
                 key={tier.tier}
                 className={
                   tier.highlight
-                    ? "rounded-xl border-[1.5px] border-indigo-600 bg-accent-soft p-8"
-                    : "rounded-xl border border-line bg-surface p-8"
+                    ? "group relative h-full overflow-hidden rounded-xl border-[1.5px] border-indigo-600 bg-accent-soft p-8 shadow-[0_20px_50px_-24px_rgba(79,70,229,.35)] transition-transform hover:-translate-y-1"
+                    : "h-full rounded-xl border border-line bg-surface p-8 transition-transform hover:-translate-y-1"
                 }
               >
                 {tier.highlight ? (
-                  <p className="font-mono text-[10px] tracking-[0.1em] text-indigo-600 uppercase">
-                    Most popular
-                  </p>
+                  <span className="pointer-events-none absolute -top-[60%] -left-[20%] h-[220%] w-[60%] -translate-x-[160%] rotate-[20deg] bg-linear-to-r from-transparent via-indigo-600/20 to-transparent transition-transform duration-1000 ease-out group-hover:translate-x-[220%]" />
                 ) : null}
 
-                <h3 className="mt-3 font-brand text-[21px] font-bold text-ink">
+                <h3 className="font-brand text-[21px] font-bold text-ink">
                   {tier.name}
                 </h3>
                 <p className="mt-1 text-sm text-ink-muted">{tier.tagline}</p>
@@ -116,6 +114,31 @@ export default function Pricing() {
                     </li>
                   ))}
                 </ul>
+              </div>
+            );
+
+            if (!tier.highlight) {
+              return (
+                <div key={tier.tier} className="animate-rise-in" style={{ animationDelay: `${i * 0.08}s` }}>
+                  {card}
+                </div>
+              );
+            }
+
+            // The badge lives on this wrapper, not on the card itself — the
+            // card needs overflow-hidden to clip the shimmer sweep, and an
+            // overflow-hidden parent clips any child positioned outside its
+            // own box, badge included (top: -12px pokes above the card).
+            return (
+              <div
+                key={tier.tier}
+                className="relative animate-rise-in"
+                style={{ animationDelay: `${i * 0.08}s` }}
+              >
+                <span className="absolute -top-3 left-1/2 z-10 -translate-x-1/2 rounded-full bg-indigo-600 px-3 py-1 font-brand text-[11px] font-bold whitespace-nowrap text-white">
+                  Most popular
+                </span>
+                {card}
               </div>
             );
           })}

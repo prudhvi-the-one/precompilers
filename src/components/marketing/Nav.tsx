@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Menu } from "lucide-react";
 import Logo from "@/components/Logo";
 import LoginMenu from "@/components/marketing/LoginMenu";
@@ -24,10 +24,26 @@ const PORTAL_LOGINS = [
 
 export default function Nav() {
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const progressRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function updateProgress() {
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      const pct = max > 0 ? Math.min(1, window.scrollY / max) : 0;
+      if (progressRef.current) progressRef.current.style.transform = `scaleX(${pct})`;
+    }
+    updateProgress();
+    document.addEventListener("scroll", updateProgress, { passive: true });
+    return () => document.removeEventListener("scroll", updateProgress);
+  }, []);
 
   return (
     <>
-      <header className="sticky top-0 z-50 h-17 border-b border-line-soft bg-surface/90 backdrop-blur-md">
+      <div
+        ref={progressRef}
+        className="fixed top-0 right-0 left-0 z-50 h-[3px] origin-left scale-x-0 bg-indigo-600 transition-transform duration-100 ease-linear"
+      />
+      <header className="sticky top-[3px] z-50 h-17 border-b border-line-soft bg-surface/90 backdrop-blur-md">
         <nav className="mx-auto flex h-full max-w-6xl items-center justify-between px-6">
           <div className="flex items-center gap-3">
             <button
