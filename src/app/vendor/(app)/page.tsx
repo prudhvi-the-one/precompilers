@@ -1,11 +1,21 @@
 import { redirect } from "next/navigation";
+import { Users, TrendingUp, Award, AlertTriangle } from "lucide-react";
 import { requireRole } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import RetryTrackingButton from "@/components/admin/RetryTrackingButton";
 import { computeVendorCompletionPercent, parseCertificateCriteria } from "@/lib/vendorCompletion";
+import StatChip from "@/components/vendor/StatChip";
+import StatusPill from "@/components/vendor/StatusPill";
 
 function formatDate(date: Date): string {
   return date.toLocaleDateString("en-US", { day: "numeric", month: "short", year: "numeric" });
+}
+
+function initials(name: string | null, email: string): string {
+  const source = name?.trim() || email;
+  const parts = source.split(/\s+/).filter(Boolean);
+  if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+  return source.slice(0, 2).toUpperCase();
 }
 
 export default async function VendorDashboardPage() {
@@ -53,25 +63,45 @@ export default async function VendorDashboardPage() {
     UNVERIFIED: "LeetCode not verified",
     BLOCKED_OR_PRIVATE: "LeetCode tracking lost",
   };
-  const LEETCODE_STATUS_STYLE: Record<string, string> = {
-    ACTIVE: "bg-green-50 text-green-700",
-    UNVERIFIED: "bg-line-soft text-ink-muted",
-    BLOCKED_OR_PRIVATE: "bg-amber-50 text-amber-700",
+  const LEETCODE_STATUS_TONE: Record<string, "success" | "neutral" | "warn"> = {
+    ACTIVE: "success",
+    UNVERIFIED: "neutral",
+    BLOCKED_OR_PRIVATE: "warn",
   };
 
+  const avgCompletion = students.length
+    ? Math.round([...completionByStudent.values()].reduce((s, v) => s + v, 0) / students.length)
+    : 0;
+  const certificatesIssued = students.filter((s) => s.certificates.length > 0).length;
+  const needsAttention = students.filter(
+    (s) => s.externalJudgeAccounts[0]?.trackingStatus === "BLOCKED_OR_PRIVATE"
+  ).length;
+
   return (
-    <div className="mx-auto max-w-3xl space-y-8">
+    <div className="mx-auto max-w-4xl space-y-8">
       <div>
-        <h1 className="font-brand text-[25px] font-bold tracking-[-0.02em] text-ink">
+        <h1 className="font-brand text-[28px] font-bold tracking-[-0.015em] text-ink">
           {vendor.name}
         </h1>
-        <p className="text-sm text-ink-faint">
+        <p className="mt-1 text-sm text-ink-faint">
           {students.length} student{students.length === 1 ? "" : "s"} · ₹
           {(vendor.ratePaisePerStudent / 100).toFixed(0)}/student/month
         </p>
       </div>
 
-      <section className="rounded-xl border border-line bg-surface">
+      <div className="grid grid-cols-2 gap-3.5 sm:grid-cols-4">
+        <StatChip icon={Users} label="Students" value={students.length} />
+        <StatChip icon={TrendingUp} label="Avg. completion" value={`${avgCompletion}%`} />
+        <StatChip icon={Award} label="Certificates issued" value={certificatesIssued} tone="success" />
+        <StatChip
+          icon={AlertTriangle}
+          label="Needs attention"
+          value={needsAttention}
+          tone={needsAttention > 0 ? "warn" : "neutral"}
+        />
+      </div>
+
+      <section className="rounded-2xl border border-line bg-surface">
         <div className="border-b border-line-soft px-5 py-4">
           <h2 className="font-brand text-base font-bold text-ink">Roster</h2>
         </div>
@@ -82,16 +112,31 @@ export default async function VendorDashboardPage() {
               const completionPercent = completionByStudent.get(student.id) ?? 0;
               const hasCertificate = student.certificates.length > 0;
               return (
-                <div key={student.id} className="flex items-center justify-between gap-3 px-5 py-3.5">
-                  <div>
-                    <p className="text-sm font-medium text-ink">{student.name ?? student.email}</p>
-                    <p className="text-xs text-ink-faint">
+                <div key={student.id} className="flex items-center gap-3.5 px-5 py-3.5">
+                  <span className="flex h-8.5 w-8.5 shrink-0 items-center justify-center rounded-full bg-accent-soft font-brand text-[13px] font-bold text-accent">
+                    {initials(student.name, student.email)}
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-medium text-ink">
+                      {student.name ?? student.email}
+                    </p>
+                    <p className="truncate text-xs text-ink-faint">
                       {student.email}
                       {student.rollNumber ? ` · Roll no. ${student.rollNumber}` : ""}
                       {leetcode ? ` · ${leetcode.handle}` : ""}
-                      {certificateCriteria ? ` · ${completionPercent}% complete` : ""}
                     </p>
                   </div>
+                  {certificateCriteria ? (
+                    <div className="hidden w-27 shrink-0 flex-col gap-1 sm:flex">
+                      <div className="h-1.5 overflow-hidden rounded-full bg-line-soft">
+                        <div
+                          className="h-full rounded-full bg-accent"
+                          style={{ width: `${Math.max(2, completionPercent)}%` }}
+                        />
+                      </div>
+                      <span className="font-mono text-[11px] text-ink-faint">{completionPercent}%</span>
+                    </div>
+                  ) : null}
                   <div className="flex shrink-0 items-center gap-2">
                     {hasCertificate ? (
                       <a
@@ -101,19 +146,15 @@ export default async function VendorDashboardPage() {
                         Certificate
                       </a>
                     ) : null}
-                    <span
-                      className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${
-                        leetcode
-                          ? LEETCODE_STATUS_STYLE[leetcode.trackingStatus]
-                          : "bg-line-soft text-ink-muted"
-                      }`}
-                    >
+                    <StatusPill tone={leetcode ? LEETCODE_STATUS_TONE[leetcode.trackingStatus] : "neutral"}>
                       {leetcode ? LEETCODE_STATUS_LABEL[leetcode.trackingStatus] : "LeetCode not linked"}
-                    </span>
+                    </StatusPill>
                     {leetcode?.trackingStatus === "BLOCKED_OR_PRIVATE" ? (
                       <RetryTrackingButton vendorId={vendor.id} userId={student.id} />
                     ) : null}
-                    <p className="text-xs text-ink-faint">Added {formatDate(student.createdAt)}</p>
+                    <p className="hidden text-xs text-ink-faint lg:block">
+                      Added {formatDate(student.createdAt)}
+                    </p>
                   </div>
                 </div>
               );

@@ -83,6 +83,27 @@ export async function computeCohortStats(userIds: string[]): Promise<CohortStats
   };
 }
 
+// Same per-student pillar averaging computeCohortStats already does to find
+// the single weakest pillar, but returning the full breakdown (all pillars,
+// not just the worst one) — for a radar-chart-style cohort overview.
+export async function computeCohortPillarAverages(
+  userIds: string[]
+): Promise<{ label: string; average: number }[]> {
+  if (userIds.length === 0) return [];
+
+  const allPillars = await Promise.all(userIds.map((id) => computeReadinessPillars(id)));
+  const pillarLabels = allPillars[0]?.map((p) => p.label) ?? [];
+
+  return pillarLabels.map((label, index) => {
+    const scored = allPillars
+      .map((pillars) => pillars[index])
+      .filter((p): p is PillarResult => p !== undefined && p.value !== null)
+      .map((p) => p.value as number);
+    const average = scored.length > 0 ? Math.round(scored.reduce((s, v) => s + v, 0) / scored.length) : 0;
+    return { label, average };
+  });
+}
+
 // Real, cheap proxy for "is this student doing anything lately" — explicitly
 // not attendance (no class join-log model exists anywhere in the schema).
 export async function computeEngagement(
