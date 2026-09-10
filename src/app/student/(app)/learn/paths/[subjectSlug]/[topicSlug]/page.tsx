@@ -4,17 +4,12 @@ import { prisma } from "@/lib/prisma";
 import { computeSubjectPath, markTopicStarted } from "@/lib/skillTree";
 import StartQuizButton from "@/components/quiz/StartQuizButton";
 import { SIMULATOR_REGISTRY } from "@/lib/simulators/registry";
-
-function stepHref(subjectSlug: string, topicSlug: string, step: string) {
-  return `/learn/paths/${subjectSlug}/${topicSlug}?step=${step}`;
-}
+import TopicStepView from "./TopicStepView";
 
 export default async function TopicPage({
   params,
-  searchParams,
 }: {
   params: Promise<{ subjectSlug: string; topicSlug: string }>;
-  searchParams: Promise<{ step?: string }>;
 }) {
   const user = await getCurrentUser();
   if (!user) {
@@ -22,7 +17,6 @@ export default async function TopicPage({
   }
 
   const { subjectSlug, topicSlug } = await params;
-  const { step: stepParam } = await searchParams;
 
   const subject = await prisma.subject.findUnique({ where: { slug: subjectSlug } });
   if (!subject || subject.status !== "PUBLISHED") {
@@ -35,74 +29,71 @@ export default async function TopicPage({
     notFound();
   }
 
-  if (topic.state !== "locked" && !stepParam) {
+  const locked = topic.state === "locked";
+  if (!locked) {
     await markTopicStarted(user.id, topic.id);
   }
 
-  const step = stepParam === "simulate" || stepParam === "quiz" ? stepParam : "learn";
   const SimulatorComponent = topic.simulatorKey ? SIMULATOR_REGISTRY[topic.simulatorKey] : undefined;
-  const locked = topic.state === "locked";
 
   return (
-    <div className="mx-auto max-w-3xl">
+    <div>
       <div className="mb-1">
         <a href={`/learn/paths/${subjectSlug}`} className="text-sm text-ink-muted hover:text-ink">
           &larr; Back to path
         </a>
       </div>
-      <h1 className="font-brand text-[25px] font-bold tracking-[-0.02em] text-ink">{topic.name}</h1>
-      <p className="mt-0.5 font-mono text-xs text-ink-faint">
-        {topic.xpReward} XP &middot;{" "}
-        {topic.state === "mastered"
-          ? "Mastered"
-          : topic.state === "in_progress"
-            ? "In progress"
-            : topic.state === "locked"
-              ? "Locked"
-              : "Unlocked"}
+      <h1 className="font-brand text-[32px] font-bold tracking-[-0.015em] text-ink">{topic.name}</h1>
+      <p className="mt-1 text-[12.5px] text-ink-faint">
+        {topic.xpReward} XP{" "}
+        <span className="ml-2 rounded-full bg-success-soft px-2.5 py-0.5 text-[11px] font-bold text-success">
+          {topic.state === "mastered"
+            ? "Mastered"
+            : topic.state === "in_progress"
+              ? "In progress"
+              : topic.state === "locked"
+                ? "Locked"
+                : "Unlocked"}
+        </span>
       </p>
 
-      <div className="mt-6 flex w-fit gap-1 rounded-lg bg-line-soft p-1">
-        {(["learn", "simulate", "quiz"] as const).map((s) => (
-          <a
-            key={s}
-            href={stepHref(subjectSlug, topicSlug, s)}
-            className={`rounded-md px-6 py-2 text-center text-sm font-semibold capitalize ${
-              step === s ? "bg-surface text-ink" : "text-ink-faint"
-            }`}
-          >
-            {s}
-          </a>
-        ))}
-      </div>
-
-      <div className="mt-6">
-        {locked ? (
-          <p className="rounded-xl border border-line bg-surface p-6 text-center text-ink-faint">
-            Complete the previous topic to unlock this one.
-          </p>
-        ) : step === "learn" ? (
-          <p className="rounded-xl border border-line bg-surface p-6 text-lg leading-relaxed text-ink">
-            {topic.description}
-          </p>
-        ) : step === "simulate" ? (
-          SimulatorComponent ? (
-            <SimulatorComponent />
-          ) : (
-            <p className="rounded-xl border border-line bg-surface-sunk p-10 text-center text-ink-faint">
-              Simulator coming soon.
+      {locked ? (
+        <p className="mt-6 max-w-[620px] rounded-xl border border-line bg-surface p-6 text-center text-ink-faint">
+          Complete the previous topic to unlock this one.
+        </p>
+      ) : (
+        <TopicStepView
+          pathHref={`/learn/paths/${subjectSlug}`}
+          learnContent={
+            <p className="font-brand text-[22px] font-bold leading-[1.45] tracking-[-0.01em] text-ink">
+              {topic.description}
             </p>
-          )
-        ) : topic.linkedQuizId ? (
-          <div className="rounded-xl border border-line bg-surface p-6">
-            <StartQuizButton quizId={topic.linkedQuizId} />
-          </div>
-        ) : (
-          <p className="rounded-xl border border-line bg-surface p-6 text-center text-ink-faint">
-            No quiz linked yet.
-          </p>
-        )}
-      </div>
+          }
+          simulateContent={
+            SimulatorComponent ? (
+              <SimulatorComponent />
+            ) : (
+              <p className="rounded-xl border border-line bg-surface-sunk p-10 text-center text-ink-faint">
+                Simulator coming soon.
+              </p>
+            )
+          }
+          quizContent={
+            topic.linkedQuizId ? (
+              <div className="rounded-2xl border border-line bg-surface p-8 text-center">
+                <p className="mb-4 text-sm text-ink-muted">Ready to test what you just learned?</p>
+                <div className="flex justify-center">
+                  <StartQuizButton quizId={topic.linkedQuizId} />
+                </div>
+              </div>
+            ) : (
+              <p className="rounded-2xl border border-line bg-surface p-8 text-center text-ink-faint">
+                No quiz linked yet.
+              </p>
+            )
+          }
+        />
+      )}
     </div>
   );
 }
