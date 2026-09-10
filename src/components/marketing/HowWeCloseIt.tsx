@@ -44,13 +44,17 @@ export default function HowWeCloseIt() {
         </p>
 
         <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {ITEMS.map((item) => (
+          {ITEMS.map((item, i) => (
             <div
               key={item.title}
               id={item.id}
-              className="rounded-xl border border-line p-6"
+              className="group animate-rise-in rounded-xl border border-line p-6 transition-[transform,border-color,box-shadow] hover:-translate-y-1 hover:border-accent hover:shadow-[0_16px_36px_-20px_rgba(79,70,229,.3)]"
+              style={{ animationDelay: `${i * 0.08}s` }}
             >
-              <span className="flex h-8.5 w-8.5 items-center justify-center rounded-[9px] bg-accent-soft text-indigo-600">
+              <span className="font-mono text-[11px] text-ink-faintest">
+                {String(i + 1).padStart(2, "0")}
+              </span>
+              <span className="mt-2.5 flex h-8.5 w-8.5 items-center justify-center rounded-[9px] bg-accent-soft text-indigo-600 transition-transform group-hover:scale-110">
                 <item.icon className="h-4.5 w-4.5" strokeWidth={2} />
               </span>
               <h3 className="mt-4 font-brand text-[17px] font-bold text-ink">

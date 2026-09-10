@@ -8,6 +8,7 @@ export default function MarketingLayout({
 }>) {
   return (
     <>
+      <div className="bg-grain" />
       <Nav />
       <main className="flex flex-1 flex-col">{children}</main>
       <Footer />

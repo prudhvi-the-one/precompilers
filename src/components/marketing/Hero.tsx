@@ -1,15 +1,13 @@
-import GapCard from "@/components/marketing/GapCard";
+import CodeEditorDemo from "@/components/marketing/CodeEditorDemo";
 
 export default function Hero() {
   return (
-    <section
-      id="gap"
-      className="bg-linear-to-b from-surface-sunk to-surface px-12 pt-19 pb-17"
-    >
-      <div className="mx-auto grid max-w-6xl gap-14 lg:grid-cols-[1.05fr_0.95fr]">
+    <section className="relative overflow-hidden bg-linear-to-b from-surface-sunk to-surface px-12 pt-19 pb-17">
+      <div className="pointer-events-none absolute -top-30 -right-20 h-115 w-115 rounded-full bg-accent-soft opacity-60 blur-3xl" />
+      <div className="relative mx-auto grid max-w-6xl gap-14 lg:grid-cols-[1.05fr_0.95fr]">
         <div>
           <span className="inline-block rounded-full bg-accent-soft px-4 py-1.5 font-mono text-[10px] tracking-[0.1em] text-indigo-600 uppercase">
-            For CSE &amp; AIML students in India
+            For students in India
           </span>
 
           <h1
@@ -38,13 +36,9 @@ export default function Hero() {
               I&apos;m from a college
             </a>
           </div>
-
-          <p className="mt-4 text-[13px] text-ink-faintest">
-            Free while in beta · No credit card required
-          </p>
         </div>
 
-        <GapCard />
+        <CodeEditorDemo />
       </div>
     </section>
   );
