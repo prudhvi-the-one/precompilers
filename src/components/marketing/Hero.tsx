@@ -31,7 +31,7 @@ export default function Hero() {
             </a>
             <a
               href="#colleges"
-              className="rounded-lg border border-line px-6 py-3 font-brand text-[14px] font-semibold text-ink transition hover:bg-[#F6F5FF]"
+              className="rounded-lg border border-line px-6 py-3 font-brand text-[14px] font-semibold text-ink transition hover:bg-surface-sunk"
             >
               I&apos;m from a college
             </a>

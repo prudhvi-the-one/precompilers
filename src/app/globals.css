@@ -37,7 +37,10 @@
   --surface: #16161f;
   --surface-sunk: #0f1020;
   --accent: #9b95ff;
-  --accent-hover: #7d76e0;
+  /* Kept as dark as the light-mode value, not lightened for the dark page
+     background — this is a hover state UNDER white button text, and a
+     lighter tint here was previously washing that text out to unreadable. */
+  --accent-hover: #4338ca;
   --accent-soft: #232152;
   --success: #34d399;
   --success-soft: #0f2e22;
@@ -61,7 +64,7 @@
     --surface: #16161f;
     --surface-sunk: #0f1020;
     --accent: #9b95ff;
-    --accent-hover: #7d76e0;
+    --accent-hover: #4338ca;
     --accent-soft: #232152;
     --success: #34d399;
     --success-soft: #0f2e22;

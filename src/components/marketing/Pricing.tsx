@@ -94,7 +94,7 @@ export default function Pricing() {
                     className={
                       tier.highlight
                         ? "block rounded-lg bg-indigo-600 px-5 py-2.5 text-center font-brand text-[13.5px] font-semibold text-white transition hover:bg-accent-hover"
-                        : "block rounded-lg border border-line px-5 py-2.5 text-center font-brand text-[13.5px] font-semibold text-ink transition hover:bg-[#F6F5FF]"
+                        : "block rounded-lg border border-line px-5 py-2.5 text-center font-brand text-[13.5px] font-semibold text-ink transition hover:bg-surface-sunk"
                     }
                   >
                     Get {tier.name}
