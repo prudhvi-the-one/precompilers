@@ -1,7 +1,13 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import { daysBefore, toISTDateKey } from "@/lib/streak";
 
-const WEEKS = 14;
 const DAYS_PER_WEEK = 7;
+const CELL_SIZE = 12;
+const CELL_GAP = 4;
+const MIN_WEEKS = 14;
 
 function levelClass(count: number): string {
   if (count === 0) return "bg-line-soft";
@@ -12,34 +18,74 @@ function levelClass(count: number): string {
 
 export default function StreakHeatmap({
   activityByDay,
+  currentStreak,
+  longestStreak,
 }: {
-  activityByDay: Map<string, number>;
+  activityByDay: [string, number][];
+  currentStreak: number;
+  longestStreak: number;
 }) {
+  const activityMap = new Map(activityByDay);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [weeks, setWeeks] = useState(MIN_WEEKS);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    const measure = () => {
+      const width = el.getBoundingClientRect().width;
+      setWeeks(Math.max(MIN_WEEKS, Math.floor(width / (CELL_SIZE + CELL_GAP))));
+    };
+    measure();
+
+    const observer = new ResizeObserver(measure);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   const todayKey = toISTDateKey(new Date());
-  const totalDays = WEEKS * DAYS_PER_WEEK;
+  const totalDays = weeks * DAYS_PER_WEEK;
 
   // Oldest day first, so columns read left (oldest) to right (today) like GitHub's graph.
   const dayKeys = Array.from({ length: totalDays }, (_, i) =>
     daysBefore(todayKey, totalDays - 1 - i)
   );
 
-  const weeks: string[][] = [];
+  const weekColumns: string[][] = [];
   for (let i = 0; i < dayKeys.length; i += DAYS_PER_WEEK) {
-    weeks.push(dayKeys.slice(i, i + DAYS_PER_WEEK));
+    weekColumns.push(dayKeys.slice(i, i + DAYS_PER_WEEK));
   }
 
   return (
     <div>
-      <div className="flex gap-1 overflow-x-auto pb-1">
-        {weeks.map((week, weekIndex) => (
-          <div key={weekIndex} className="flex flex-col gap-1">
+      <div className="flex items-center gap-3">
+        <Image
+          src="/student-home/streak-flame.png"
+          alt=""
+          width={40}
+          height={40}
+          className="shrink-0"
+        />
+        <div>
+          <div className="font-brand text-xl font-bold text-ink">
+            {currentStreak} {currentStreak === 1 ? "day" : "days"}
+          </div>
+          <div className="text-xs text-ink-faint">Longest streak: {longestStreak} days</div>
+        </div>
+      </div>
+
+      <div ref={containerRef} className="mt-4 flex gap-1 overflow-x-auto pb-1" style={{ gap: CELL_GAP }}>
+        {weekColumns.map((week, weekIndex) => (
+          <div key={weekIndex} className="flex flex-col" style={{ gap: CELL_GAP }}>
             {week.map((dayKey) => {
-              const count = activityByDay.get(dayKey) ?? 0;
+              const count = activityMap.get(dayKey) ?? 0;
               return (
                 <div
                   key={dayKey}
                   title={`${dayKey}: ${count} ${count === 1 ? "activity" : "activities"}`}
-                  className={`h-2.5 w-2.5 rounded-[2px] ${levelClass(count)}`}
+                  className={`rounded-[2px] ${levelClass(count)}`}
+                  style={{ width: CELL_SIZE, height: CELL_SIZE }}
                 />
               );
             })}

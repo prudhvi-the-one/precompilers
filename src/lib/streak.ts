@@ -60,9 +60,7 @@ export async function computeActivityByDay(userId: string): Promise<Map<string, 
   return activityByDay;
 }
 
-export async function computeCurrentStreak(userId: string): Promise<number> {
-  const activityByDay = await computeActivityByDay(userId);
-
+export function currentStreakFromMap(activityByDay: Map<string, number>): number {
   const todayKey = toISTDateKey(new Date());
   let cursor: string;
   if (activityByDay.has(todayKey)) {
@@ -82,4 +80,22 @@ export async function computeCurrentStreak(userId: string): Promise<number> {
     cursor = daysBefore(cursor, 1);
   }
   return streak;
+}
+
+export async function computeCurrentStreak(userId: string): Promise<number> {
+  const activityByDay = await computeActivityByDay(userId);
+  return currentStreakFromMap(activityByDay);
+}
+
+export function longestStreakFromMap(activityByDay: Map<string, number>): number {
+  const days = [...activityByDay.keys()].sort();
+  let longest = 0;
+  let current = 0;
+  let prevKey: string | null = null;
+  for (const key of days) {
+    current = prevKey !== null && daysBefore(key, 1) === prevKey ? current + 1 : 1;
+    longest = Math.max(longest, current);
+    prevKey = key;
+  }
+  return longest;
 }

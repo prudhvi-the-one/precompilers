@@ -20,8 +20,10 @@ function pointOnAxis(index: number, count: number, radius: number) {
 
 export default function RadarChart({
   axes,
+  boldLabels = false,
 }: {
   axes: { label: string; value: number }[];
+  boldLabels?: boolean;
 }) {
   const count = axes.length;
   const shapePoints = axes
@@ -68,8 +70,8 @@ export default function RadarChart({
             x={labelPoint.x}
             y={labelPoint.y}
             textAnchor={anchor}
-            className="text-[9.5px]"
-            fill="var(--ink-faint)"
+            className={boldLabels ? "text-[9.5px] font-bold" : "text-[9.5px]"}
+            fill={boldLabels ? "var(--ink-muted)" : "var(--ink-faint)"}
           >
             {truncateLabel(axis.label)} {Math.round(axis.value)}
           </text>
