@@ -35,14 +35,15 @@ export default async function LearningPathsPage() {
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {subjectsWithProgress.map(({ subject, masteredCount, totalCount }) => {
+        {subjectsWithProgress.map(({ subject, masteredCount, totalCount }, i) => {
           const Icon = subjectIcon(subject.iconKey);
           const pct = totalCount > 0 ? Math.round((masteredCount / totalCount) * 100) : 0;
           return (
             <a
               key={subject.id}
               href={`/learn/paths/${subject.slug}`}
-              className="rounded-xl border border-line bg-surface p-5 hover:bg-surface-sunk"
+              className="animate-rise-in rounded-xl border border-line bg-surface p-5 transition-transform hover:-translate-y-1 hover:bg-surface-sunk"
+              style={{ animationDelay: `${i * 0.06}s` }}
             >
               <div className="mb-3 flex items-center gap-3">
                 <span
@@ -60,7 +61,7 @@ export default async function LearningPathsPage() {
               </div>
               <div className="h-1.5 overflow-hidden rounded-full bg-line-soft">
                 <div
-                  className="h-full rounded-full"
+                  className="animate-grow-bar-x h-full rounded-full"
                   style={{ width: `${pct}%`, backgroundColor: subject.accentColor }}
                 />
               </div>
