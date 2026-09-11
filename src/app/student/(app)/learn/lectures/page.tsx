@@ -1,8 +1,18 @@
 import { redirect } from "next/navigation";
+import { Check, PlayCircle } from "lucide-react";
 import { getCurrentUser } from "@/lib/session";
 import { requireTierAccess } from "@/lib/tier";
 import { prisma } from "@/lib/prisma";
 import DownloadAffordance from "@/components/learn/DownloadAffordance";
+import NoTrackEmptyState from "@/components/learn/NoTrackEmptyState";
+
+function formatDuration(totalMinutes: number): string {
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+  if (hours === 0) return `${minutes}m`;
+  if (minutes === 0) return `${hours}h`;
+  return `${hours}h ${minutes}m`;
+}
 
 export default async function LecturesPage() {
   const user = await getCurrentUser();
@@ -30,6 +40,14 @@ export default async function LecturesPage() {
       )
     : new Set<string>();
 
+  const totalDuration = enrollment
+    ? enrollment.track.lectures.reduce((sum, l) => sum + l.durationMinutes, 0)
+    : 0;
+  const completedPct =
+    enrollment && enrollment.track.lectures.length
+      ? (completedIds.size / enrollment.track.lectures.length) * 100
+      : 0;
+
   return (
     <div className="max-w-3xl space-y-4">
       <div>
@@ -44,39 +62,56 @@ export default async function LecturesPage() {
       </div>
 
       {enrollment ? (
-        <div className="divide-y divide-line-soft rounded-xl border border-line bg-surface">
-          {enrollment.track.lectures.map((lecture) => (
-            <a
-              key={lecture.id}
-              href={`/learn/lectures/${lecture.id}`}
-              className="flex items-center gap-3 px-5 py-3.5 hover:bg-surface-sunk"
-            >
-              <span
-                className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-xs ${
-                  completedIds.has(lecture.id)
-                    ? "bg-success-soft text-success"
-                    : "border border-[#DDDDE7]"
-                }`}
-              >
-                {completedIds.has(lecture.id) ? "✓" : ""}
-              </span>
-              <span className="flex-1 text-sm text-ink">
-                {lecture.title}
-              </span>
-              <DownloadAffordance />
-              <span className="text-xs text-ink-faintest">
-                {lecture.durationMinutes} min
-              </span>
-            </a>
-          ))}
-        </div>
+        <>
+          <div className="flex items-center gap-4">
+            <div className="h-2 flex-1 rounded-full bg-line-soft">
+              <div
+                className="animate-grow-bar-x h-full rounded-full bg-indigo-600"
+                style={{ width: `${completedPct}%` }}
+              />
+            </div>
+            <span className="shrink-0 text-xs text-ink-faint">
+              {completedIds.size} of {enrollment.track.lectures.length} complete ·{" "}
+              {formatDuration(totalDuration)} total
+            </span>
+          </div>
+
+          <div className="divide-y divide-line-soft rounded-xl border border-line bg-surface">
+            {enrollment.track.lectures.map((lecture) => {
+              const completed = completedIds.has(lecture.id);
+              return (
+                <a
+                  key={lecture.id}
+                  href={`/learn/lectures/${lecture.id}`}
+                  className="flex items-center gap-3 px-5 py-3.5 hover:bg-surface-sunk"
+                >
+                  <span
+                    className={`flex h-7.5 w-7.5 shrink-0 items-center justify-center rounded-full ${
+                      completed
+                        ? "bg-success-soft text-success"
+                        : "border border-line text-ink-faintest"
+                    }`}
+                  >
+                    {completed ? (
+                      <Check className="h-4 w-4" strokeWidth={2.5} />
+                    ) : (
+                      <PlayCircle className="h-4 w-4" strokeWidth={1.75} />
+                    )}
+                  </span>
+                  <span className="flex-1 text-sm text-ink">
+                    {lecture.title}
+                  </span>
+                  <DownloadAffordance />
+                  <span className="text-xs text-ink-faintest">
+                    {lecture.durationMinutes} min
+                  </span>
+                </a>
+              );
+            })}
+          </div>
+        </>
       ) : (
-        <a
-          href="/onboarding"
-          className="text-sm font-semibold text-indigo-600 hover:underline"
-        >
-          Set your track
-        </a>
+        <NoTrackEmptyState description="Pick a track from Skill tracks, or let us match you to one based on your target role." />
       )}
     </div>
   );

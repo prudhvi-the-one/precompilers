@@ -181,7 +181,7 @@ export default async function HomePage() {
           ) : (
             <div className="flex flex-col items-center py-4 text-center">
               <Image
-                src="/student-home/getting-started.png"
+                src="/illustrations/getting-started.png"
                 alt=""
                 width={200}
                 height={167}
@@ -238,7 +238,7 @@ export default async function HomePage() {
         ) : (
           <div className="flex flex-col items-center py-4 text-center">
             <Image
-              src="/student-home/getting-started.png"
+              src="/illustrations/getting-started.png"
               alt=""
               width={200}
               height={167}

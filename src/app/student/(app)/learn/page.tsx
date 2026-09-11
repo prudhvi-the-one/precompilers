@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
-import { Lock } from "lucide-react";
+import Image from "next/image";
+import { Lock, Check, PlayCircle } from "lucide-react";
 import { getCurrentUser } from "@/lib/session";
 import { requireTierAccess } from "@/lib/tier";
 import { prisma } from "@/lib/prisma";
@@ -7,6 +8,7 @@ import { meetsEntitlement } from "@/lib/entitlement";
 import TrackCoverPlaceholder from "@/components/learn/TrackCoverPlaceholder";
 import StartTrackButton from "@/components/learn/StartTrackButton";
 import DownloadAffordance from "@/components/learn/DownloadAffordance";
+import NoTrackEmptyState from "@/components/learn/NoTrackEmptyState";
 
 const FILTERS = [
   { key: "all", label: "All" },
@@ -14,6 +16,16 @@ const FILTERS = [
   { key: "for-my-role", label: "For my role" },
   { key: "free", label: "Free" },
 ];
+
+// Real cover art for the current tracks, keyed by their stable slug. Any
+// track not in this map (future admin-created tracks) falls back to
+// TrackCoverPlaceholder's deterministic icon-on-tint treatment below.
+const TRACK_COVER_BY_SLUG: Record<string, string> = {
+  "sql-for-interviews": "/learn/track-sql.png",
+  "aws-fundamentals": "/learn/track-aws.png",
+  "react-properly": "/learn/track-react.png",
+  "technical-communication": "/learn/track-comm.png",
+};
 
 function formatClassChip(date: Date): string {
   const day = date
@@ -107,67 +119,85 @@ export default async function LearnPage({
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {tracks.map((track) => {
+        {tracks.map((track, i) => {
           const isEnrolled = enrollment?.trackId === track.id;
           const locked = !meetsEntitlement(
             user.entitlement,
             track.requiredEntitlement
           );
           const total = track.lectures.length;
+          const cover = TRACK_COVER_BY_SLUG[track.slug];
 
           return (
             <div
               key={track.id}
-              className="rounded-xl border border-line bg-surface p-4"
+              className="animate-rise-in overflow-hidden rounded-xl border border-line bg-surface transition-transform hover:-translate-y-1"
+              style={{ animationDelay: `${i * 0.06}s` }}
             >
-              <TrackCoverPlaceholder trackId={track.id} label={track.name.toUpperCase()} />
+              {cover ? (
+                <div className="h-30 overflow-hidden">
+                  <Image
+                    src={cover}
+                    alt=""
+                    width={400}
+                    height={267}
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+              ) : (
+                <div className="p-4 pb-0">
+                  <TrackCoverPlaceholder trackId={track.id} label={track.name.toUpperCase()} />
+                </div>
+              )}
 
-              <div className="mt-3 flex items-center gap-2 text-xs">
-                {isEnrolled ? (
-                  <span className="rounded-full bg-accent-soft px-2.5 py-0.5 font-medium text-indigo-600">
-                    In progress
-                  </span>
-                ) : locked ? (
-                  <span className="flex items-center gap-1 rounded-full bg-line-soft px-2.5 py-0.5 font-medium text-ink-faint">
-                    <Lock className="h-3 w-3" strokeWidth={2} />
-                    {track.requiredEntitlement === "INSTITUTION" ? "Institution" : "Plan"}
-                  </span>
-                ) : (
-                  <span className="rounded-full bg-success-soft px-2.5 py-0.5 font-medium text-success">
-                    Free
-                  </span>
-                )}
-                <span className="text-ink-faintest">{total} lessons</span>
-              </div>
+              <div className="p-4">
+                <div className="mt-1 flex items-center gap-2 text-xs">
+                  {isEnrolled ? (
+                    <span className="rounded-full bg-accent-soft px-2.5 py-0.5 font-medium text-indigo-600">
+                      In progress
+                    </span>
+                  ) : locked ? (
+                    <span className="flex items-center gap-1 rounded-full bg-line-soft px-2.5 py-0.5 font-medium text-ink-faint">
+                      <Lock className="h-3 w-3" strokeWidth={2} />
+                      {track.requiredEntitlement === "INSTITUTION" ? "Institution" : "Plan"}
+                    </span>
+                  ) : (
+                    <span className="rounded-full bg-success-soft px-2.5 py-0.5 font-medium text-success">
+                      Free
+                    </span>
+                  )}
+                  <span className="text-ink-faintest">{total} lessons</span>
+                </div>
 
-              <h2 className="mt-2 font-brand text-base font-bold text-ink">
-                {track.name}
-              </h2>
-              <p className="mt-1 text-sm text-ink-muted">{track.tagline}</p>
+                <h2 className="mt-2 font-brand text-base font-bold text-ink">
+                  {track.name}
+                </h2>
+                <p className="mt-1 text-sm text-ink-muted">{track.tagline}</p>
 
-              <div className="mt-3">
-                {isEnrolled ? (
-                  <>
-                    <div className="h-1.5 rounded-full bg-line-soft">
-                      <div
-                        className="h-full rounded-full bg-indigo-600"
-                        style={{
-                          width: `${total ? (completedIds.size / total) * 100 : 0}%`,
-                        }}
-                      />
-                    </div>
-                    <p className="mt-1.5 text-xs text-ink-faint">
-                      {completedIds.size} of {total} lessons
+                <div className="mt-3">
+                  {isEnrolled ? (
+                    <>
+                      <div className="h-1.5 rounded-full bg-line-soft">
+                        <div
+                          className="animate-grow-bar-x h-full rounded-full bg-indigo-600"
+                          style={{
+                            width: `${total ? (completedIds.size / total) * 100 : 0}%`,
+                          }}
+                        />
+                      </div>
+                      <p className="mt-1.5 text-xs text-ink-faint">
+                        {completedIds.size} of {total} lessons
+                      </p>
+                    </>
+                  ) : locked ? (
+                    <p className="text-xs text-ink-faint">
+                      Preview the first lesson free, or unlock the rest with a
+                      plan.
                     </p>
-                  </>
-                ) : locked ? (
-                  <p className="text-xs text-ink-faint">
-                    Preview the first lesson free, or unlock the rest with a
-                    plan.
-                  </p>
-                ) : (
-                  <StartTrackButton trackId={track.id} />
-                )}
+                  ) : (
+                    <StartTrackButton trackId={track.id} />
+                  )}
+                </div>
               </div>
             </div>
           );
@@ -191,13 +221,17 @@ export default async function LearnPage({
                   className="flex items-center gap-3 px-5 py-3.5 hover:bg-surface-sunk"
                 >
                   <span
-                    className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-xs ${
+                    className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full ${
                       completed
                         ? "bg-success-soft text-success"
-                        : "border border-[#DDDDE7]"
+                        : "border border-line text-ink-faintest"
                     }`}
                   >
-                    {completed ? "✓" : ""}
+                    {completed ? (
+                      <Check className="h-3.5 w-3.5" strokeWidth={2.5} />
+                    ) : (
+                      <PlayCircle className="h-3.5 w-3.5" strokeWidth={1.75} />
+                    )}
                   </span>
                   <span className="flex-1 text-sm text-ink">
                     {formatLectureOrder(lecture.order)} · {lecture.title}
@@ -215,7 +249,9 @@ export default async function LearnPage({
                 href={`/live/${liveClass.id}`}
                 className="flex items-center gap-3 px-5 py-3.5 hover:bg-surface-sunk"
               >
-                <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-[#DDDDE7] text-xs" />
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-line">
+                  <span className="h-2 w-2 rounded-full bg-accent" />
+                </span>
                 <span className="flex-1 text-sm text-ink">
                   Live class — {liveClass.title}
                 </span>
@@ -227,17 +263,7 @@ export default async function LearnPage({
           </div>
         </div>
       ) : (
-        <div className="rounded-xl border border-line bg-surface p-6 text-center">
-          <p className="text-sm text-ink-muted">
-            You haven&apos;t started a track yet.
-          </p>
-          <a
-            href="/onboarding"
-            className="mt-2 inline-block text-sm font-semibold text-indigo-600 hover:underline"
-          >
-            Set your track
-          </a>
-        </div>
+        <NoTrackEmptyState description="Pick one above, or let us match you to a track based on your target role." />
       )}
     </div>
   );
