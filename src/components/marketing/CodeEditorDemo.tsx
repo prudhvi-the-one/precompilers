@@ -5,9 +5,11 @@ import BrowserChrome from "@/components/marketing/BrowserChrome";
 
 type Snippet = {
   file: string;
+  files: string[];
   lang: string;
   keywords: string[];
   lines: string[];
+  output: string[];
 };
 
 // Same problem (Two Sum), four real languages — a true claim about the
@@ -15,6 +17,7 @@ type Snippet = {
 const SNIPPETS: Snippet[] = [
   {
     file: "two_sum.py",
+    files: ["two_sum.py", "utils.py", "README.md", "tests/"],
     lang: "Python 3",
     keywords: ["def", "for", "in", "if", "return"],
     lines: [
@@ -28,9 +31,11 @@ const SNIPPETS: Snippet[] = [
       "        seen[n] = i",
       "    return []",
     ],
+    output: ["nums = [2, 7, 11, 15]", "target = 9", "→ [0, 1]"],
   },
   {
     file: "twoSum.js",
+    files: ["twoSum.js", "utils.js", "README.md", "tests/"],
     lang: "JavaScript",
     keywords: ["function", "for", "let", "const", "if", "return", "new"],
     lines: [
@@ -45,9 +50,11 @@ const SNIPPETS: Snippet[] = [
       "  return [];",
       "}",
     ],
+    output: ["nums = [2, 7, 11, 15]", "target = 9", "→ [0, 1]"],
   },
   {
     file: "TwoSum.java",
+    files: ["TwoSum.java", "utils/", "README.md", "tests/"],
     lang: "Java",
     keywords: ["public", "int", "for", "if", "return", "new"],
     lines: [
@@ -63,9 +70,11 @@ const SNIPPETS: Snippet[] = [
       "    return new int[]{};",
       "}",
     ],
+    output: ["nums = [2, 7, 11, 15]", "target = 9", "→ [0, 1]"],
   },
   {
     file: "two_sum.cpp",
+    files: ["two_sum.cpp", "utils.h", "README.md", "tests/"],
     lang: "C++",
     keywords: ["vector", "int", "for", "if", "return"],
     lines: [
@@ -80,6 +89,7 @@ const SNIPPETS: Snippet[] = [
       "    return {};",
       "}",
     ],
+    output: ["nums = [2, 7, 11, 15]", "target = 9", "→ [0, 1]"],
   },
 ];
 
@@ -113,7 +123,9 @@ export default function CodeEditorDemo() {
   const [snippetIndex, setSnippetIndex] = useState(0);
   const [code, setCode] = useState("");
   const [status, setStatus] = useState<"ready" | "running" | "pass">("ready");
+  const [manualRunFlash, setManualRunFlash] = useState(false);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const flashTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -182,10 +194,25 @@ export default function CodeEditorDemo() {
     };
   }, []);
 
+  useEffect(() => {
+    return () => {
+      if (flashTimeoutRef.current) clearTimeout(flashTimeoutRef.current);
+    };
+  }, []);
+
+  function handleRunClick() {
+    if (manualRunFlash) return;
+    setManualRunFlash(true);
+    flashTimeoutRef.current = setTimeout(() => setManualRunFlash(false), 650);
+  }
+
   const snippet = SNIPPETS[snippetIndex];
+  const fullLength = snippet.lines.join("\n").length;
+  const percent = manualRunFlash ? 100 : Math.min(100, Math.round((code.length / fullLength) * 100));
   const lineCount = Math.max(1, code.split("\n").length);
-  const statusText =
-    status === "running"
+  const statusText = manualRunFlash
+    ? `Running ${snippet.lang}...`
+    : status === "running"
       ? "Running · nums=[2,7,11,15], target=9"
       : status === "pass"
         ? "✓ All test cases passed (3/3)"
@@ -198,38 +225,73 @@ export default function CodeEditorDemo() {
           {snippet.lang}
         </span>
       </div>
-      <div className="flex min-h-67 py-4">
-        <div className="w-8.5 shrink-0 select-none pr-3 text-right font-mono text-[12.5px] leading-[21px] text-[#4d4c63]">
-          {Array.from({ length: lineCount }, (_, i) => (
-            <div key={i}>{i + 1}</div>
+      <div className="flex min-h-67">
+        <div className="hidden w-19 shrink-0 border-r border-[#22222f] px-2 py-3.5 font-mono text-[10px] text-[#6c6b83] lg:block">
+          {snippet.files.map((f, i) => (
+            <div
+              key={f}
+              className={
+                i === 0
+                  ? "truncate rounded-md bg-[#22222f] px-2 py-1.5 font-semibold text-[#d8d7e8]"
+                  : "truncate px-2 py-1.5"
+              }
+            >
+              {f}
+            </div>
           ))}
         </div>
-        <pre
-          className="m-0 flex-1 whitespace-pre-wrap pr-4 font-mono text-[12.5px] leading-[21px] text-[#d8d7e8]"
-          dangerouslySetInnerHTML={{
-            __html:
-              highlight(code, snippet.keywords) +
-              '<span class="inline-block h-[15px] w-[7px] translate-y-[3px] animate-pulse bg-[#8b7fff]"></span>',
-          }}
-        />
+
+        <div className="flex flex-1 py-4 pl-4">
+          <div className="w-8.5 shrink-0 select-none pr-3 text-right font-mono text-[12.5px] leading-[21px] text-[#4d4c63]">
+            {Array.from({ length: lineCount }, (_, i) => (
+              <div key={i}>{i + 1}</div>
+            ))}
+          </div>
+          <pre
+            className="m-0 flex-1 whitespace-pre-wrap pr-4 font-mono text-[12.5px] leading-[21px] text-[#d8d7e8]"
+            dangerouslySetInnerHTML={{
+              __html:
+                highlight(code, snippet.keywords) +
+                '<span class="inline-block h-[15px] w-[7px] translate-y-[3px] animate-pulse bg-[#8b7fff]"></span>',
+            }}
+          />
+        </div>
+
+        <div className="hidden w-31 shrink-0 flex-col border-l border-[#22222f] p-3 lg:flex">
+          <p className="font-brand text-[10px] font-bold tracking-[0.04em] text-[#d8d7e8] uppercase">
+            Output
+          </p>
+          <div className="mt-2 flex-1 font-mono text-[9.5px] leading-[1.7] text-[#9695ab]">
+            {status === "pass" ? snippet.output.map((line) => <div key={line}>{line}</div>) : null}
+          </div>
+          <button
+            type="button"
+            onClick={handleRunClick}
+            disabled={manualRunFlash}
+            className="mt-2 rounded-md bg-indigo-600 px-2.5 py-1.5 font-brand text-[10.5px] font-bold text-white transition hover:bg-accent-hover disabled:opacity-70"
+          >
+            {manualRunFlash ? "⟳ Running..." : "▶ Run"}
+          </button>
+        </div>
       </div>
       <div
         className={
-          status === "pass"
+          status === "pass" && !manualRunFlash
             ? "flex items-center gap-1.5 border-t border-[#26263a] px-4 py-2.5 font-mono text-[11.5px] text-[#5ce6a6]"
             : "flex items-center gap-1.5 border-t border-[#26263a] px-4 py-2.5 font-mono text-[11.5px] text-[#9695ab]"
         }
       >
         <span
           className={
-            status === "pass"
+            status === "pass" && !manualRunFlash
               ? "h-1.5 w-1.5 rounded-full bg-[#5ce6a6]"
-              : status === "running"
-                ? "h-1.5 w-1.5 animate-pulse rounded-full bg-[#f7b955]"
+              : status === "running" || manualRunFlash
+                ? "h-1.5 w-1.5 animate-live-pulse rounded-full bg-[#f7b955]"
                 : "h-1.5 w-1.5 rounded-full bg-[#4d4c63]"
           }
         />
-        {statusText}
+        <span className="flex-1">{statusText}</span>
+        <span className="font-bold text-[#5ce6a6]">{percent}%</span>
       </div>
     </BrowserChrome>
   );

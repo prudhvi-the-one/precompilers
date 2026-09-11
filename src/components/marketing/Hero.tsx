@@ -4,7 +4,7 @@ export default function Hero() {
   return (
     <section className="relative overflow-hidden bg-linear-to-b from-surface-sunk to-surface px-12 pt-19 pb-17">
       <div className="pointer-events-none absolute -top-30 -right-20 h-115 w-115 rounded-full bg-accent-soft opacity-60 blur-3xl" />
-      <div className="relative mx-auto grid max-w-6xl gap-14 lg:grid-cols-[1.05fr_0.95fr]">
+      <div className="relative mx-auto grid max-w-6xl gap-14 lg:grid-cols-[0.85fr_1.15fr]">
         <div>
           <span className="inline-block rounded-full bg-accent-soft px-4 py-1.5 font-mono text-[10px] tracking-[0.1em] text-indigo-600 uppercase">
             For students in India
