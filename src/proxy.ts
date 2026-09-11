@@ -68,7 +68,13 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
+  // The trailing alternative excludes any path ending in a static-asset
+  // extension — e.g. `/student-home/hero.png`, a `public/` file referenced
+  // from a page under a portal subdomain. Without it, this proxy rewrites
+  // every non-excluded path (prepending `/student`, `/admin`, etc.), so an
+  // otherwise-real public/ file 404s: there's no route at the rewritten
+  // path, and Next.js never looks for a literal file there either.
   matcher: [
-    "/((?!api|_next/static|_next/image|favicon.ico|icon.svg|sitemap.xml|robots.txt).*)",
+    "/((?!api|_next/static|_next/image|favicon.ico|icon.svg|sitemap.xml|robots.txt|.*\\.(?:png|jpe?g|gif|webp|avif|svg|ico|css|js|mjs|woff2?|ttf|otf|map|mp4|webm|pdf)$).*)",
   ],
 };
