@@ -1,17 +1,14 @@
 import { redirect } from "next/navigation";
+import Image from "next/image";
+import { Target, UserCircle, Compass, PlayCircle, type LucideIcon } from "lucide-react";
 import { getCurrentUser } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
-import { computeReadinessPillars } from "@/lib/readiness";
+import { computeReadinessPillars, computeOverallReadiness } from "@/lib/readiness";
 import { computeBatchLeaderboard } from "@/lib/leaderboard";
-import { computeActivityByDay } from "@/lib/streak";
+import { computeActivityByDay, currentStreakFromMap, longestStreakFromMap } from "@/lib/streak";
 import StreakHeatmap from "@/components/home/StreakHeatmap";
+import RadarChart from "@/components/charts/RadarChart";
 import { avatarColor, initialsFromName } from "@/lib/avatar";
-
-function barColor(value: number): string {
-  if (value < 40) return "#DB2777";
-  if (value < 60) return "#D97706";
-  return "#4F46E5";
-}
 
 function minutesUntil(date: Date): number {
   return Math.round((date.getTime() - Date.now()) / 60000);
@@ -60,25 +57,48 @@ export default async function HomePage() {
     return mins >= 0 && mins <= 60;
   });
 
-  const [pillars, leaderboard, activityByDay] = await Promise.all([
+  const [pillars, leaderboard, activityByDay, overallReadiness] = await Promise.all([
     computeReadinessPillars(user.id),
     computeBatchLeaderboard(user.id),
     computeActivityByDay(user.id),
+    computeOverallReadiness(user.id),
   ]);
+  const currentStreak = currentStreakFromMap(activityByDay);
+  const longestStreak = longestStreakFromMap(activityByDay);
 
   return (
-    <div className="max-w-3xl space-y-4.5">
-      <div>
-        <h1 className="font-brand text-[25px] font-bold tracking-[-0.02em] text-ink">
-          Welcome{user.name ? `, ${user.name}` : ""}
-        </h1>
-        <p className="text-[14.5px] text-ink-muted">
-          {enrollment
-            ? enrollment.track.name
-            : user.gradYear
-              ? `Class of ${user.gradYear}`
-              : "Let's get your profile set up first."}
-        </p>
+    <div className="max-w-5xl space-y-4.5">
+      <div className="relative overflow-hidden rounded-xl border border-line-soft bg-linear-to-r from-accent-soft to-surface p-5">
+        <div
+          className="pointer-events-none absolute -top-16 -right-10 h-56 w-56 rounded-full opacity-10 blur-3xl"
+          style={{ background: "var(--accent)" }}
+        />
+        <div className="relative flex items-center gap-5">
+          <div className="min-w-0 flex-1">
+            <h1 className="font-brand text-[25px] font-bold tracking-[-0.02em] text-ink">
+              Welcome{user.name ? `, ${user.name}` : ""}
+            </h1>
+            <p className="text-[14.5px] text-ink-muted">
+              {enrollment
+                ? enrollment.track.name
+                : user.gradYear
+                  ? `Class of ${user.gradYear}`
+                  : "Let's get your profile set up first."}
+            </p>
+            {overallReadiness !== null ? (
+              <span className="mt-3 inline-block rounded-full bg-accent-soft px-2.5 py-1 font-mono text-[12px] text-accent">
+                {overallReadiness} readiness score
+              </span>
+            ) : null}
+          </div>
+          <Image
+            src="/student-home/hero.png"
+            alt=""
+            width={230}
+            height={125}
+            className="hidden shrink-0 sm:block"
+          />
+        </div>
       </div>
 
       {soonLiveClass ? (
@@ -112,6 +132,7 @@ export default async function HomePage() {
 
         {!profileComplete ? (
           <NextActionRow
+            icon={UserCircle}
             title="Complete your profile"
             description="College, branch and graduation year help us personalize what's coming."
             href="/profile"
@@ -119,6 +140,7 @@ export default async function HomePage() {
           />
         ) : !enrollment ? (
           <NextActionRow
+            icon={Compass}
             title="Set your track"
             description="Tell us what you're working towards so Learn has something for you."
             href="/onboarding"
@@ -126,6 +148,7 @@ export default async function HomePage() {
           />
         ) : nextLecture ? (
           <NextActionRow
+            icon={PlayCircle}
             title={`Continue ${enrollment.track.name}`}
             description={nextLecture.title}
             href={`/learn/lectures/${nextLecture.id}`}
@@ -139,62 +162,67 @@ export default async function HomePage() {
         )}
       </div>
 
-      <div className="rounded-xl border border-line bg-surface p-5">
-        <h2 className="font-brand text-base font-bold text-ink">
-          Readiness by pillar
-        </h2>
-        <div className="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-3">
-          {pillars.map((pillar) => (
-            <div key={pillar.label}>
-              <div className="flex min-h-4.25 flex-wrap items-start gap-1.5 text-xs text-ink-muted">
-                {pillar.label}
-                {pillar.provenance ? (
-                  <span
-                    className={
-                      pillar.provenance === "VERIFIED"
-                        ? "rounded-full bg-success-soft px-1.5 py-0.5 font-mono text-[9px] font-semibold text-success"
-                        : "rounded-full bg-line-soft px-1.5 py-0.5 font-mono text-[9px] font-semibold text-ink-faintest"
-                    }
-                  >
-                    {pillar.provenance}
-                  </span>
-                ) : null}
+      <div className="grid grid-cols-1 gap-4.5 lg:grid-cols-[1.15fr_1fr]">
+        <div className="rounded-xl border border-line bg-surface p-5">
+          {overallReadiness !== null ? (
+            <>
+              <div className="flex items-center justify-between gap-3">
+                <h2 className="flex items-center gap-2 font-brand text-base font-bold text-ink">
+                  <Target className="h-4 w-4 text-indigo-600" />
+                  Readiness by pillar
+                </h2>
+                <span className="font-mono text-xl font-bold text-ink">{overallReadiness}</span>
               </div>
-              <div className="mt-1.5 h-1.5 rounded-full bg-line-soft">
-                {pillar.value !== null ? (
-                  <div
-                    className="h-full rounded-full"
-                    style={{ width: `${pillar.value}%`, backgroundColor: barColor(pillar.value) }}
-                  />
-                ) : null}
-              </div>
-              <div className="mt-1 text-xs text-ink-faintest">
-                {pillar.value !== null ? `${pillar.value} · ${pillar.caption}` : "Not assessed"}
-              </div>
+              <RadarChart
+                axes={pillars.map((pillar) => ({ label: pillar.label, value: pillar.value ?? 0 }))}
+                boldLabels
+              />
+            </>
+          ) : (
+            <div className="flex flex-col items-center py-4 text-center">
+              <Image
+                src="/student-home/getting-started.png"
+                alt=""
+                width={200}
+                height={167}
+                className="mb-3"
+              />
+              <p className="text-sm font-semibold text-ink">No readiness data yet</p>
+              <p className="mt-1 max-w-xs text-xs text-ink-faint">
+                Take a quiz or two once you&apos;ve set your track — this is where your pillar
+                scores will show up.
+              </p>
             </div>
-          ))}
+          )}
+        </div>
+
+        <div className="rounded-xl border border-line bg-surface p-5">
+          <h2 className="font-brand text-base font-bold text-ink">
+            Activity streak
+          </h2>
+          <div className="mt-4">
+            <StreakHeatmap
+              activityByDay={Array.from(activityByDay.entries())}
+              currentStreak={currentStreak}
+              longestStreak={longestStreak}
+            />
+          </div>
         </div>
       </div>
 
       <div className="rounded-xl border border-line bg-surface p-5">
-        <h2 className="font-brand text-base font-bold text-ink">
-          Activity streak
-        </h2>
-        <div className="mt-3">
-          <StreakHeatmap activityByDay={activityByDay} />
-        </div>
-      </div>
-
-      <div className="rounded-xl border border-line bg-surface p-5">
-        <h2 className="font-brand text-base font-bold text-ink">
-          Your batch
-        </h2>
         {leaderboard ? (
           <>
-            <p className="mt-1 text-sm text-ink-muted">
-              You&apos;re <span className="font-semibold text-ink">#{leaderboard.rank}</span> of{" "}
-              {leaderboard.total} in your batch.
-            </p>
+            <div className="flex items-center gap-3">
+              <Image src="/student-home/trophy.png" alt="" width={44} height={44} />
+              <div>
+                <h2 className="font-brand text-base font-bold text-ink">Your batch</h2>
+                <p className="text-sm text-ink-muted">
+                  You&apos;re <span className="font-semibold text-ink">#{leaderboard.rank}</span> of{" "}
+                  {leaderboard.total} in your batch.
+                </p>
+              </div>
+            </div>
             <div className="mt-3 space-y-2.5">
               {leaderboard.entries.slice(0, 5).map((entry, index) => (
                 <LeaderboardRow key={entry.userId} rank={index + 1} entry={entry} />
@@ -208,9 +236,26 @@ export default async function HomePage() {
             </div>
           </>
         ) : (
-          <p className="mt-2 text-sm text-ink-muted">
-            Join a batch and take a quiz or two to see how you compare with your cohort.
-          </p>
+          <div className="flex flex-col items-center py-4 text-center">
+            <Image
+              src="/student-home/getting-started.png"
+              alt=""
+              width={200}
+              height={167}
+              className="mb-3"
+            />
+            <p className="text-sm font-semibold text-ink">Join a batch to see the leaderboard</p>
+            <p className="mt-1 max-w-xs text-xs text-ink-faint">
+              Take a quiz or two once you&apos;re in a batch to see how you compare with your
+              cohort.
+            </p>
+            <a
+              href="/onboarding"
+              className="mt-3 rounded-lg bg-indigo-600 px-4 py-2 font-brand text-[13px] font-semibold text-white hover:bg-accent-hover"
+            >
+              Set your track
+            </a>
+          </div>
         )}
       </div>
     </div>
@@ -247,7 +292,7 @@ function LeaderboardRow({
       <div className="h-1.5 w-24 shrink-0 rounded-full bg-line-soft">
         <div
           className="h-full rounded-full"
-          style={{ width: `${entry.score}%`, backgroundColor: barColor(entry.score) }}
+          style={{ width: `${entry.score}%`, backgroundColor: avatarColor(entry.userId) }}
         />
       </div>
       <span className="w-8 shrink-0 text-right text-xs font-mono text-ink-faint">
@@ -258,19 +303,24 @@ function LeaderboardRow({
 }
 
 function NextActionRow({
+  icon: Icon,
   title,
   description,
   href,
   cta,
 }: {
+  icon: LucideIcon;
   title: string;
   description: string;
   href: string;
   cta: string;
 }) {
   return (
-    <div className="mt-3 flex items-center justify-between gap-4 rounded-lg border border-[#DDD9FB] bg-accent-soft px-4 py-3">
-      <div>
+    <div className="mt-3 flex items-center gap-4 rounded-lg border border-[#DDD9FB] bg-accent-soft px-4 py-3">
+      <span className="flex h-10.5 w-10.5 shrink-0 items-center justify-center rounded-[11px] bg-surface text-indigo-600">
+        <Icon className="h-5 w-5" strokeWidth={1.75} />
+      </span>
+      <div className="min-w-0 flex-1">
         <div className="text-sm font-medium text-ink">{title}</div>
         <div className="text-xs text-ink-faint">{description}</div>
       </div>
