@@ -7,6 +7,7 @@ import CreateNoteForm from "@/components/admin/CreateNoteForm";
 import PublishDraftProblemButton from "@/components/admin/PublishDraftProblemButton";
 import SubjectForm from "@/components/admin/SubjectForm";
 import TopicForm from "@/components/admin/TopicForm";
+import BulkContentUploadForm from "@/components/admin/BulkContentUploadForm";
 import { subjectIcon } from "@/lib/subjectIcons";
 
 const STATUS_STYLE: Record<string, string> = {
@@ -355,18 +356,32 @@ export default async function AdminContentPage({
             })}
           </div>
           {tab !== "tracks" && tab !== "learning-paths" ? (
-            <a
-              href={
-                tab === "problems"
-                  ? "/content/problems/new"
-                  : tab === "quizzes"
-                    ? "/content/quizzes/new"
-                    : "/content/company-questions/new"
-              }
-              className="rounded-md bg-ink px-3 py-1.5 text-xs font-semibold text-surface"
-            >
-              {tab === "problems" ? "New problem" : tab === "quizzes" ? "New quiz" : "New question"}
-            </a>
+            <div className="flex items-center gap-2">
+              <a
+                href={
+                  tab === "problems"
+                    ? "/content/problems/bulk"
+                    : tab === "quizzes"
+                      ? "/content/quizzes/bulk"
+                      : "/content/company-questions/bulk"
+                }
+                className="rounded-md border border-line px-3 py-1.5 text-xs font-semibold text-ink-secondary"
+              >
+                Bulk import
+              </a>
+              <a
+                href={
+                  tab === "problems"
+                    ? "/content/problems/new"
+                    : tab === "quizzes"
+                      ? "/content/quizzes/new"
+                      : "/content/company-questions/new"
+                }
+                className="rounded-md bg-ink px-3 py-1.5 text-xs font-semibold text-surface"
+              >
+                {tab === "problems" ? "New problem" : tab === "quizzes" ? "New quiz" : "New question"}
+              </a>
+            </div>
           ) : null}
         </div>
 
@@ -498,13 +513,32 @@ export default async function AdminContentPage({
                   )}
                 </div>
 
-                <div className="rounded-xl border border-line bg-surface p-4">
-                  <h3 className="mb-3 text-sm font-semibold text-ink">New topic</h3>
-                  <TopicForm
-                    subjectId={selectedSubjectId}
-                    nextOrder={subjectTopics.length}
-                    quizOptions={topicQuizOptions}
-                  />
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <div className="rounded-xl border border-line bg-surface p-4">
+                    <h3 className="mb-3 text-sm font-semibold text-ink">New topic</h3>
+                    <TopicForm
+                      subjectId={selectedSubjectId}
+                      nextOrder={subjectTopics.length}
+                      quizOptions={topicQuizOptions}
+                    />
+                  </div>
+                  <div className="rounded-xl border border-line bg-surface p-4">
+                    <h3 className="mb-3 text-sm font-semibold text-ink">Bulk import topics</h3>
+                    <p className="mb-3 text-xs text-ink-faint">
+                      Upload a .csv or .xlsx file to add several topics to this subject at once.
+                      Imported topics publish immediately.
+                    </p>
+                    <a href="/samples/topics-sample.csv" className="text-xs font-medium text-accent">
+                      Download sample CSV
+                    </a>
+                    <div className="mt-3">
+                      <BulkContentUploadForm
+                        endpoint="/api/admin/topics/bulk"
+                        extraFields={{ subjectId: selectedSubjectId }}
+                        submitLabel="Upload topics"
+                      />
+                    </div>
+                  </div>
                 </div>
               </>
             ) : null}
