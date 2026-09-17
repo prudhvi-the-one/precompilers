@@ -42,7 +42,7 @@ export default function AppShell({
           mobileOpen={drawerOpen}
           onMobileClose={() => setDrawerOpen(false)}
         />
-        <main className="flex flex-1 flex-col gap-4.5 bg-surface-sunk px-4 py-5 sm:px-7 sm:py-6.5">
+        <main className="bg-crosshatch flex flex-1 flex-col gap-4.5 bg-surface-sunk px-4 py-5 sm:px-7 sm:py-6.5">
           {children}
         </main>
       </div>
