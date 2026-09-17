@@ -172,3 +172,26 @@ body {
   mix-blend-mode: overlay;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
+
+/* Faint diagonal crosshatch — a canvas-fiber texture for content areas that
+   sit directly on a surface color (no separate overlay element needed). The
+   alpha is baked into the gradient color via color-mix(), not the `opacity`
+   property, so it never dims the element's own children — safe to apply
+   straight onto a container that also holds real content. */
+.bg-crosshatch {
+  background-image:
+    repeating-linear-gradient(
+      45deg,
+      color-mix(in srgb, var(--ink-faint) 6%, transparent) 0,
+      color-mix(in srgb, var(--ink-faint) 6%, transparent) 1px,
+      transparent 1px,
+      transparent 7px
+    ),
+    repeating-linear-gradient(
+      -45deg,
+      color-mix(in srgb, var(--ink-faint) 6%, transparent) 0,
+      color-mix(in srgb, var(--ink-faint) 6%, transparent) 1px,
+      transparent 1px,
+      transparent 7px
+    );
+}
