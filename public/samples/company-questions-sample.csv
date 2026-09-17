@@ -1,0 +1,4 @@
+companyName,category,question,guidance
+Google,TECHNICAL,"Reverse a linked list in O(n) time.","Walk through the iterative three-pointer approach; watch for edge cases with 0 or 1 nodes."
+Amazon,BEHAVIORAL,"Tell me about a time you disagreed with a teammate.","Use the STAR format; emphasize how the disagreement was resolved constructively."
+Infosys,HR,"Why do you want to join us?","Look for a specific, researched answer rather than a generic one."

@@ -1,0 +1,3 @@
+name,description,unitLabel,order,xpReward,linkedQuizId,simulatorKey
+Arrays Basics,Learn how arrays store and access elements in contiguous memory.,Unit 1,,100,,
+Two Pointers,Solve array problems efficiently by moving two indices toward each other.,Unit 1,,120,,

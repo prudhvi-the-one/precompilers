@@ -1,0 +1,3 @@
+quizTitle,topic,kind,requiredEntitlement,sectionName,sectionDurationMinutes,questionText,questionMarks,optionA,optionB,optionC,optionD,correctOption
+Arrays Fundamentals,Arrays,TOPIC_QUIZ,FREE,Core Concepts,10,What is the time complexity of accessing an element by index in an array?,1,O(1),O(n),O(log n),O(n^2),A
+Arrays Fundamentals,Arrays,TOPIC_QUIZ,FREE,Core Concepts,10,What is the time complexity of inserting an element at the beginning of an array?,2,O(1),O(n),O(log n),O(n^2),B
