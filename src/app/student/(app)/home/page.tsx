@@ -1,6 +1,5 @@
 import { redirect } from "next/navigation";
-import Image from "next/image";
-import { Target, UserCircle, Compass, PlayCircle, type LucideIcon } from "lucide-react";
+import { Target, Trophy, UserCircle, Compass, PlayCircle, type LucideIcon } from "lucide-react";
 import { getCurrentUser } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { computeReadinessPillars, computeOverallReadiness } from "@/lib/readiness";
@@ -73,6 +72,7 @@ export default async function HomePage() {
           className="pointer-events-none absolute -top-16 -right-10 h-56 w-56 rounded-full opacity-10 blur-3xl"
           style={{ background: "var(--accent)" }}
         />
+        <CornerMarks />
         <div className="relative flex items-center gap-5">
           <div className="min-w-0 flex-1">
             <h1 className="font-brand text-[25px] font-bold tracking-[-0.02em] text-ink">
@@ -86,18 +86,16 @@ export default async function HomePage() {
                   : "Let's get your profile set up first."}
             </p>
             {overallReadiness !== null ? (
-              <span className="mt-3 inline-block rounded-full bg-accent-soft px-2.5 py-1 font-mono text-[12px] text-accent">
+              <span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-accent-soft px-2.5 py-1 font-mono text-[12px] text-accent">
+                <span
+                  className="h-1.5 w-1.5 shrink-0 rounded-full"
+                  style={{ background: overallReadiness >= 50 ? "var(--success)" : "var(--warn)" }}
+                />
                 {overallReadiness} readiness score
               </span>
             ) : null}
           </div>
-          <Image
-            src="/student-home/hero.png"
-            alt=""
-            width={230}
-            height={125}
-            className="hidden shrink-0 sm:block"
-          />
+          {overallReadiness !== null ? <ReadinessMatrix score={overallReadiness} /> : null}
         </div>
       </div>
 
@@ -163,7 +161,8 @@ export default async function HomePage() {
       </div>
 
       <div className="grid grid-cols-1 gap-4.5 lg:grid-cols-[1.15fr_1fr]">
-        <div className="rounded-xl border border-line bg-surface p-5">
+        <div className="relative rounded-xl border border-line bg-surface p-5">
+          <CornerMarks />
           {overallReadiness !== null ? (
             <>
               <div className="flex items-center justify-between gap-3">
@@ -179,14 +178,12 @@ export default async function HomePage() {
               />
             </>
           ) : (
-            <div className="flex flex-col items-center py-4 text-center">
-              <Image
-                src="/illustrations/getting-started.png"
-                alt=""
-                width={200}
-                height={167}
-                className="mb-3"
-              />
+            <div className="flex flex-col items-center py-2 text-center">
+              <div className="pointer-events-none opacity-40 grayscale-[0.4]">
+                <RadarChart
+                  axes={pillars.map((pillar) => ({ label: pillar.label, value: pillar.value ?? 0 }))}
+                />
+              </div>
               <p className="text-sm font-semibold text-ink">No readiness data yet</p>
               <p className="mt-1 max-w-xs text-xs text-ink-faint">
                 Take a quiz or two once you&apos;ve set your track — this is where your pillar
@@ -214,7 +211,9 @@ export default async function HomePage() {
         {leaderboard ? (
           <>
             <div className="flex items-center gap-3">
-              <Image src="/student-home/trophy.png" alt="" width={44} height={44} />
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[11px] bg-accent-soft text-accent">
+                <Trophy className="h-5 w-5" strokeWidth={1.75} />
+              </span>
               <div>
                 <h2 className="font-brand text-base font-bold text-ink">Your batch</h2>
                 <p className="text-sm text-ink-muted">
@@ -236,14 +235,12 @@ export default async function HomePage() {
             </div>
           </>
         ) : (
-          <div className="flex flex-col items-center py-4 text-center">
-            <Image
-              src="/illustrations/getting-started.png"
-              alt=""
-              width={200}
-              height={167}
-              className="mb-3"
-            />
+          <div className="flex flex-col items-center py-2 text-center">
+            <div className="pointer-events-none mb-3 w-full max-w-xs space-y-2.5 opacity-40">
+              {[1, 2, 3].map((rank) => (
+                <GhostLeaderboardRow key={rank} rank={rank} />
+              ))}
+            </div>
             <p className="text-sm font-semibold text-ink">Join a batch to see the leaderboard</p>
             <p className="mt-1 max-w-xs text-xs text-ink-faint">
               Take a quiz or two once you&apos;re in a batch to see how you compare with your
@@ -258,6 +255,55 @@ export default async function HomePage() {
           </div>
         )}
       </div>
+    </div>
+  );
+}
+
+function CornerMarks() {
+  return (
+    <>
+      <span className="pointer-events-none absolute top-3 left-3 h-3 w-3 border-t-2 border-l-2 border-accent/30" />
+      <span className="pointer-events-none absolute right-3 bottom-3 h-3 w-3 border-r-2 border-b-2 border-accent/30" />
+    </>
+  );
+}
+
+function ReadinessMatrix({ score }: { score: number }) {
+  const cols = 6;
+  const rows = 4;
+  const total = cols * rows;
+  const filled = Math.round((Math.max(0, Math.min(100, score)) / 100) * total);
+  return (
+    <div
+      role="img"
+      aria-label={`Readiness ${score} out of 100`}
+      className="hidden shrink-0 sm:block"
+    >
+      <div className="grid grid-cols-6 gap-1.5">
+        {Array.from({ length: total }, (_, i) => (
+          <span
+            key={i}
+            className={`animate-fade-scale h-3.5 w-3.5 rounded-[3px] ${
+              i < filled ? "bg-accent" : "bg-line-soft"
+            }`}
+            style={{ animationDelay: `${i * 20}ms` }}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function GhostLeaderboardRow({ rank }: { rank: number }) {
+  return (
+    <div className="flex items-center gap-3 rounded-lg px-3 py-2">
+      <span className="w-5 shrink-0 text-center text-xs font-semibold text-ink-faintest">
+        {rank}
+      </span>
+      <span className="h-6 w-6 shrink-0 rounded-full bg-line-soft" />
+      <span className="h-3 max-w-24 flex-1 rounded-full bg-line-soft" />
+      <div className="h-1.5 w-24 shrink-0 rounded-full bg-line-soft" />
+      <span className="h-3 w-8 shrink-0 rounded-full bg-line-soft" />
     </div>
   );
 }
