@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Editor from "@monaco-editor/react";
 import type { Comment, Problem, TestCase, User } from "@prisma/client";
+import AngularBorder from "@/components/ui/AngularBorder";
 
 type ProblemWithRelations = Problem & {
   testCases: TestCase[];
@@ -136,21 +137,22 @@ export default function ProblemEditorClient({
 
   if (locked) {
     return (
-      <div className="max-w-md rounded-xl border border-line bg-surface p-6 text-center">
+      <AngularBorder color="var(--line)" className="max-w-md bg-surface p-6 text-center" wrapperClassName="max-w-md">
         <p className="text-sm text-ink-muted">
           🔒 This problem needs a plan upgrade.
         </p>
         <a href="/practice/problems" className="mt-2 inline-block text-sm font-semibold text-indigo-600 hover:underline">
           Back to problems
         </a>
-      </div>
+      </AngularBorder>
     );
   }
 
   const passedCount = results?.filter((r) => r.passed).length ?? 0;
 
   return (
-    <div className="flex h-[calc(100vh-3rem)] flex-col overflow-hidden rounded-[14px] border border-line bg-surface shadow-sm">
+    <div className="clip-panel h-[calc(100vh-3rem)] bg-line p-[2px] shadow-sm">
+    <div className="clip-panel flex h-full flex-col overflow-hidden bg-surface">
       {/* Header */}
       <div className="flex h-auto shrink-0 flex-wrap items-center gap-3 border-b border-line-soft px-3.5 py-2.5 sm:h-14 sm:px-5.5 sm:py-0">
         <a href="/practice/problems" className="text-sm text-ink-faint hover:text-ink">
@@ -160,7 +162,7 @@ export default function ProblemEditorClient({
           {problem.title}
         </span>
         <span
-          className={`rounded-full px-2.5 py-0.5 font-mono text-[11px] uppercase ${DIFFICULTY_STYLE[problem.difficulty]}`}
+          className={`clip-chip px-2.5 py-0.5 font-mono text-[11px] uppercase ${DIFFICULTY_STYLE[problem.difficulty]}`}
         >
           {problem.difficulty}
         </span>
@@ -170,17 +172,19 @@ export default function ProblemEditorClient({
               Asked at {problem.companies.join(", ")}
             </span>
           ) : null}
-          <button
-            onClick={handleRun}
-            disabled={busy !== null}
-            className="rounded-lg border border-line px-3.5 py-1.5 text-sm font-semibold text-[#43435A] hover:bg-surface-sunk disabled:opacity-50"
-          >
-            {busy === "run" ? "Running…" : "Run"}
-          </button>
+          <AngularBorder clip="clip-btn" color="var(--line)" className="bg-surface">
+            <button
+              onClick={handleRun}
+              disabled={busy !== null}
+              className="px-3.5 py-1.5 text-sm font-semibold text-ink-secondary hover:bg-surface-sunk disabled:opacity-50"
+            >
+              {busy === "run" ? "Running…" : "Run"}
+            </button>
+          </AngularBorder>
           <button
             onClick={handleSubmit}
             disabled={busy !== null}
-            className="rounded-lg bg-indigo-600 px-3.5 py-1.5 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-50"
+            className="clip-btn bg-indigo-600 px-3.5 py-1.5 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-50"
           >
             {busy === "submit" ? "Submitting…" : "Submit"}
           </button>
@@ -233,8 +237,8 @@ export default function ProblemEditorClient({
               <div className="space-y-4">
                 <p className="whitespace-pre-wrap text-sm text-ink-secondary">{problem.statement}</p>
                 {examples.map((ex, i) => (
-                  <div key={i} className="rounded-[10px] border border-line-soft">
-                    <div className="rounded-t-[10px] bg-surface-sunk px-3.5 py-2 text-xs font-semibold text-ink-muted">
+                  <AngularBorder key={i} color="var(--line-soft)" className="bg-surface">
+                    <div className="bg-surface-sunk px-3.5 py-2 text-xs font-semibold text-ink-muted">
                       Example {i + 1}
                     </div>
                     <div className="space-y-1 px-3.5 py-2.5 font-mono text-[12.5px] text-ink-secondary">
@@ -244,7 +248,7 @@ export default function ProblemEditorClient({
                         <p className="text-ink-faint">{`// ${ex.explanation}`}</p>
                       ) : null}
                     </div>
-                  </div>
+                  </AngularBorder>
                 ))}
                 <div>
                   <p className="text-xs font-semibold text-ink-muted">Constraints</p>
@@ -257,7 +261,7 @@ export default function ProblemEditorClient({
                   {problem.tags.map((tag) => (
                     <span
                       key={tag}
-                      className="rounded-full bg-accent-soft px-2 py-0.5 text-[11px] font-medium text-indigo-600"
+                      className="clip-chip bg-accent-soft px-2 py-0.5 text-[11px] font-medium text-indigo-600"
                     >
                       {tag}
                     </span>
@@ -287,7 +291,7 @@ export default function ProblemEditorClient({
                   />
                   <button
                     onClick={handlePostComment}
-                    className="rounded-lg bg-indigo-600 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-700"
+                    className="clip-btn bg-indigo-600 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-700"
                   >
                     Post
                   </button>
@@ -356,7 +360,7 @@ export default function ProblemEditorClient({
               <p className="text-sm font-semibold text-ink">Test results</p>
               {results ? (
                 <span
-                  className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${
+                  className={`clip-chip px-2.5 py-0.5 text-xs font-semibold ${
                     passedCount === results.length
                       ? "bg-success-soft text-success"
                       : "bg-error-soft text-error"
@@ -380,10 +384,7 @@ export default function ProblemEditorClient({
             {results ? (
               <div className="mt-2 space-y-1.5">
                 {results.map((r, i) => (
-                  <div
-                    key={i}
-                    className="rounded-lg border border-line-soft px-3 py-1.5 font-mono text-[12.5px]"
-                  >
+                  <AngularBorder key={i} color="var(--line-soft)" className="bg-surface px-3 py-1.5 font-mono text-[12.5px]">
                     <span className={r.passed ? "text-success" : "text-error"}>
                       {r.passed ? "✓" : "✗"}
                     </span>{" "}
@@ -395,13 +396,14 @@ export default function ProblemEditorClient({
                     ) : (
                       <span className="text-ink-faint">hidden — large input</span>
                     )}
-                  </div>
+                  </AngularBorder>
                 ))}
               </div>
             ) : null}
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 }

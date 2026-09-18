@@ -4,6 +4,7 @@ import type { EligibilityResult } from "@/lib/driveEligibility";
 import type { DriveReadinessResult } from "@/lib/readiness";
 import LogApplicationButton from "@/components/career/LogApplicationButton";
 import NotifyIfCriteriaChangeButton from "@/components/career/NotifyIfCriteriaChangeButton";
+import AngularBorder from "@/components/ui/AngularBorder";
 
 const STATUS_STYLE: Record<string, string> = {
   APPLIED: "bg-accent-soft text-indigo-600",
@@ -48,10 +49,10 @@ export default function DriveCard({
 
   if (!eligibility.eligible && !applied) {
     return (
-      <div className="flex items-center justify-between gap-4 rounded-xl border border-line bg-surface px-5 py-3 opacity-72">
+      <AngularBorder color="var(--line)" className="flex items-center justify-between gap-4 bg-surface px-5 py-3 opacity-72">
         <div className="flex items-center gap-3">
           <span
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg font-brand text-[13px] font-semibold text-white"
+            className="clip-chip flex h-9 w-9 shrink-0 items-center justify-center font-brand text-[13px] font-semibold text-white"
             style={{ backgroundColor: avatarColor(drive.companyName) }}
           >
             {initialsFromName(drive.companyName)}
@@ -59,7 +60,7 @@ export default function DriveCard({
           <div>
             <p className="text-sm font-medium text-ink">
               {drive.companyName} · {drive.roleTitle}
-              <span className="ml-2 rounded-full bg-error-soft px-2 py-0.5 text-[10px] font-semibold text-error">
+              <span className="clip-chip ml-2 bg-error-soft px-2 py-0.5 text-[10px] font-semibold text-error">
                 Not eligible
               </span>
             </p>
@@ -71,16 +72,16 @@ export default function DriveCard({
           </div>
         </div>
         <NotifyIfCriteriaChangeButton driveId={drive.id} initialWatching={isWatching} />
-      </div>
+      </AngularBorder>
     );
   }
 
   return (
-    <div className="rounded-xl border border-line bg-surface p-5">
+    <AngularBorder color="var(--line)" className="bg-surface p-5">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex items-start gap-3">
           <span
-            className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl font-brand text-lg font-semibold text-white"
+            className="clip-chip flex h-14 w-14 shrink-0 items-center justify-center font-brand text-lg font-semibold text-white"
             style={{ backgroundColor: avatarColor(drive.companyName) }}
           >
             {initialsFromName(drive.companyName)}
@@ -89,7 +90,7 @@ export default function DriveCard({
             <p className="flex flex-wrap items-center gap-2 text-sm font-medium text-ink">
               {drive.companyName}
               <span
-                className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${
+                className={`clip-chip px-2 py-0.5 text-[10px] font-semibold ${
                   applied
                     ? "bg-accent-soft text-indigo-600"
                     : "bg-success-soft text-success"
@@ -112,14 +113,14 @@ export default function DriveCard({
               href={drive.applyUrl}
               target="_blank"
               rel="noreferrer"
-              className="rounded-md bg-ink px-3 py-1.5 text-xs font-semibold text-surface"
+              className="clip-btn bg-ink px-3 py-1.5 text-xs font-semibold text-surface"
             >
               Apply
             </a>
           ) : null}
           {application ? (
             <span
-              className={`rounded-full px-2.5 py-1 text-xs font-semibold ${STATUS_STYLE[application.status]}`}
+              className={`clip-chip px-2.5 py-1 text-xs font-semibold ${STATUS_STYLE[application.status]}`}
             >
               {STATUS_LABEL[application.status]}
             </span>
@@ -147,7 +148,7 @@ export default function DriveCard({
       </div>
 
       {driveReadiness ? (
-        <div className="mt-4 rounded-lg border border-line-soft bg-surface-sunk p-3.5">
+        <AngularBorder color="var(--line-soft)" className="mt-4 bg-surface-sunk p-3.5">
           <p className="font-mono text-[10px] tracking-[0.05em] text-ink-faint uppercase">
             Your readiness against this drive
             {driveReadiness.hiringBarScore !== null ? (
@@ -173,7 +174,7 @@ export default function DriveCard({
               <span className="font-semibold">Do this:</span> {driveReadiness.instruction}
             </p>
           ) : null}
-        </div>
+        </AngularBorder>
       ) : null}
 
       <div className="mt-3 flex items-center justify-between text-xs text-ink-faint">
@@ -186,7 +187,7 @@ export default function DriveCard({
           </span>
         ) : null}
       </div>
-    </div>
+    </AngularBorder>
   );
 }
 

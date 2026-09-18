@@ -6,6 +6,7 @@ import { computeOverallReadiness, computeReadinessPillars, computeDriveReadiness
 import { evaluateEligibility } from "@/lib/driveEligibility";
 import { computeBatchAppliedCounts } from "@/lib/driveSocialProof";
 import DriveCard from "@/components/career/DriveCard";
+import AngularBorder from "@/components/ui/AngularBorder";
 
 const FILTERS = [
   { key: "eligible", label: "Eligible" },
@@ -94,27 +95,25 @@ export default async function CareerPage({
                 : f.key === "applied"
                   ? appliedDrives.length
                   : drives.length;
-            return (
-              <a
-                key={f.key}
-                href={`/career?filter=${f.key}`}
-                className={`rounded-full px-3.5 py-1.5 text-[13px] font-medium ${
-                  filter === f.key
-                    ? "bg-ink text-surface"
-                    : "border border-line text-ink-secondary hover:bg-surface"
-                }`}
-              >
+            return filter === f.key ? (
+              <a key={f.key} href={`/career?filter=${f.key}`} className="clip-chip bg-ink px-3.5 py-1.5 text-[13px] font-medium text-surface">
                 {f.label} · {count}
               </a>
+            ) : (
+              <AngularBorder key={f.key} clip="clip-chip" color="var(--line)" className="bg-surface">
+                <a href={`/career?filter=${f.key}`} className="block px-3.5 py-1.5 text-[13px] font-medium text-ink-secondary hover:bg-surface-sunk">
+                  {f.label} · {count}
+                </a>
+              </AngularBorder>
             );
           })}
         </div>
       </div>
 
       {featuredDrive ? (
-        <div className="flex items-center justify-between gap-4 rounded-xl border border-accent-soft bg-linear-to-r from-accent-soft to-surface p-4">
+        <AngularBorder color="var(--accent-soft)" className="flex items-center justify-between gap-4 bg-linear-to-r from-accent-soft to-surface p-4">
           <div className="flex items-center gap-3">
-            <span className="flex h-11 w-11 shrink-0 flex-col items-center justify-center rounded-lg bg-indigo-600 font-mono text-white">
+            <span className="clip-chip flex h-11 w-11 shrink-0 flex-col items-center justify-center bg-indigo-600 font-mono text-white">
               <span className="text-sm font-bold leading-none">
                 {featuredDrive.applyDeadline!.getDate()}
               </span>
@@ -134,11 +133,11 @@ export default async function CareerPage({
           </div>
           <a
             href={`/practice/problems?company=${encodeURIComponent(featuredDrive.companyName)}`}
-            className="shrink-0 rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-accent-hover"
+            className="clip-btn shrink-0 bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-accent-hover"
           >
             Prepare for this drive
           </a>
-        </div>
+        </AngularBorder>
       ) : null}
 
       <div className="space-y-3">
@@ -162,13 +161,13 @@ export default async function CareerPage({
             );
           })
         ) : (
-          <div className="rounded-xl border border-line bg-surface px-5 py-6 text-center">
+          <AngularBorder color="var(--line)" className="bg-surface px-5 py-6 text-center">
             <p className="text-sm text-ink-muted">
               {filter === "applied"
                 ? "You haven't applied to any drives yet."
                 : "Your placement cell hasn't added drives yet."}
             </p>
-          </div>
+          </AngularBorder>
         )}
       </div>
     </div>

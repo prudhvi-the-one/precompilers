@@ -3,6 +3,7 @@ import { getCurrentUser } from "@/lib/session";
 import { requireTierAccess } from "@/lib/tier";
 import { prisma } from "@/lib/prisma";
 import PeerReviewForm from "@/components/prove/PeerReviewForm";
+import AngularBorder from "@/components/ui/AngularBorder";
 
 function hoursUntil(date: Date): number {
   return Math.max(0, Math.round((date.getTime() - Date.now()) / 3_600_000));
@@ -39,7 +40,7 @@ export default async function ReviewQueuePage() {
               <h1 className="font-brand text-[22px] font-bold text-ink">
                 Reviewing: {next.project.title}
               </h1>
-              <span className="rounded-full bg-warn-soft px-2.5 py-0.5 font-mono text-[10px] font-semibold text-warn">
+              <span className="clip-chip bg-warn-soft px-2.5 py-0.5 font-mono text-[10px] font-semibold text-warn">
                 DUE IN {hoursUntil(new Date(next.submittedAt.getTime() + 48 * 3_600_000))}H
               </span>
             </div>
@@ -49,7 +50,7 @@ export default async function ReviewQueuePage() {
           </div>
 
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1.4fr_1fr]">
-            <div className="space-y-3 rounded-xl border border-line bg-surface p-5">
+            <AngularBorder color="var(--line)" className="space-y-3 bg-surface p-5">
               <p className="text-sm font-medium text-ink">Submission</p>
               <a
                 href={next.submissionUrl}
@@ -62,15 +63,15 @@ export default async function ReviewQueuePage() {
               <p className="whitespace-pre-line text-sm text-ink-muted">
                 {next.description}
               </p>
-            </div>
+            </AngularBorder>
 
-            <div className="rounded-xl border border-line bg-surface p-5">
+            <AngularBorder color="var(--line)" className="bg-surface p-5">
               <PeerReviewForm submissionId={next.id} />
-            </div>
+            </AngularBorder>
           </div>
         </>
       ) : (
-        <div className="rounded-xl border border-line bg-surface p-8 text-center">
+        <AngularBorder color="var(--line)" className="bg-surface p-8 text-center">
           <p className="text-sm font-medium text-ink">
             Nothing to review right now.
           </p>
@@ -78,7 +79,7 @@ export default async function ReviewQueuePage() {
             Every current submission already has two reviews. Check back once
             more students submit.
           </p>
-        </div>
+        </AngularBorder>
       )}
     </div>
   );

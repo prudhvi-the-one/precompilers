@@ -4,6 +4,7 @@ import { requireTierAccess } from "@/lib/tier";
 import { prisma } from "@/lib/prisma";
 import { meetsEntitlement } from "@/lib/entitlement";
 import SubmitProjectForm from "@/components/prove/SubmitProjectForm";
+import AngularBorder from "@/components/ui/AngularBorder";
 
 export default async function ProjectsPage() {
   const user = await getCurrentUser();
@@ -42,13 +43,13 @@ export default async function ProjectsPage() {
           const submission = project.submissions[0];
 
           return (
-            <div key={project.id} className="rounded-xl border border-line bg-surface p-5">
+            <AngularBorder key={project.id} color="var(--line)" className="bg-surface p-5">
               <div className="flex items-center gap-2">
                 <h2 className="font-brand text-base font-bold text-ink">
                   {project.title}
                 </h2>
                 {submission ? (
-                  <span className="rounded-full bg-success-soft px-2.5 py-0.5 text-xs font-semibold text-success">
+                  <span className="clip-chip bg-success-soft px-2.5 py-0.5 text-xs font-semibold text-success">
                     Submitted
                   </span>
                 ) : null}
@@ -86,7 +87,7 @@ export default async function ProjectsPage() {
                   ) : null}
                 </div>
               )}
-            </div>
+            </AngularBorder>
           );
         })}
       </div>

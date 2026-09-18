@@ -39,7 +39,7 @@ export default function BookMentorSlot({ slotId }: { slotId: string }) {
             type="button"
             onClick={() => book(opt.value)}
             disabled={loading !== null}
-            className="rounded-md bg-indigo-600 px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-accent-hover disabled:opacity-50"
+            className="clip-btn bg-indigo-600 px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-accent-hover disabled:opacity-50"
           >
             {loading === opt.value ? "Booking…" : opt.label}
           </button>

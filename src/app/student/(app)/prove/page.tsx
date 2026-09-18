@@ -57,60 +57,56 @@ export default async function ProvePage() {
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <a
-          href="/prove/projects"
-          className="rounded-xl border border-line bg-surface p-5 hover:bg-surface-sunk"
-        >
-          <FolderKanban className="h-5 w-5 text-indigo-600" strokeWidth={1.75} />
-          <h2 className="mt-3 font-brand text-base font-bold text-ink">Project briefs</h2>
-          <p className="mt-1 text-sm text-ink-muted">
-            {mySubmissionCount > 0
-              ? `${mySubmissionCount} submitted`
-              : "Pick a brief and ship it"}
-          </p>
-        </a>
-        <a
-          href="/prove/review-queue"
-          className="rounded-xl border border-line bg-surface p-5 hover:bg-surface-sunk"
-        >
-          <ClipboardCheck className="h-5 w-5 text-indigo-600" strokeWidth={1.75} />
-          <h2 className="mt-3 font-brand text-base font-bold text-ink">Review queue</h2>
-          <p className="mt-1 text-sm text-ink-muted">
-            {pendingReviewCount > 0
-              ? `${pendingReviewCount} awaiting review`
-              : "Nothing to review right now"}
-          </p>
-        </a>
-        <a
-          href="/prove/mocks"
-          className="rounded-xl border border-line bg-surface p-5 hover:bg-surface-sunk"
-        >
-          <Mic className="h-5 w-5 text-indigo-600" strokeWidth={1.75} />
-          <h2 className="mt-3 flex items-center font-brand text-base font-bold text-ink">
-            Mock interviews
-            {isLive(myMockRequest?.scheduledAt) ? <LiveDot /> : null}
-          </h2>
-          <p className="mt-1 text-sm text-ink-muted">
-            {myMockRequest
-              ? "You have a paired mock"
-              : "Join the peer pool, free and unlimited"}
-          </p>
-        </a>
-        <a
-          href="/prove/group-discussions"
-          className="rounded-xl border border-line bg-surface p-5 hover:bg-surface-sunk"
-        >
-          <Users className="h-5 w-5 text-indigo-600" strokeWidth={1.75} />
-          <h2 className="mt-3 flex items-center font-brand text-base font-bold text-ink">
-            Group discussions
-            {isLive(upcomingGd?.scheduledAt) ? <LiveDot /> : null}
-          </h2>
-          <p className="mt-1 text-sm text-ink-muted">
-            {upcomingGd
-              ? `Next: "${upcomingGd.topic}"`
-              : "No sessions scheduled"}
-          </p>
-        </a>
+        <div className="clip-panel bg-line p-[2px]">
+          <a href="/prove/projects" className="clip-panel block bg-surface p-5 hover:bg-surface-sunk">
+            <FolderKanban className="h-5 w-5 text-indigo-600" strokeWidth={1.75} />
+            <h2 className="mt-3 font-brand text-base font-bold text-ink">Project briefs</h2>
+            <p className="mt-1 text-sm text-ink-muted">
+              {mySubmissionCount > 0
+                ? `${mySubmissionCount} submitted`
+                : "Pick a brief and ship it"}
+            </p>
+          </a>
+        </div>
+        <div className="clip-panel bg-line p-[2px]">
+          <a href="/prove/review-queue" className="clip-panel block bg-surface p-5 hover:bg-surface-sunk">
+            <ClipboardCheck className="h-5 w-5 text-indigo-600" strokeWidth={1.75} />
+            <h2 className="mt-3 font-brand text-base font-bold text-ink">Review queue</h2>
+            <p className="mt-1 text-sm text-ink-muted">
+              {pendingReviewCount > 0
+                ? `${pendingReviewCount} awaiting review`
+                : "Nothing to review right now"}
+            </p>
+          </a>
+        </div>
+        <div className="clip-panel bg-line p-[2px]">
+          <a href="/prove/mocks" className="clip-panel block bg-surface p-5 hover:bg-surface-sunk">
+            <Mic className="h-5 w-5 text-indigo-600" strokeWidth={1.75} />
+            <h2 className="mt-3 flex items-center font-brand text-base font-bold text-ink">
+              Mock interviews
+              {isLive(myMockRequest?.scheduledAt) ? <LiveDot /> : null}
+            </h2>
+            <p className="mt-1 text-sm text-ink-muted">
+              {myMockRequest
+                ? "You have a paired mock"
+                : "Join the peer pool, free and unlimited"}
+            </p>
+          </a>
+        </div>
+        <div className="clip-panel bg-line p-[2px]">
+          <a href="/prove/group-discussions" className="clip-panel block bg-surface p-5 hover:bg-surface-sunk">
+            <Users className="h-5 w-5 text-indigo-600" strokeWidth={1.75} />
+            <h2 className="mt-3 flex items-center font-brand text-base font-bold text-ink">
+              Group discussions
+              {isLive(upcomingGd?.scheduledAt) ? <LiveDot /> : null}
+            </h2>
+            <p className="mt-1 text-sm text-ink-muted">
+              {upcomingGd
+                ? `Next: "${upcomingGd.topic}"`
+                : "No sessions scheduled"}
+            </p>
+          </a>
+        </div>
       </div>
     </div>
   );

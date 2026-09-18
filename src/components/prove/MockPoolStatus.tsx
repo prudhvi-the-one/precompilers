@@ -46,7 +46,7 @@ export default function MockPoolStatus({
       <button
         type="button"
         onClick={() => router.push(`/mock-room/${requestId}`)}
-        className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-accent-hover"
+        className="clip-btn bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-accent-hover"
       >
         Join your mock
       </button>
@@ -67,7 +67,7 @@ export default function MockPoolStatus({
       type="button"
       onClick={joinPool}
       disabled={joining}
-      className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-accent-hover disabled:opacity-50"
+      className="clip-btn bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-accent-hover disabled:opacity-50"
     >
       {joining ? "Joining…" : "Join the pool"}
     </button>

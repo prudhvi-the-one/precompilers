@@ -44,7 +44,8 @@ export default function ApplicationForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 rounded-xl border border-line bg-surface p-4">
+    <div className="clip-panel bg-line p-[2px]">
+    <form onSubmit={handleSubmit} className="clip-panel space-y-4 bg-surface p-4">
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div>
           <label className="text-sm font-medium text-ink">Company</label>
@@ -102,10 +103,11 @@ export default function ApplicationForm() {
       <button
         type="submit"
         disabled={submitting || !companyName.trim() || !roleTitle.trim()}
-        className="rounded-md bg-ink px-4 py-2.5 text-sm font-semibold text-surface disabled:opacity-50"
+        className="clip-btn bg-ink px-4 py-2.5 text-sm font-semibold text-surface disabled:opacity-50"
       >
         {submitting ? "Logging…" : "Log application"}
       </button>
     </form>
+    </div>
   );
 }

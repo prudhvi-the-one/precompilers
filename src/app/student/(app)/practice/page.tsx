@@ -26,33 +26,30 @@ export default async function PracticePage() {
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <a
-          href="/practice/quizzes"
-          className="rounded-xl border border-line bg-surface p-5 hover:bg-surface-sunk"
-        >
-          <h2 className="font-brand text-base font-bold text-ink">Topic quizzes</h2>
-          <p className="mt-1 text-sm text-ink-muted">
-            {quizCount} quizzes across core CS &amp; AIML topics.
-          </p>
-        </a>
-        <a
-          href="/practice/aptitude"
-          className="rounded-xl border border-line bg-surface p-5 hover:bg-surface-sunk"
-        >
-          <h2 className="font-brand text-base font-bold text-ink">Aptitude papers</h2>
-          <p className="mt-1 text-sm text-ink-muted">
-            {paperCount} full sectional paper{paperCount === 1 ? "" : "s"}, proctored or practice.
-          </p>
-        </a>
-        <a
-          href="/practice/problems"
-          className="rounded-xl border border-line bg-surface p-5 hover:bg-surface-sunk"
-        >
-          <h2 className="font-brand text-base font-bold text-ink">Coding problems</h2>
-          <p className="mt-1 text-sm text-ink-muted">
-            {problemCount} problem{problemCount === 1 ? "" : "s"} across core topics.
-          </p>
-        </a>
+        <div className="clip-panel bg-line p-[2px]">
+          <a href="/practice/quizzes" className="clip-panel block bg-surface p-5 hover:bg-surface-sunk">
+            <h2 className="font-brand text-base font-bold text-ink">Topic quizzes</h2>
+            <p className="mt-1 text-sm text-ink-muted">
+              {quizCount} quizzes across core CS &amp; AIML topics.
+            </p>
+          </a>
+        </div>
+        <div className="clip-panel bg-line p-[2px]">
+          <a href="/practice/aptitude" className="clip-panel block bg-surface p-5 hover:bg-surface-sunk">
+            <h2 className="font-brand text-base font-bold text-ink">Aptitude papers</h2>
+            <p className="mt-1 text-sm text-ink-muted">
+              {paperCount} full sectional paper{paperCount === 1 ? "" : "s"}, proctored or practice.
+            </p>
+          </a>
+        </div>
+        <div className="clip-panel bg-line p-[2px]">
+          <a href="/practice/problems" className="clip-panel block bg-surface p-5 hover:bg-surface-sunk">
+            <h2 className="font-brand text-base font-bold text-ink">Coding problems</h2>
+            <p className="mt-1 text-sm text-ink-muted">
+              {problemCount} problem{problemCount === 1 ? "" : "s"} across core topics.
+            </p>
+          </a>
+        </div>
       </div>
     </div>
   );

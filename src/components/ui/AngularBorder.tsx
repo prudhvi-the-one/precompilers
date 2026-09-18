@@ -17,7 +17,7 @@ export default function AngularBorder({
   color: string;
   /** Which corner-cut shape to use — must match on both layers, or the
    * inset "border" ring won't line up. Defaults to the panel cut. */
-  clip?: "clip-panel" | "clip-chip";
+  clip?: "clip-panel" | "clip-chip" | "clip-btn";
   className?: string;
   /** Layout classes for the outer layer (e.g. `mt-auto` to position this
    * whole component within a flex parent) — kept separate from `className`
