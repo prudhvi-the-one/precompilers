@@ -136,6 +136,8 @@ export const subjectAuthorSchema = z.object({
     .string()
     .trim()
     .regex(/^#[0-9a-fA-F]{6}$/, "Enter a hex color like #4f46e5"),
+  category: z.string().trim().min(1, "Category is required").max(40),
+  tagline: z.string().trim().min(1, "Tagline is required").max(160),
   order: z.number().int().min(0),
   submit: z.boolean(),
 });
