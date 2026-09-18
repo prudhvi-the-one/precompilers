@@ -141,7 +141,7 @@ export default function ProblemEditorClient({
         <p className="text-sm text-ink-muted">
           🔒 This problem needs a plan upgrade.
         </p>
-        <a href="/practice/problems" className="mt-2 inline-block text-sm font-semibold text-indigo-600 hover:underline">
+        <a href="/practice/problems" className="mt-2 inline-block text-sm font-semibold text-accent hover:underline">
           Back to problems
         </a>
       </AngularBorder>
@@ -261,7 +261,7 @@ export default function ProblemEditorClient({
                   {problem.tags.map((tag) => (
                     <span
                       key={tag}
-                      className="clip-chip bg-accent-soft px-2 py-0.5 text-[11px] font-medium text-indigo-600"
+                      className="clip-chip bg-accent-soft px-2 py-0.5 text-[11px] font-medium text-accent"
                     >
                       {tag}
                     </span>
@@ -372,7 +372,7 @@ export default function ProblemEditorClient({
               {verdict === "ACCEPTED" ? (
                 <a
                   href="/prove/review-queue"
-                  className="ml-auto text-xs font-medium text-indigo-600 hover:underline"
+                  className="ml-auto text-xs font-medium text-accent hover:underline"
                 >
                   Ask a peer to review this solution
                 </a>

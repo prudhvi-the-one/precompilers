@@ -108,7 +108,7 @@ export default function PeerReviewForm({ submissionId }: { submissionId: string 
                 key={opt.value}
                 type="button"
                 onClick={() => setWouldHire(opt.value)}
-                className="clip-chip bg-accent-soft px-3 py-2 text-sm font-medium text-indigo-600"
+                className="clip-chip bg-accent-soft px-3 py-2 text-sm font-medium text-accent"
               >
                 {opt.label}
               </button>

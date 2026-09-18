@@ -40,7 +40,7 @@ export default function MockFeedbackForm({ requestId }: { requestId: string }) {
                 key={n}
                 type="button"
                 onClick={() => setScore(n)}
-                className="clip-chip h-9 flex-1 bg-accent-soft text-sm font-semibold text-indigo-600"
+                className="clip-chip h-9 flex-1 bg-accent-soft text-sm font-semibold text-accent"
               >
                 {n}
               </button>

@@ -49,7 +49,7 @@ export default async function AptitudePapersPage() {
         </div>
         <a
           href="/practice/quizzes/history"
-          className="text-sm font-semibold text-indigo-600 hover:underline"
+          className="text-sm font-semibold text-accent hover:underline"
         >
           History
         </a>

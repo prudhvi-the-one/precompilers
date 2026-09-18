@@ -7,7 +7,7 @@ import NotifyIfCriteriaChangeButton from "@/components/career/NotifyIfCriteriaCh
 import AngularBorder from "@/components/ui/AngularBorder";
 
 const STATUS_STYLE: Record<string, string> = {
-  APPLIED: "bg-accent-soft text-indigo-600",
+  APPLIED: "bg-accent-soft text-accent",
   INTERVIEWING: "bg-warn-soft text-warn",
   OFFER: "bg-success-soft text-success",
   REJECTED: "bg-error-soft text-error",
@@ -92,7 +92,7 @@ export default function DriveCard({
               <span
                 className={`clip-chip px-2 py-0.5 text-[10px] font-semibold ${
                   applied
-                    ? "bg-accent-soft text-indigo-600"
+                    ? "bg-accent-soft text-accent"
                     : "bg-success-soft text-success"
                 }`}
               >

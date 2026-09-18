@@ -118,7 +118,7 @@ export default async function QuizzesPage({
         </div>
         <a
           href="/practice/quizzes/history"
-          className="text-sm font-semibold text-indigo-600 hover:underline"
+          className="text-sm font-semibold text-accent hover:underline"
         >
           History
         </a>
@@ -133,7 +133,7 @@ export default async function QuizzesPage({
         <div className="flex items-center gap-2 text-xs text-ink-faint">
           Filtering by
           {topic ? (
-            <span className="clip-chip bg-accent-soft px-2.5 py-1 font-semibold text-indigo-600">
+            <span className="clip-chip bg-accent-soft px-2.5 py-1 font-semibold text-accent">
               {topic}
             </span>
           ) : null}
@@ -142,7 +142,7 @@ export default async function QuizzesPage({
               &quot;{q.trim()}&quot;
             </span>
           ) : null}
-          <a href="/practice/quizzes" className="font-semibold text-indigo-600 hover:underline">
+          <a href="/practice/quizzes" className="font-semibold text-accent hover:underline">
             Clear
           </a>
         </div>
@@ -168,7 +168,7 @@ export default async function QuizzesPage({
                   <div className="mt-1.5 flex flex-wrap items-center gap-2">
                     <a
                       href={buildHref({ topic: quiz.topic })}
-                      className="clip-chip bg-accent-soft px-2.5 py-0.5 text-[10.5px] font-semibold text-indigo-600 hover:bg-accent-soft/70"
+                      className="clip-chip bg-accent-soft px-2.5 py-0.5 text-[10.5px] font-semibold text-accent hover:bg-accent-soft/70"
                     >
                       {quiz.topic}
                     </a>

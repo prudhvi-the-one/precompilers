@@ -56,7 +56,7 @@ export default async function ReviewQueuePage() {
                 href={next.submissionUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="block truncate text-sm font-semibold text-indigo-600 hover:underline"
+                className="block truncate text-sm font-semibold text-accent hover:underline"
               >
                 {next.submissionUrl}
               </a>

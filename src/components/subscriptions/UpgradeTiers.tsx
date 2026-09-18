@@ -129,7 +129,7 @@ export default function UpgradeTiers({
             className={`rounded-full px-2 py-0.5 font-mono text-[10px] ${
               billing === "ANNUAL"
                 ? "bg-white/20 text-white"
-                : "bg-accent-soft text-indigo-600"
+                : "bg-accent-soft text-accent"
             }`}
           >
             Save 33%
@@ -156,7 +156,7 @@ export default function UpgradeTiers({
               }
             >
               {tier.highlight ? (
-                <p className="font-mono text-[10px] tracking-[0.1em] text-indigo-600 uppercase">
+                <p className="font-mono text-[10px] tracking-[0.1em] text-accent uppercase">
                   Most popular
                 </p>
               ) : null}
@@ -207,7 +207,7 @@ export default function UpgradeTiers({
                 ) : null}
                 {tier.features.map((feature) => (
                   <li key={feature} className="flex gap-2 text-sm text-ink-muted">
-                    <span className="text-indigo-600">✓</span>
+                    <span className="text-accent">✓</span>
                     <span>{feature}</span>
                   </li>
                 ))}

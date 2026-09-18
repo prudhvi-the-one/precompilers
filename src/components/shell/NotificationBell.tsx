@@ -83,7 +83,7 @@ export default function NotificationBell() {
               <button
                 type="button"
                 onClick={markAllRead}
-                className="text-xs font-medium text-indigo-600 hover:underline"
+                className="text-xs font-medium text-accent hover:underline"
               >
                 Mark all read
               </button>

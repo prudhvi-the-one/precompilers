@@ -162,7 +162,7 @@ export default async function LearnPage({
                 <div className="p-4">
                   <div className="mt-1 flex items-center gap-2 text-xs">
                     {isEnrolled ? (
-                      <span className="clip-chip bg-accent-soft px-2.5 py-0.5 font-medium text-indigo-600">
+                      <span className="clip-chip bg-accent-soft px-2.5 py-0.5 font-medium text-accent">
                         In progress
                       </span>
                     ) : locked ? (
@@ -265,7 +265,7 @@ export default async function LearnPage({
                 <span className="flex-1 text-sm text-ink">
                   Live class — {liveClass.title}
                 </span>
-                <span className="clip-chip bg-accent-soft px-2 py-0.5 font-mono text-[10px] text-indigo-600">
+                <span className="clip-chip bg-accent-soft px-2 py-0.5 font-mono text-[10px] text-accent">
                   {formatClassChip(liveClass.scheduledAt)}
                 </span>
               </a>

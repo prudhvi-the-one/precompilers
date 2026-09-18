@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 const STATUS_STYLE: Record<string, string> = {
-  APPLIED: "bg-accent-soft text-indigo-600",
+  APPLIED: "bg-accent-soft text-accent",
   INTERVIEWING: "bg-warn-soft text-warn",
   OFFER: "bg-success-soft text-success",
   REJECTED: "bg-error-soft text-error",

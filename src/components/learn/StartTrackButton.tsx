@@ -29,7 +29,7 @@ export default function StartTrackButton({
       type="button"
       onClick={handleClick}
       disabled={loading}
-      className="text-sm font-semibold text-indigo-600 hover:underline disabled:opacity-50"
+      className="text-sm font-semibold text-accent hover:underline disabled:opacity-50"
     >
       {loading ? "Starting…" : label}
     </button>
