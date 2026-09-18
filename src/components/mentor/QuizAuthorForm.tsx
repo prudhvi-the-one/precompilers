@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 type OptionDraft = { label: string; text: string; isCorrect: boolean };
-type QuestionDraft = { text: string; marks: number; options: OptionDraft[] };
+type QuestionDraft = { text: string; marks: number; explanation: string; options: OptionDraft[] };
 type SectionDraft = { name: string; durationMinutes: number; questions: QuestionDraft[] };
 
 const OPTION_LABELS = ["A", "B", "C", "D"];
@@ -14,7 +14,7 @@ function emptyOptions(): OptionDraft[] {
 }
 
 function emptyQuestion(): QuestionDraft {
-  return { text: "", marks: 1, options: emptyOptions() };
+  return { text: "", marks: 1, explanation: "", options: emptyOptions() };
 }
 
 function emptySection(): SectionDraft {
@@ -164,6 +164,7 @@ export default function QuizAuthorForm({
           text: q.text.trim(),
           marks: q.marks,
           order: qIndex,
+          explanation: q.explanation.trim(),
           options: q.options.map((o) => ({ label: o.label, text: o.text.trim(), isCorrect: o.isCorrect })),
         })),
       })),
@@ -296,6 +297,13 @@ export default function QuizAuthorForm({
                       </button>
                     ) : null}
                   </div>
+                  <textarea
+                    value={question.explanation}
+                    onChange={(e) => updateQuestion(sIndex, qIndex, { explanation: e.target.value })}
+                    rows={2}
+                    className="w-full rounded-md border border-line p-2 text-sm focus:border-black focus:outline-none"
+                    placeholder="Explanation shown after the student answers (optional, but shown either way)"
+                  />
                   <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                     {question.options.map((option, oIndex) => (
                       <label

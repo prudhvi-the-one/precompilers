@@ -417,13 +417,14 @@ model QuizSection {
 }
 
 model Question {
-  id        String       @id @default(cuid())
-  sectionId String
-  section   QuizSection  @relation(fields: [sectionId], references: [id], onDelete: Cascade)
-  order     Int          @default(0)
-  text      String
-  marks     Int          @default(1)
-  type      QuestionType @default(SINGLE_CHOICE)
+  id          String       @id @default(cuid())
+  sectionId   String
+  section     QuizSection  @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  order       Int          @default(0)
+  text        String
+  marks       Int          @default(1)
+  type        QuestionType @default(SINGLE_CHOICE)
+  explanation String       @default("")
 
   options   QuestionOption[]
   responses QuestionResponse[]

@@ -61,6 +61,7 @@ export default async function EditQuizPage({
             questions: section.questions.map((question) => ({
               text: question.text,
               marks: question.marks,
+              explanation: question.explanation,
               options: question.options.map((option) => ({
                 label: option.label,
                 text: option.text,

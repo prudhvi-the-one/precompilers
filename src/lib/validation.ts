@@ -440,6 +440,7 @@ const quizQuestionSchema = z.object({
   text: z.string().trim().max(2000),
   marks: z.number().int().min(1).max(20),
   order: z.number().int().min(0),
+  explanation: z.string().trim().max(2000).optional().default(""),
   options: z.array(quizOptionSchema).max(4),
 });
 

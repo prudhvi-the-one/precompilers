@@ -54,6 +54,7 @@ export async function PATCH(
                 text: question.text,
                 marks: question.marks,
                 order: question.order,
+                explanation: question.explanation,
                 options: {
                   create: question.options.map((option) => ({
                     label: option.label,
