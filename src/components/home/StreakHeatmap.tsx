@@ -60,7 +60,7 @@ export default function StreakHeatmap({
   return (
     <div>
       <div className="flex items-center gap-3">
-        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[11px] bg-warn-soft text-warn">
+        <span className="clip-chip flex h-10 w-10 shrink-0 items-center justify-center bg-warn-soft text-warn">
           <Flame className="h-5 w-5" strokeWidth={1.75} />
         </span>
         <div>
