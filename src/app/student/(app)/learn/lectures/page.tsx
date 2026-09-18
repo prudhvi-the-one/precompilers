@@ -5,6 +5,7 @@ import { requireTierAccess } from "@/lib/tier";
 import { prisma } from "@/lib/prisma";
 import DownloadAffordance from "@/components/learn/DownloadAffordance";
 import NoTrackEmptyState from "@/components/learn/NoTrackEmptyState";
+import AngularBorder from "@/components/ui/AngularBorder";
 
 function formatDuration(totalMinutes: number): string {
   const hours = Math.floor(totalMinutes / 60);
@@ -76,7 +77,7 @@ export default async function LecturesPage() {
             </span>
           </div>
 
-          <div className="divide-y divide-line-soft rounded-xl border border-line bg-surface">
+          <AngularBorder color="var(--line)" className="divide-y divide-line-soft bg-surface">
             {enrollment.track.lectures.map((lecture) => {
               const completed = completedIds.has(lecture.id);
               return (
@@ -108,7 +109,7 @@ export default async function LecturesPage() {
                 </a>
               );
             })}
-          </div>
+          </AngularBorder>
         </>
       ) : (
         <NoTrackEmptyState description="Pick a track from Skill tracks, or let us match you to one based on your target role." />

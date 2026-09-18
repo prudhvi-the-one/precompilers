@@ -5,6 +5,7 @@ import { requireTierAccess } from "@/lib/tier";
 import { prisma } from "@/lib/prisma";
 import { meetsEntitlement } from "@/lib/entitlement";
 import MarkCompleteButton from "@/components/learn/MarkCompleteButton";
+import AngularBorder from "@/components/ui/AngularBorder";
 
 export default async function LectureDetailPage({
   params,
@@ -51,7 +52,7 @@ export default async function LectureDetailPage({
 
       {unlocked ? (
         <>
-          <div className="aspect-video overflow-hidden rounded-xl border border-line bg-black">
+          <AngularBorder color="var(--line)" className="aspect-video overflow-hidden bg-black">
             <iframe
               src={lecture.videoUrl}
               title={lecture.title}
@@ -59,7 +60,7 @@ export default async function LectureDetailPage({
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
             />
-          </div>
+          </AngularBorder>
           <p className="text-sm text-ink-muted">{lecture.description}</p>
           <MarkCompleteButton
             lectureId={lecture.id}
@@ -67,7 +68,7 @@ export default async function LectureDetailPage({
           />
         </>
       ) : (
-        <div className="rounded-xl border border-line bg-surface p-8 text-center">
+        <AngularBorder color="var(--line)" className="bg-surface p-8 text-center">
           <p className="flex items-center justify-center gap-1.5 text-sm font-medium text-ink">
             <Lock className="h-4 w-4" strokeWidth={2} />
             This lesson needs a plan upgrade.
@@ -82,7 +83,7 @@ export default async function LectureDetailPage({
           >
             Back to Skill tracks
           </a>
-        </div>
+        </AngularBorder>
       )}
     </div>
   );

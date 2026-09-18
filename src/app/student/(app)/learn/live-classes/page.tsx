@@ -5,6 +5,7 @@ import { getCurrentUser } from "@/lib/session";
 import { requireTierAccess } from "@/lib/tier";
 import { prisma } from "@/lib/prisma";
 import NoTrackEmptyState from "@/components/learn/NoTrackEmptyState";
+import AngularBorder from "@/components/ui/AngularBorder";
 
 function formatSchedule(date: Date): string {
   return date.toLocaleString("en-US", {
@@ -66,11 +67,11 @@ export default async function LiveClassesPage() {
               <p className="mb-2 text-[11.5px] font-bold tracking-[0.05em] text-ink-faintest uppercase">
                 Live now
               </p>
-              <div className="divide-y divide-line-soft rounded-xl border border-line bg-surface">
+              <AngularBorder color="var(--accent-soft)" className="divide-y divide-line-soft bg-surface">
                 {live.map((liveClass) => (
                   <div
                     key={liveClass.id}
-                    className="flex items-center gap-3 rounded-xl bg-linear-to-r from-accent-soft to-surface px-5 py-4"
+                    className="flex items-center gap-3 bg-linear-to-r from-accent-soft to-surface px-5 py-4"
                   >
                     <span className="relative flex h-2 w-2 shrink-0 items-center justify-center">
                       <span className="h-2 w-2 rounded-full bg-error" />
@@ -79,18 +80,18 @@ export default async function LiveClassesPage() {
                     <p className="flex-1 text-sm font-medium text-ink">
                       {liveClass.title}
                     </p>
-                    <span className="shrink-0 rounded-full bg-error-soft px-2 py-0.5 font-mono text-[10px] font-bold text-error">
+                    <span className="clip-chip shrink-0 bg-error-soft px-2 py-0.5 font-mono text-[10px] font-bold text-error">
                       LIVE
                     </span>
                     <a
                       href={`/live/${liveClass.id}`}
-                      className="shrink-0 rounded-lg bg-indigo-600 px-4 py-2 font-brand text-[13px] font-semibold text-white hover:bg-accent-hover"
+                      className="clip-btn shrink-0 bg-indigo-600 px-4 py-2 font-brand text-[13px] font-semibold text-white hover:bg-accent-hover"
                     >
                       Join class
                     </a>
                   </div>
                 ))}
-              </div>
+              </AngularBorder>
             </div>
           ) : null}
 
@@ -99,7 +100,7 @@ export default async function LiveClassesPage() {
               <p className="mb-2 text-[11.5px] font-bold tracking-[0.05em] text-ink-faintest uppercase">
                 Upcoming
               </p>
-              <div className="divide-y divide-line-soft rounded-xl border border-line bg-surface">
+              <AngularBorder color="var(--line)" className="divide-y divide-line-soft bg-surface">
                 {upcoming.map((liveClass) => (
                   <div key={liveClass.id} className="flex items-center gap-3 px-5 py-4">
                     <span className="flex h-7.5 w-7.5 shrink-0 items-center justify-center rounded-full border border-line text-ink-faintest">
@@ -108,7 +109,7 @@ export default async function LiveClassesPage() {
                     <p className="flex-1 text-sm font-medium text-ink">
                       {liveClass.title}
                     </p>
-                    <span className="shrink-0 rounded-full bg-accent-soft px-2.5 py-0.5 font-mono text-[10.5px] text-indigo-600">
+                    <span className="clip-chip shrink-0 bg-accent-soft px-2.5 py-0.5 font-mono text-[10.5px] text-indigo-600">
                       {formatSchedule(liveClass.scheduledAt)}
                     </span>
                     <span className="shrink-0 text-xs text-ink-faintest">
@@ -116,7 +117,7 @@ export default async function LiveClassesPage() {
                     </span>
                   </div>
                 ))}
-              </div>
+              </AngularBorder>
             </div>
           ) : null}
 
@@ -125,7 +126,7 @@ export default async function LiveClassesPage() {
               <p className="mb-2 text-[11.5px] font-bold tracking-[0.05em] text-ink-faintest uppercase">
                 Past
               </p>
-              <div className="divide-y divide-line-soft rounded-xl border border-line bg-surface">
+              <AngularBorder color="var(--line)" className="divide-y divide-line-soft bg-surface">
                 {past.map((liveClass) => (
                   <div
                     key={liveClass.id}
@@ -137,17 +138,17 @@ export default async function LiveClassesPage() {
                     <p className="flex-1 text-sm font-medium text-ink">
                       {liveClass.title}
                     </p>
-                    <span className="shrink-0 rounded-full bg-line-soft px-2.5 py-0.5 text-[10.5px] text-ink-faintest">
+                    <span className="clip-chip shrink-0 bg-line-soft px-2.5 py-0.5 text-[10.5px] text-ink-faintest">
                       {formatSchedule(liveClass.scheduledAt)}
                     </span>
                   </div>
                 ))}
-              </div>
+              </AngularBorder>
             </div>
           ) : null}
         </div>
       ) : enrollment ? (
-        <div className="flex flex-col items-center rounded-xl border border-line bg-surface p-7 text-center">
+        <AngularBorder color="var(--line)" className="flex flex-col items-center bg-surface p-7 text-center">
           <Image
             src="/learn/live-classes-empty.png"
             alt=""
@@ -160,7 +161,7 @@ export default async function LiveClassesPage() {
             Your mentor hasn&apos;t scheduled a session for this batch yet — check back
             soon.
           </p>
-        </div>
+        </AngularBorder>
       ) : (
         <NoTrackEmptyState description="Pick a track from Skill tracks to see its live class schedule." />
       )}
