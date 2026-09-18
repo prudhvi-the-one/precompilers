@@ -15,6 +15,28 @@ function SubjectMark({ iconKey }: { iconKey: string }) {
   return createElement(subjectIcon(iconKey), { className: "h-6 w-6 text-ink-secondary" });
 }
 
+const DIFFICULTY_STYLE = {
+  Beginner: "bg-emerald-500/15 text-emerald-300",
+  Intermediate: "bg-amber-500/15 text-amber-300",
+  Advanced: "bg-rose-500/15 text-rose-300",
+} as const;
+
+// Derived from the topic's real unit number rather than a new field — units
+// already progress from foundational to advanced within every subject, so
+// this reflects real curriculum structure instead of inventing one.
+function difficultyFor(unitLabel: string | null): keyof typeof DIFFICULTY_STYLE {
+  const unitNumber = Number(unitLabel?.match(/Unit (\d+)/)?.[1] ?? 1);
+  if (unitNumber <= 1) return "Beginner";
+  if (unitNumber === 2) return "Intermediate";
+  return "Advanced";
+}
+
+// Derived from the topic's real xpReward (harder/longer topics already
+// carry more XP) rather than a separate, hand-authored estimate field.
+function estimatedMinutesFor(xpReward: number): number {
+  return Math.max(15, Math.round(xpReward / 20) * 5);
+}
+
 function NodeIcon({ topic }: { topic: PathTopic }) {
   if (topic.state === "mastered") {
     return (
@@ -134,6 +156,8 @@ export default async function SubjectPathPage({
             const isCurrent = topic.state === "in_progress" || topic.state === "unlocked";
             const isMastered = topic.state === "mastered";
             const isLocked = topic.state === "locked";
+            const difficulty = difficultyFor(topic.unitLabel);
+            const estMinutes = estimatedMinutesFor(topic.xpReward);
 
             return (
               <div key={topic.id}>
@@ -158,9 +182,14 @@ export default async function SubjectPathPage({
                     }`}
                   >
                     <div className="mb-2 flex items-center justify-between">
-                      <span className="font-mono text-[10.5px] font-bold text-ink-faintest">
-                        NODE {String(topic.order + 1).padStart(2, "0")}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="font-mono text-[10.5px] font-bold text-ink-faintest">
+                          NODE {String(topic.order + 1).padStart(2, "0")}
+                        </span>
+                        <span className={`clip-chip px-2 py-0.5 text-[10px] font-bold uppercase ${DIFFICULTY_STYLE[difficulty]}`}>
+                          {difficulty}
+                        </span>
+                      </div>
                       {isMastered ? (
                         <span className="clip-chip bg-success-soft px-2 py-0.5 text-[10px] font-bold text-success">✓ Mastered</span>
                       ) : isCurrent ? (
@@ -171,12 +200,24 @@ export default async function SubjectPathPage({
                         <span className="clip-chip bg-line-soft px-2 py-0.5 text-[10px] font-bold text-ink-faintest">Locked</span>
                       )}
                     </div>
-                    <h3 className="font-brand text-[14.5px] font-bold text-ink">{topic.name}</h3>
-                    <p className="mt-1 line-clamp-2 text-[11.5px] text-ink-faint">{topic.description}</p>
+                    <div className="flex gap-3">
+                      <span className="clip-chip flex h-11 w-11 shrink-0 items-center justify-center bg-fuchsia-500/10">
+                        <SubjectMark iconKey={subject.iconKey} />
+                      </span>
+                      <div className="min-w-0">
+                        <h3 className="font-brand text-[14.5px] font-bold text-ink">{topic.name}</h3>
+                        <p className="mt-1 line-clamp-2 text-[11.5px] text-ink-faint">{topic.description}</p>
+                      </div>
+                    </div>
                     <div className="mt-3 flex items-center justify-between border-t border-line-soft pt-2.5 text-[11px]">
-                      <span className="font-mono font-semibold text-amber-300">+{topic.xpReward} XP</span>
+                      <span className="flex items-center gap-2.5">
+                        <span className="text-ink-faintest">⏱ {estMinutes} mins</span>
+                        <span className="font-mono font-semibold text-amber-300">+{topic.xpReward} XP</span>
+                      </span>
                       {topic.simulatorKey ? (
-                        <span className="text-cyan-300">🎮 Simulator</span>
+                        <span className="clip-chip flex items-center gap-1 bg-cyan-500/10 px-2 py-0.5 text-cyan-300">
+                          🎮 Simulator
+                        </span>
                       ) : (
                         <span className="text-ink-faintest">Guided theory</span>
                       )}
