@@ -294,3 +294,36 @@ body {
 .chart-icon {
   filter: var(--icon-filter);
 }
+
+/* Learning Paths "CodeQuest" scope — a deliberately dark, cyber-neon look
+   for the Learning Paths section only, agreed as its own visual world
+   rather than a variant of the app's light/dark theme (it doesn't follow
+   the theme toggle). Redefining the same token names used everywhere
+   else means every existing themed utility/component (clip-panel,
+   clip-chip, AngularBorder, text-ink, bg-surface, ...) works here
+   unmodified — only the color values change for this subtree. */
+.learn-cyber {
+  --ink: #f1f1fb;
+  --ink-secondary: #d7d7ee;
+  --ink-muted: #9d9dbd;
+  --ink-faint: #8181a8;
+  --ink-faintest: #6d6d94;
+  --line: #26273f;
+  --line-soft: #1a1b2e;
+  --surface: #0e0f1e;
+  --surface-sunk: #05050c;
+  --accent: #e879f9;
+  --accent-hover: #d946ef;
+  --accent-soft: rgba(217, 70, 239, 0.16);
+  --success: #34d399;
+  --success-soft: rgba(52, 211, 153, 0.16);
+  --warn: #fbbf24;
+  --warn-soft: rgba(251, 191, 36, 0.16);
+  --error: #fb7185;
+  --error-soft: rgba(251, 113, 133, 0.16);
+  background-color: var(--surface-sunk);
+  background-image:
+    linear-gradient(to right, rgba(148, 163, 184, 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(148, 163, 184, 0.06) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
