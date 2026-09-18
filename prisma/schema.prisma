@@ -296,6 +296,8 @@ model Subject {
   name        String
   iconKey     String
   accentColor String
+  category    String        @default("")
+  tagline     String        @default("")
   order       Int           @default(0)
   status      ContentStatus @default(DRAFT)
   createdAt   DateTime      @default(now())

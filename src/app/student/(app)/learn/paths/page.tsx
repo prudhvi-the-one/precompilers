@@ -42,6 +42,10 @@ export default async function LearningPathsPage() {
         {subjectsWithProgress.map(({ subject, masteredCount, totalCount }) => {
           const Icon = subjectIcon(subject.iconKey);
           const pct = totalCount > 0 ? Math.round((masteredCount / totalCount) * 100) : 0;
+          // "Active" = the student has real, unfinished progress in this
+          // path — not a fabricated "currently selected" concept, since
+          // this app has no such state for the subjects list.
+          const isActive = masteredCount > 0 && masteredCount < totalCount;
           return (
             <a
               key={subject.id}
@@ -52,20 +56,34 @@ export default async function LearningPathsPage() {
                 className="absolute inset-x-0 top-0 h-[3px] opacity-70 transition group-hover:opacity-100"
                 style={{ background: `linear-gradient(to right, ${subject.accentColor}, transparent)` }}
               />
-              <span className="flex h-13 w-13 items-center justify-center rounded-2xl bg-line-soft">
-                <Icon className="h-6 w-6 text-ink-secondary" />
-              </span>
+              <div className="flex items-start justify-between gap-3">
+                <span className="flex h-13 w-13 items-center justify-center rounded-2xl bg-line-soft">
+                  <Icon className="h-6 w-6 text-ink-secondary" />
+                </span>
+                <div className="flex flex-col items-end gap-1.5">
+                  <span className="clip-chip bg-line-soft px-2.5 py-0.5 text-[10px] font-bold tracking-wider text-ink-faint uppercase">
+                    {subject.category}
+                  </span>
+                  {isActive ? (
+                    <span className="clip-chip flex items-center gap-1.5 bg-fuchsia-500/15 px-2.5 py-0.5 text-[10px] font-bold text-fuchsia-300">
+                      <span className="relative flex h-1.5 w-1.5">
+                        <span className="absolute h-full w-full animate-ping rounded-full bg-fuchsia-400" />
+                        <span className="relative h-1.5 w-1.5 rounded-full bg-fuchsia-400" />
+                      </span>
+                      Active
+                    </span>
+                  ) : null}
+                </div>
+              </div>
               <h2 className="font-brand mt-4 text-lg font-bold text-ink group-hover:text-fuchsia-300">
                 {subject.name}
               </h2>
-              <p className="mt-1 text-xs text-ink-faint">
-                {totalCount} topic{totalCount === 1 ? "" : "s"}
-              </p>
+              <p className="mt-1 text-xs text-ink-faint">{subject.tagline}</p>
               <div className="mt-5 border-t border-line-soft pt-3.5">
                 <div className="mb-1.5 flex items-center justify-between text-[11px]">
                   <span className="font-medium text-ink-muted">Path progress</span>
                   <span className="font-mono font-bold text-cyan-300">
-                    {masteredCount}/{totalCount} ({pct}%)
+                    {masteredCount}/{totalCount} Topics ({pct}%)
                   </span>
                 </div>
                 <div className="h-1.5 overflow-hidden rounded-full bg-line-soft">
