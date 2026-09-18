@@ -3,6 +3,7 @@ import { getCurrentUser } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { subjectIcon } from "@/lib/subjectIcons";
 import { computeSubjectPath } from "@/lib/skillTree";
+import CyberScope from "@/components/learn/paths/CyberScope";
 
 export default async function LearningPathsPage() {
   const user = await getCurrentUser();
@@ -24,66 +25,68 @@ export default async function LearningPathsPage() {
   );
 
   return (
-    <div className="max-w-3xl space-y-4">
-      <div>
-        <h1 className="font-brand text-[25px] font-bold tracking-[-0.02em] text-ink">
-          Learning paths
+    <CyberScope>
+      <div className="mb-7">
+        <span className="clip-chip inline-flex items-center gap-1.5 bg-accent-soft px-3 py-1 text-[11px] font-bold tracking-wider text-accent uppercase">
+          Choose your learning dimension
+        </span>
+        <h1 className="font-brand mt-3 text-[28px] font-extrabold text-ink">
+          What would you like to master today?
         </h1>
-        <p className="text-[14.5px] text-ink-muted">
-          Master each subject one topic at a time — the same path, for every subject.
+        <p className="mt-1 max-w-2xl text-[13.5px] text-ink-muted">
+          10 subjects, each with its own path from first principles to mastery.
         </p>
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {subjectsWithProgress.map(({ subject, masteredCount, totalCount }, i) => {
+        {subjectsWithProgress.map(({ subject, masteredCount, totalCount }) => {
           const Icon = subjectIcon(subject.iconKey);
           const pct = totalCount > 0 ? Math.round((masteredCount / totalCount) * 100) : 0;
           return (
-            <div
+            <a
               key={subject.id}
-              className="clip-panel animate-rise-in bg-line p-[2px] transition-transform hover:-translate-y-1"
-              style={{ animationDelay: `${i * 0.06}s` }}
+              href={`/learn/paths/${subject.slug}`}
+              className="group relative block overflow-hidden rounded-3xl border border-line bg-surface p-5 transition hover:-translate-y-0.5 hover:border-line-soft"
             >
-              <a
-                href={`/learn/paths/${subject.slug}`}
-                className="clip-panel block bg-surface p-5 hover:bg-surface-sunk"
-              >
-                <div className="mb-3 flex items-center gap-3">
-                  <span
-                    className="clip-chip flex h-11 w-11 items-center justify-center"
-                    style={{ backgroundColor: `${subject.accentColor}1a` }}
-                  >
-                    <Icon className="h-5 w-5" style={{ color: subject.accentColor }} />
+              <div
+                className="absolute inset-x-0 top-0 h-1 opacity-60 transition group-hover:opacity-100"
+                style={{ backgroundColor: subject.accentColor }}
+              />
+              <div className="flex items-start justify-between">
+                <span
+                  className="flex h-13 w-13 items-center justify-center rounded-2xl"
+                  style={{ backgroundColor: `${subject.accentColor}1f` }}
+                >
+                  <Icon className="h-6 w-6" style={{ color: subject.accentColor }} />
+                </span>
+              </div>
+              <h2 className="font-brand mt-4 text-lg font-bold text-ink group-hover:text-accent">
+                {subject.name}
+              </h2>
+              <p className="mt-1 text-xs text-ink-faint">
+                {totalCount} topic{totalCount === 1 ? "" : "s"}
+              </p>
+              <div className="mt-5 border-t border-line-soft pt-3.5">
+                <div className="mb-1.5 flex items-center justify-between text-[11px] text-ink-faint">
+                  <span className="font-medium text-ink-muted">Path progress</span>
+                  <span className="font-mono font-bold text-ink-secondary">
+                    {masteredCount}/{totalCount} ({pct}%)
                   </span>
-                  <div>
-                    <h2 className="font-brand text-[15.5px] font-bold text-ink">{subject.name}</h2>
-                    <p className="text-xs text-ink-faint">
-                      {totalCount} topic{totalCount === 1 ? "" : "s"}
-                    </p>
-                  </div>
                 </div>
                 <div className="h-1.5 overflow-hidden rounded-full bg-line-soft">
                   <div
-                    className="animate-grow-bar-x h-full rounded-full"
+                    className="h-full rounded-full transition-all"
                     style={{ width: `${pct}%`, backgroundColor: subject.accentColor }}
                   />
                 </div>
-                <div className="mt-1.5 flex justify-between text-[11.5px] text-ink-faint">
-                  <span>
-                    {masteredCount} of {totalCount} mastered
-                  </span>
-                  <span className="font-mono font-semibold" style={{ color: subject.accentColor }}>
-                    {pct}%
-                  </span>
-                </div>
-              </a>
-            </div>
+              </div>
+            </a>
           );
         })}
         {subjectsWithProgress.length === 0 ? (
           <p className="col-span-full text-sm text-ink-faint">No learning paths published yet.</p>
         ) : null}
       </div>
-    </div>
+    </CyberScope>
   );
 }
