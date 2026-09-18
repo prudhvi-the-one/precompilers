@@ -153,6 +153,7 @@ export const topicAuthorSchema = z.object({
   linkedQuizId: z.string().trim().min(1).nullable().optional(),
   simulatorKey: z
     .enum([
+      "array-ops-custom",
       "sorting-comparison",
       "array-vs-list-insert",
       "stack-vs-queue",

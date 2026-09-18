@@ -4,6 +4,7 @@ import { getCurrentUser } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { subjectIcon } from "@/lib/subjectIcons";
 import { computeSubjectPath, type PathTopic } from "@/lib/skillTree";
+import { DIFFICULTY_STYLE, DIFFICULTY_LABEL, estimatedMinutesFor } from "@/lib/topicDisplay";
 import CyberScope from "@/components/learn/paths/CyberScope";
 
 // subjectIcon() returns a reference to an already-defined, stable Lucide
@@ -13,24 +14,6 @@ import CyberScope from "@/components/learn/paths/CyberScope";
 // that false positive without changing behavior.
 function SubjectMark({ iconKey }: { iconKey: string }) {
   return createElement(subjectIcon(iconKey), { className: "h-6 w-6 text-ink-secondary" });
-}
-
-const DIFFICULTY_STYLE = {
-  BEGINNER: "bg-emerald-500/15 text-emerald-300",
-  INTERMEDIATE: "bg-amber-500/15 text-amber-300",
-  ADVANCED: "bg-rose-500/15 text-rose-300",
-} as const;
-
-const DIFFICULTY_LABEL = {
-  BEGINNER: "Beginner",
-  INTERMEDIATE: "Intermediate",
-  ADVANCED: "Advanced",
-} as const;
-
-// Derived from the topic's real xpReward (harder/longer topics already
-// carry more XP) rather than a separate, hand-authored estimate field.
-function estimatedMinutesFor(xpReward: number): number {
-  return Math.max(15, Math.round(xpReward / 20) * 5);
 }
 
 function NodeIcon({ topic }: { topic: PathTopic }) {
