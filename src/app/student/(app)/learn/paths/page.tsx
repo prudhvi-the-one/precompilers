@@ -49,36 +49,36 @@ export default async function LearningPathsPage() {
               className="group relative block overflow-hidden rounded-3xl border border-line bg-surface p-5 transition hover:-translate-y-0.5 hover:border-line-soft"
             >
               <div
-                className="absolute inset-x-0 top-0 h-1 opacity-60 transition group-hover:opacity-100"
-                style={{ backgroundColor: subject.accentColor }}
+                className="absolute inset-x-0 top-0 h-[3px] opacity-70 transition group-hover:opacity-100"
+                style={{ background: `linear-gradient(to right, ${subject.accentColor}, transparent)` }}
               />
-              <div className="flex items-start justify-between">
-                <span
-                  className="flex h-13 w-13 items-center justify-center rounded-2xl"
-                  style={{ backgroundColor: `${subject.accentColor}1f` }}
-                >
-                  <Icon className="h-6 w-6" style={{ color: subject.accentColor }} />
-                </span>
-              </div>
-              <h2 className="font-brand mt-4 text-lg font-bold text-ink group-hover:text-accent">
+              <span className="flex h-13 w-13 items-center justify-center rounded-2xl bg-line-soft">
+                <Icon className="h-6 w-6 text-ink-secondary" />
+              </span>
+              <h2 className="font-brand mt-4 text-lg font-bold text-ink group-hover:text-fuchsia-300">
                 {subject.name}
               </h2>
               <p className="mt-1 text-xs text-ink-faint">
                 {totalCount} topic{totalCount === 1 ? "" : "s"}
               </p>
               <div className="mt-5 border-t border-line-soft pt-3.5">
-                <div className="mb-1.5 flex items-center justify-between text-[11px] text-ink-faint">
+                <div className="mb-1.5 flex items-center justify-between text-[11px]">
                   <span className="font-medium text-ink-muted">Path progress</span>
-                  <span className="font-mono font-bold text-ink-secondary">
+                  <span className="font-mono font-bold text-cyan-300">
                     {masteredCount}/{totalCount} ({pct}%)
                   </span>
                 </div>
                 <div className="h-1.5 overflow-hidden rounded-full bg-line-soft">
                   <div
-                    className="h-full rounded-full transition-all"
-                    style={{ width: `${pct}%`, backgroundColor: subject.accentColor }}
+                    className="h-full rounded-full bg-gradient-to-r from-fuchsia-500 to-cyan-400 transition-all"
+                    style={{ width: `${pct}%` }}
                   />
                 </div>
+              </div>
+              <div className="mt-4 flex items-center justify-end text-[11px]">
+                <span className="font-semibold text-fuchsia-400 transition group-hover:translate-x-0.5">
+                  Explore path →
+                </span>
               </div>
             </a>
           );
