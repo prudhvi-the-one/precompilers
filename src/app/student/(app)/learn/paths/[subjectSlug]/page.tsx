@@ -16,20 +16,16 @@ function SubjectMark({ iconKey }: { iconKey: string }) {
 }
 
 const DIFFICULTY_STYLE = {
-  Beginner: "bg-emerald-500/15 text-emerald-300",
-  Intermediate: "bg-amber-500/15 text-amber-300",
-  Advanced: "bg-rose-500/15 text-rose-300",
+  BEGINNER: "bg-emerald-500/15 text-emerald-300",
+  INTERMEDIATE: "bg-amber-500/15 text-amber-300",
+  ADVANCED: "bg-rose-500/15 text-rose-300",
 } as const;
 
-// Derived from the topic's real unit number rather than a new field — units
-// already progress from foundational to advanced within every subject, so
-// this reflects real curriculum structure instead of inventing one.
-function difficultyFor(unitLabel: string | null): keyof typeof DIFFICULTY_STYLE {
-  const unitNumber = Number(unitLabel?.match(/Unit (\d+)/)?.[1] ?? 1);
-  if (unitNumber <= 1) return "Beginner";
-  if (unitNumber === 2) return "Intermediate";
-  return "Advanced";
-}
+const DIFFICULTY_LABEL = {
+  BEGINNER: "Beginner",
+  INTERMEDIATE: "Intermediate",
+  ADVANCED: "Advanced",
+} as const;
 
 // Derived from the topic's real xpReward (harder/longer topics already
 // carry more XP) rather than a separate, hand-authored estimate field.
@@ -156,7 +152,7 @@ export default async function SubjectPathPage({
             const isCurrent = topic.state === "in_progress" || topic.state === "unlocked";
             const isMastered = topic.state === "mastered";
             const isLocked = topic.state === "locked";
-            const difficulty = difficultyFor(topic.unitLabel);
+            const difficulty = topic.difficulty;
             const estMinutes = estimatedMinutesFor(topic.xpReward);
 
             return (
@@ -187,7 +183,7 @@ export default async function SubjectPathPage({
                           NODE {String(topic.order + 1).padStart(2, "0")}
                         </span>
                         <span className={`clip-chip px-2 py-0.5 text-[10px] font-bold uppercase ${DIFFICULTY_STYLE[difficulty]}`}>
-                          {difficulty}
+                          {DIFFICULTY_LABEL[difficulty]}
                         </span>
                       </div>
                       {isMastered ? (
