@@ -11,8 +11,8 @@ import CyberScope from "@/components/learn/paths/CyberScope";
 // bound to a locally-computed variable reads identically, to static
 // analysis, as a component defined during render. createElement sidesteps
 // that false positive without changing behavior.
-function SubjectMark({ iconKey, color }: { iconKey: string; color: string }) {
-  return createElement(subjectIcon(iconKey), { className: "h-6 w-6", style: { color } });
+function SubjectMark({ iconKey }: { iconKey: string }) {
+  return createElement(subjectIcon(iconKey), { className: "h-6 w-6 text-ink-secondary" });
 }
 
 function NodeIcon({ topic }: { topic: PathTopic }) {
@@ -55,14 +55,19 @@ export default async function SubjectPathPage({
   const masteredCount = path.filter((t) => t.state === "mastered").length;
   const totalCount = path.length;
   const pct = totalCount > 0 ? Math.round((masteredCount / totalCount) * 100) : 0;
-  const accent = subject.accentColor;
+  // Kept subtle (a soft background glow only) — bold text/borders in this
+  // subject's own color read poorly for several subjects whose real
+  // accentColor is a saturated indigo/blue. Every functional/emphasis color
+  // below uses the shared fuchsia/cyan palette instead, matching the design
+  // reference, regardless of which subject this is.
+  const subjectGlow = subject.accentColor;
 
   return (
     <CyberScope>
       <div className="relative mb-8 overflow-hidden rounded-3xl border border-line bg-surface p-6 sm:p-8">
         <div
-          className="pointer-events-none absolute -top-20 -right-20 h-64 w-64 rounded-full opacity-20 blur-3xl"
-          style={{ backgroundColor: accent }}
+          className="pointer-events-none absolute -top-20 -right-20 h-64 w-64 rounded-full opacity-15 blur-3xl"
+          style={{ backgroundColor: subjectGlow }}
         />
         <div className="relative flex flex-wrap items-center justify-between gap-6">
           <div className="flex items-center gap-4">
@@ -75,15 +80,12 @@ export default async function SubjectPathPage({
             </a>
             <div>
               <div className="flex items-center gap-2">
-                <span
-                  className="clip-chip px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider"
-                  style={{ backgroundColor: `${accent}26`, color: accent }}
-                >
+                <span className="clip-chip bg-fuchsia-500/15 px-2.5 py-0.5 text-[10px] font-bold tracking-wider text-fuchsia-300 uppercase">
                   Learning path
                 </span>
               </div>
               <h1 className="font-brand mt-1.5 flex items-center gap-2.5 text-2xl font-extrabold text-ink sm:text-3xl">
-                <SubjectMark iconKey={subject.iconKey} color={accent} />
+                <SubjectMark iconKey={subject.iconKey} />
                 {subject.name}
               </h1>
               <p className="mt-1 text-xs text-ink-faint sm:text-sm">
@@ -104,7 +106,7 @@ export default async function SubjectPathPage({
                 <path
                   d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                   fill="none"
-                  stroke={accent}
+                  stroke="#e879f9"
                   strokeWidth="3.5"
                   strokeDasharray={`${pct}, 100`}
                   strokeLinecap="round"
@@ -123,10 +125,7 @@ export default async function SubjectPathPage({
       </div>
 
       <div className="relative mx-auto max-w-3xl py-2">
-        <div
-          className="absolute top-6 bottom-6 left-6 w-[3px] sm:left-1/2"
-          style={{ background: `linear-gradient(to bottom, ${accent}, var(--line))` }}
-        />
+        <div className="absolute top-6 bottom-6 left-6 w-[3px] bg-gradient-to-b from-fuchsia-500 to-cyan-500/30 sm:left-1/2" />
 
         <div className="space-y-10">
           {path.map((topic, i) => {
@@ -153,9 +152,10 @@ export default async function SubjectPathPage({
                         ? "border-success/40 bg-surface hover:border-success/70"
                         : isLocked
                           ? "border-line-soft bg-surface-sunk opacity-55 hover:opacity-75"
-                          : "border-line bg-surface hover:border-line-soft"
+                          : isCurrent
+                            ? "border-fuchsia-400/70 bg-surface shadow-[0_0_26px_rgba(232,121,249,0.25)]"
+                            : "border-line bg-surface hover:border-line-soft"
                     }`}
-                    style={isCurrent ? { borderColor: accent, boxShadow: `0 0 26px ${accent}33` } : undefined}
                   >
                     <div className="mb-2 flex items-center justify-between">
                       <span className="font-mono text-[10.5px] font-bold text-ink-faintest">
@@ -164,10 +164,7 @@ export default async function SubjectPathPage({
                       {isMastered ? (
                         <span className="clip-chip bg-success-soft px-2 py-0.5 text-[10px] font-bold text-success">✓ Mastered</span>
                       ) : isCurrent ? (
-                        <span
-                          className="clip-chip px-2 py-0.5 text-[10px] font-bold"
-                          style={{ backgroundColor: `${accent}26`, color: accent }}
-                        >
+                        <span className="clip-chip bg-fuchsia-500/15 px-2 py-0.5 text-[10px] font-bold text-fuchsia-300">
                           {topic.state === "in_progress" ? "In progress" : "Start here"}
                         </span>
                       ) : (
@@ -177,9 +174,9 @@ export default async function SubjectPathPage({
                     <h3 className="font-brand text-[14.5px] font-bold text-ink">{topic.name}</h3>
                     <p className="mt-1 line-clamp-2 text-[11.5px] text-ink-faint">{topic.description}</p>
                     <div className="mt-3 flex items-center justify-between border-t border-line-soft pt-2.5 text-[11px]">
-                      <span className="font-mono font-semibold text-warn">+{topic.xpReward} XP</span>
+                      <span className="font-mono font-semibold text-amber-300">+{topic.xpReward} XP</span>
                       {topic.simulatorKey ? (
-                        <span className="text-ink-faint">🎮 Simulator</span>
+                        <span className="text-cyan-300">🎮 Simulator</span>
                       ) : (
                         <span className="text-ink-faintest">Guided theory</span>
                       )}
@@ -187,14 +184,13 @@ export default async function SubjectPathPage({
                   </a>
 
                   <div
-                    className="absolute top-1/2 left-6 flex h-10 w-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 sm:left-1/2"
-                    style={
+                    className={`absolute top-1/2 left-6 flex h-10 w-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 bg-surface-sunk sm:left-1/2 ${
                       isMastered
-                        ? { borderColor: "var(--success)", color: "var(--success)", background: "var(--surface-sunk)", boxShadow: "0 0 16px rgba(52,211,153,.5)" }
+                        ? "border-success text-success shadow-[0_0_16px_rgba(52,211,153,0.5)]"
                         : isCurrent
-                          ? { borderColor: accent, color: accent, background: "var(--surface-sunk)", boxShadow: `0 0 18px ${accent}88` }
-                          : { borderColor: "var(--line)", color: "var(--ink-faintest)", background: "var(--surface-sunk)" }
-                    }
+                          ? "border-fuchsia-400 text-fuchsia-300 shadow-[0_0_18px_rgba(232,121,249,0.55)]"
+                          : "border-line text-ink-faintest"
+                    }`}
                   >
                     <NodeIcon topic={topic} />
                   </div>
