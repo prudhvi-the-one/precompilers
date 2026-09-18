@@ -110,30 +110,30 @@ enum CompanyQuestionCategory {
 }
 
 model User {
-  id              String      @id @default(cuid())
-  email           String      @unique
-  passwordHash    String
-  role            Role        @default(STUDENT)
-  name            String?
-  college         String?
-  branch          String?
-  rollNumber      String?
-  gradYear        Int?
-  cgpa            Float?
-  backlogCount    Int?        @default(0)
-  weeklyHours     String?
-  targetRole      TargetRole?
-  entitlement     Entitlement @default(FREE)
-  emailVerifiedAt DateTime?
-  reportShareToken String?    @unique
-  reportShowCollege   Boolean @default(true)
-  reportShowMockNotes Boolean @default(false)
-  phoneNumber     String?     @unique
-  whatsappOptIn   Boolean     @default(false)
-  failedLoginAttempts Int     @default(0)
-  lockedUntil     DateTime?
-  createdAt       DateTime    @default(now())
-  updatedAt       DateTime    @updatedAt
+  id                  String      @id @default(cuid())
+  email               String      @unique
+  passwordHash        String
+  role                Role        @default(STUDENT)
+  name                String?
+  college             String?
+  branch              String?
+  rollNumber          String?
+  gradYear            Int?
+  cgpa                Float?
+  backlogCount        Int?        @default(0)
+  weeklyHours         String?
+  targetRole          TargetRole?
+  entitlement         Entitlement @default(FREE)
+  emailVerifiedAt     DateTime?
+  reportShareToken    String?     @unique
+  reportShowCollege   Boolean     @default(true)
+  reportShowMockNotes Boolean     @default(false)
+  phoneNumber         String?     @unique
+  whatsappOptIn       Boolean     @default(false)
+  failedLoginAttempts Int         @default(0)
+  lockedUntil         DateTime?
+  createdAt           DateTime    @default(now())
+  updatedAt           DateTime    @updatedAt
 
   institutionId  String?
   institution    Institution? @relation(fields: [institutionId], references: [id])
@@ -142,43 +142,43 @@ model User {
   facultyBatchId String?
   facultyBatch   Batch?       @relation("BatchFaculty", fields: [facultyBatchId], references: [id])
 
-  otps            Otp[]
-  enrollment      Enrollment?
-  resume          Resume?
-  lectureProgress LectureProgress[]
-  liveClassAttendances LiveClassAttendance[]
-  quizAttempts    QuizAttempt[]
-  submissions       ProjectSubmission[]
-  problemSubmissions Submission[]
-  problemComments    Comment[]
-  mentorProfile           MentorProfile?
-  mentorSessionsAsStudent MentorSession[]
-  authoredQuizzes   Quiz[]               @relation("QuizAuthor")
-  reviewedQuizzes   Quiz[]               @relation("QuizReviewer")
-  authoredProblems  Problem[]            @relation("ProblemAuthor")
-  reviewedProblems  Problem[]            @relation("ProblemReviewer")
-  authoredCompanyQuestions CompanyQuestion[] @relation("CompanyQuestionAuthor")
-  reviewedCompanyQuestions CompanyQuestion[] @relation("CompanyQuestionReviewer")
-  reviewsGiven      PeerReview[]         @relation("ReviewsGiven")
-  mockRequests      MockRequest[]
-  mockFeedbackGiven MockFeedback[]       @relation("MockFeedbackGiven")
-  mockFeedbackRecv  MockFeedback[]       @relation("MockFeedbackReceived")
-  gdParticipations  GdParticipant[]
-  gdRatingsGiven    GdRating[]           @relation("GdRatingsGiven")
-  gdRatingsReceived GdRating[]           @relation("GdRatingsReceived")
-  applications      Application[]
-  notifications     Notification[]
-  subscriptions     Subscription[]
-  readinessSnapshots ReadinessSnapshot[]
-  driveEligibilityWatches DriveEligibilityWatch[]
-  externalJudgeAccounts ExternalJudgeAccount[]
-  loginEvents LoginEvent[]
-  certificates Certificate[]
-  topicProgress TopicProgress[]
+  otps                     Otp[]
+  enrollment               Enrollment?
+  resume                   Resume?
+  lectureProgress          LectureProgress[]
+  liveClassAttendances     LiveClassAttendance[]
+  quizAttempts             QuizAttempt[]
+  submissions              ProjectSubmission[]
+  problemSubmissions       Submission[]
+  problemComments          Comment[]
+  mentorProfile            MentorProfile?
+  mentorSessionsAsStudent  MentorSession[]
+  authoredQuizzes          Quiz[]                  @relation("QuizAuthor")
+  reviewedQuizzes          Quiz[]                  @relation("QuizReviewer")
+  authoredProblems         Problem[]               @relation("ProblemAuthor")
+  reviewedProblems         Problem[]               @relation("ProblemReviewer")
+  authoredCompanyQuestions CompanyQuestion[]       @relation("CompanyQuestionAuthor")
+  reviewedCompanyQuestions CompanyQuestion[]       @relation("CompanyQuestionReviewer")
+  reviewsGiven             PeerReview[]            @relation("ReviewsGiven")
+  mockRequests             MockRequest[]
+  mockFeedbackGiven        MockFeedback[]          @relation("MockFeedbackGiven")
+  mockFeedbackRecv         MockFeedback[]          @relation("MockFeedbackReceived")
+  gdParticipations         GdParticipant[]
+  gdRatingsGiven           GdRating[]              @relation("GdRatingsGiven")
+  gdRatingsReceived        GdRating[]              @relation("GdRatingsReceived")
+  applications             Application[]
+  notifications            Notification[]
+  subscriptions            Subscription[]
+  readinessSnapshots       ReadinessSnapshot[]
+  driveEligibilityWatches  DriveEligibilityWatch[]
+  externalJudgeAccounts    ExternalJudgeAccount[]
+  loginEvents              LoginEvent[]
+  certificates             Certificate[]
+  topicProgress            TopicProgress[]
 
+  @@unique([vendorId, rollNumber])
   @@index([institutionId, role])
   @@index([vendorId, role])
-  @@unique([vendorId, rollNumber])
 }
 
 model ReadinessSnapshot {
@@ -306,22 +306,29 @@ model Subject {
   topics Topic[]
 }
 
+enum TopicDifficulty {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+}
+
 model Topic {
-  id           String        @id @default(cuid())
-  slug         String        @unique
+  id           String          @id @default(cuid())
+  slug         String          @unique
   subjectId    String
-  subject      Subject       @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  subject      Subject         @relation(fields: [subjectId], references: [id], onDelete: Cascade)
   name         String
   description  String
   unitLabel    String?
-  order        Int           @default(0)
-  xpReward     Int           @default(100)
+  order        Int             @default(0)
+  xpReward     Int             @default(100)
+  difficulty   TopicDifficulty @default(INTERMEDIATE)
   simulatorKey String?
   linkedQuizId String?
-  linkedQuiz   Quiz?         @relation(fields: [linkedQuizId], references: [id], onDelete: SetNull)
-  status       ContentStatus @default(DRAFT)
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
+  linkedQuiz   Quiz?           @relation(fields: [linkedQuizId], references: [id], onDelete: SetNull)
+  status       ContentStatus   @default(DRAFT)
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
 
   progress TopicProgress[]
 
@@ -386,10 +393,10 @@ model Quiz {
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
 
-  sections QuizSection[]
-  attempts QuizAttempt[]
+  sections          QuizSection[]
+  attempts          QuizAttempt[]
   scheduledReleases ScheduledRelease[]
-  linkedTopics Topic[]
+  linkedTopics      Topic[]
 
   @@index([status])
   @@index([authorId])
@@ -439,18 +446,18 @@ model QuestionOption {
 }
 
 model QuizAttempt {
-  id              String    @id @default(cuid())
-  userId          String
-  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  quizId          String
-  quiz            Quiz      @relation(fields: [quizId], references: [id], onDelete: Cascade)
-  proctored       Boolean   @default(false)
-  startedAt       DateTime  @default(now())
-  submittedAt     DateTime?
-  score           Int?
-  endedByViolation Boolean  @default(false)
-  violationCount  Int       @default(0)
-  recordingKey    String?
+  id               String    @id @default(cuid())
+  userId           String
+  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  quizId           String
+  quiz             Quiz      @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  proctored        Boolean   @default(false)
+  startedAt        DateTime  @default(now())
+  submittedAt      DateTime?
+  score            Int?
+  endedByViolation Boolean   @default(false)
+  violationCount   Int       @default(0)
+  recordingKey     String?
 
   sectionAttempts   SectionAttempt[]
   questionResponses QuestionResponse[]
@@ -497,14 +504,14 @@ model Project {
 }
 
 model ProjectSubmission {
-  id            String    @id @default(cuid())
+  id            String   @id @default(cuid())
   projectId     String
-  project       Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  project       Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
   userId        String
-  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   submissionUrl String
   description   String
-  submittedAt   DateTime  @default(now())
+  submittedAt   DateTime @default(now())
 
   reviews PeerReview[]
 
@@ -512,17 +519,17 @@ model ProjectSubmission {
 }
 
 model PeerReview {
-  id           String      @id @default(cuid())
+  id           String            @id @default(cuid())
   submissionId String
   submission   ProjectSubmission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
   reviewerId   String
-  reviewer     User        @relation("ReviewsGiven", fields: [reviewerId], references: [id], onDelete: Cascade)
+  reviewer     User              @relation("ReviewsGiven", fields: [reviewerId], references: [id], onDelete: Cascade)
   correctness  Int
   efficiency   Int
   readability  Int
   wouldHire    HireVerdict
   comment      String
-  submittedAt  DateTime    @default(now())
+  submittedAt  DateTime          @default(now())
 
   @@unique([submissionId, reviewerId])
 }
@@ -538,7 +545,7 @@ model MockRequest {
   roomUrl      String?
   scheduledAt  DateTime?
 
-  feedbackGiven   MockFeedback[] @relation("FeedbackByRequest")
+  feedbackGiven MockFeedback[] @relation("FeedbackByRequest")
 }
 
 model MockFeedback {
@@ -568,13 +575,13 @@ model GdSession {
 }
 
 model GdParticipant {
-  id             String    @id @default(cuid())
-  sessionId      String
-  session        GdSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
-  userId         String
-  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  joinedAt       DateTime  @default(now())
-  speakingSeconds Int      @default(0)
+  id              String    @id @default(cuid())
+  sessionId       String
+  session         GdSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  userId          String
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  joinedAt        DateTime  @default(now())
+  speakingSeconds Int       @default(0)
 
   @@unique([sessionId, userId])
 }
@@ -595,22 +602,22 @@ model GdRating {
 }
 
 model Problem {
-  id                  String      @id @default(cuid())
-  slug                String      @unique
-  title               String
-  difficulty          Difficulty
-  category            String
-  tags                String[]
-  companies           String[]
-  statement           String
-  examples            Json
-  constraints         String
-  hints               String
-  solutionExplanation String
+  id                        String      @id @default(cuid())
+  slug                      String      @unique
+  title                     String
+  difficulty                Difficulty
+  category                  String
+  tags                      String[]
+  companies                 String[]
+  statement                 String
+  examples                  Json
+  constraints               String
+  hints                     String
+  solutionExplanation       String
   referenceSolutionLanguage String?
   referenceSolutionCode     String?
-  requiredEntitlement Entitlement @default(FREE)
-  order               Int         @default(0)
+  requiredEntitlement       Entitlement @default(FREE)
+  order                     Int         @default(0)
 
   status          ContentStatus @default(PUBLISHED)
   authorId        String?
@@ -623,10 +630,10 @@ model Problem {
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
 
-  testCases   TestCase[]
+  testCases         TestCase[]
   scheduledReleases ScheduledRelease[]
-  submissions Submission[]
-  comments    Comment[]
+  submissions       Submission[]
+  comments          Comment[]
 
   @@index([status])
   @@index([authorId])
@@ -750,25 +757,25 @@ model Institution {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 
-  users   User[]
-  batches Batch[]
+  users            User[]
+  batches          Batch[]
   preferredMentors InstitutionPreferredMentor[]
 }
 
 model Vendor {
-  id                   String   @id @default(cuid())
-  name                 String
-  contactEmail         String
-  ratePaisePerStudent  Int
-  certificateCriteria  Json?
-  selfSignupEnabled    Boolean  @default(false)
-  signupSlug           String?  @unique
-  createdAt            DateTime @default(now())
-  updatedAt            DateTime @updatedAt
+  id                  String   @id @default(cuid())
+  name                String
+  contactEmail        String
+  ratePaisePerStudent Int
+  certificateCriteria Json?
+  selfSignupEnabled   Boolean  @default(false)
+  signupSlug          String?  @unique
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
 
-  users     User[]
-  batches   Batch[]
-  releases  ScheduledRelease[]
+  users          User[]
+  batches        Batch[]
+  releases       ScheduledRelease[]
   billingRecords VendorBillingRecord[]
   certificates   Certificate[]
 }
@@ -802,13 +809,13 @@ model LoginEvent {
 }
 
 model ScheduledRelease {
-  id            String   @id @default(cuid())
-  vendorId      String
-  vendor        Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
-  quizId        String?
-  quiz          Quiz?    @relation(fields: [quizId], references: [id], onDelete: Cascade)
-  problemId     String?
-  problem       Problem? @relation(fields: [problemId], references: [id], onDelete: Cascade)
+  id        String   @id @default(cuid())
+  vendorId  String
+  vendor    Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  quizId    String?
+  quiz      Quiz?    @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  problemId String?
+  problem   Problem? @relation(fields: [problemId], references: [id], onDelete: Cascade)
 
   externalPlatform     ExternalJudgePlatform?
   externalProblemSlug  String?
@@ -868,12 +875,12 @@ model ExternalSubmissionRecord {
 }
 
 model Certificate {
-  id        String   @id @default(cuid())
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  vendorId  String
-  vendor    Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
-  issuedAt  DateTime @default(now())
+  id       String   @id @default(cuid())
+  userId   String
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  vendorId String
+  vendor   Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  issuedAt DateTime @default(now())
 
   @@unique([userId, vendorId])
 }
@@ -894,7 +901,7 @@ model Drive {
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
 
-  applications Application[]
+  applications       Application[]
   eligibilityWatches DriveEligibilityWatch[]
 }
 

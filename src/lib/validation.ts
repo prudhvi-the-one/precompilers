@@ -149,6 +149,7 @@ export const topicAuthorSchema = z.object({
   unitLabel: z.string().trim().max(100).optional(),
   order: z.number().int().min(0),
   xpReward: z.number().int().min(1).max(1000),
+  difficulty: z.enum(["BEGINNER", "INTERMEDIATE", "ADVANCED"]),
   linkedQuizId: z.string().trim().min(1).nullable().optional(),
   simulatorKey: z
     .enum([

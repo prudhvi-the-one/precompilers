@@ -18,6 +18,7 @@ export default function TopicForm({
   const [unitLabel, setUnitLabel] = useState("");
   const [order, setOrder] = useState(nextOrder);
   const [xpReward, setXpReward] = useState(100);
+  const [difficulty, setDifficulty] = useState("INTERMEDIATE");
   const [linkedQuizId, setLinkedQuizId] = useState("");
   const [simulatorKey, setSimulatorKey] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -38,6 +39,7 @@ export default function TopicForm({
         unitLabel: unitLabel || undefined,
         order,
         xpReward,
+        difficulty,
         linkedQuizId: linkedQuizId || null,
         simulatorKey: simulatorKey || null,
         submit: true,
@@ -133,7 +135,7 @@ export default function TopicForm({
           <option value="ml-canary-rollout">MLOps: canary rollout + rollback</option>
         </select>
       </div>
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-4">
         <div>
           <label className="mb-1 block text-xs font-medium text-ink-secondary">Order</label>
           <input
@@ -153,6 +155,18 @@ export default function TopicForm({
             onChange={(e) => setXpReward(Number(e.target.value))}
             className="w-full rounded-md border border-line px-3 py-2 text-sm"
           />
+        </div>
+        <div>
+          <label className="mb-1 block text-xs font-medium text-ink-secondary">Difficulty</label>
+          <select
+            value={difficulty}
+            onChange={(e) => setDifficulty(e.target.value)}
+            className="w-full rounded-md border border-line px-3 py-2 text-sm"
+          >
+            <option value="BEGINNER">Beginner</option>
+            <option value="INTERMEDIATE">Intermediate</option>
+            <option value="ADVANCED">Advanced</option>
+          </select>
         </div>
         <div>
           <label className="mb-1 block text-xs font-medium text-ink-secondary">Linked quiz</label>
