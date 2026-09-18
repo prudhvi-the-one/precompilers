@@ -39,41 +39,45 @@ export default async function LearningPathsPage() {
           const Icon = subjectIcon(subject.iconKey);
           const pct = totalCount > 0 ? Math.round((masteredCount / totalCount) * 100) : 0;
           return (
-            <a
+            <div
               key={subject.id}
-              href={`/learn/paths/${subject.slug}`}
-              className="animate-rise-in rounded-xl border border-line bg-surface p-5 transition-transform hover:-translate-y-1 hover:bg-surface-sunk"
+              className="clip-panel animate-rise-in bg-line p-[2px] transition-transform hover:-translate-y-1"
               style={{ animationDelay: `${i * 0.06}s` }}
             >
-              <div className="mb-3 flex items-center gap-3">
-                <span
-                  className="flex h-11 w-11 items-center justify-center rounded-[11px]"
-                  style={{ backgroundColor: `${subject.accentColor}1a` }}
-                >
-                  <Icon className="h-5 w-5" style={{ color: subject.accentColor }} />
-                </span>
-                <div>
-                  <h2 className="font-brand text-[15.5px] font-bold text-ink">{subject.name}</h2>
-                  <p className="text-xs text-ink-faint">
-                    {totalCount} topic{totalCount === 1 ? "" : "s"}
-                  </p>
+              <a
+                href={`/learn/paths/${subject.slug}`}
+                className="clip-panel block bg-surface p-5 hover:bg-surface-sunk"
+              >
+                <div className="mb-3 flex items-center gap-3">
+                  <span
+                    className="clip-chip flex h-11 w-11 items-center justify-center"
+                    style={{ backgroundColor: `${subject.accentColor}1a` }}
+                  >
+                    <Icon className="h-5 w-5" style={{ color: subject.accentColor }} />
+                  </span>
+                  <div>
+                    <h2 className="font-brand text-[15.5px] font-bold text-ink">{subject.name}</h2>
+                    <p className="text-xs text-ink-faint">
+                      {totalCount} topic{totalCount === 1 ? "" : "s"}
+                    </p>
+                  </div>
                 </div>
-              </div>
-              <div className="h-1.5 overflow-hidden rounded-full bg-line-soft">
-                <div
-                  className="animate-grow-bar-x h-full rounded-full"
-                  style={{ width: `${pct}%`, backgroundColor: subject.accentColor }}
-                />
-              </div>
-              <div className="mt-1.5 flex justify-between text-[11.5px] text-ink-faint">
-                <span>
-                  {masteredCount} of {totalCount} mastered
-                </span>
-                <span className="font-mono font-semibold" style={{ color: subject.accentColor }}>
-                  {pct}%
-                </span>
-              </div>
-            </a>
+                <div className="h-1.5 overflow-hidden rounded-full bg-line-soft">
+                  <div
+                    className="animate-grow-bar-x h-full rounded-full"
+                    style={{ width: `${pct}%`, backgroundColor: subject.accentColor }}
+                  />
+                </div>
+                <div className="mt-1.5 flex justify-between text-[11.5px] text-ink-faint">
+                  <span>
+                    {masteredCount} of {totalCount} mastered
+                  </span>
+                  <span className="font-mono font-semibold" style={{ color: subject.accentColor }}>
+                    {pct}%
+                  </span>
+                </div>
+              </a>
+            </div>
           );
         })}
         {subjectsWithProgress.length === 0 ? (
