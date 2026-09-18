@@ -1,23 +1,24 @@
 import Image from "next/image";
 import { rankForScore, TIER_BADGE_SRC } from "@/lib/rank";
+import AngularBorder from "@/components/ui/AngularBorder";
 
 export default function ReadinessWidget({ score }: { score: number | null }) {
   if (score === null) {
     return (
-      <div className="clip-panel mt-auto rounded-[11px] border border-line bg-surface p-4 text-center">
+      <AngularBorder color="var(--line)" wrapperClassName="mt-auto rounded-[11px]" className="bg-surface p-4 text-center">
         <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-line-soft">
           <span className="font-brand text-xl font-extrabold text-ink-faint">—</span>
         </div>
         <div className="mt-3 font-brand text-[13px] font-semibold text-ink">Job readiness</div>
         <div className="mt-0.5 text-xs text-ink-faint">Not assessed yet</div>
-      </div>
+      </AngularBorder>
     );
   }
 
   const rank = rankForScore(score);
 
   return (
-    <div className="clip-panel mt-auto border border-line bg-surface p-4 text-center">
+    <AngularBorder color="var(--line)" wrapperClassName="mt-auto" className="bg-surface p-4 text-center">
       <div className="relative mx-auto flex h-19 w-19 items-center justify-center">
         <svg className="animate-orbit-spin absolute inset-0" viewBox="0 0 76 76" aria-hidden="true">
           <circle
@@ -63,6 +64,6 @@ export default function ReadinessWidget({ score }: { score: number | null }) {
       >
         See full report
       </a>
-    </div>
+    </AngularBorder>
   );
 }

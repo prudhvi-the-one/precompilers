@@ -7,8 +7,12 @@ import { computeReadinessPillars, computeOverallReadiness } from "@/lib/readines
 import { computeBatchLeaderboard } from "@/lib/leaderboard";
 import { computeActivityByDay, currentStreakFromMap, longestStreakFromMap } from "@/lib/streak";
 import { rankForScore, TIER_BADGE_SRC } from "@/lib/rank";
+import { computeAchievements } from "@/lib/achievements";
 import StreakHeatmap from "@/components/home/StreakHeatmap";
 import RadarChart from "@/components/charts/RadarChart";
+import AchievementBadges from "@/components/home/AchievementBadges";
+import AchievementGrid from "@/components/home/AchievementGrid";
+import AngularBorder from "@/components/ui/AngularBorder";
 import { avatarColor, initialsFromName } from "@/lib/avatar";
 
 // Same order as computeReadinessPillars: Fundamentals, Aptitude &
@@ -78,11 +82,17 @@ export default async function HomePage() {
   ]);
   const currentStreak = currentStreakFromMap(activityByDay);
   const longestStreak = longestStreakFromMap(activityByDay);
+  const achievements = await computeAchievements(user.id, {
+    longestStreak,
+    profileComplete,
+    pillars,
+    leaderboardRank: leaderboard?.rank ?? null,
+  });
   const rank = overallReadiness !== null ? rankForScore(overallReadiness) : null;
 
   return (
     <div className="max-w-5xl space-y-4.5">
-      <div className="clip-panel relative overflow-hidden border-2 border-accent bg-surface p-5">
+      <AngularBorder color="var(--accent)" className="relative overflow-hidden bg-surface p-5">
         <div
           className="pointer-events-none absolute -top-16 -right-10 h-56 w-56 rounded-full opacity-10 blur-3xl"
           style={{ background: "var(--accent)" }}
@@ -119,11 +129,15 @@ export default async function HomePage() {
               </div>
             ) : null}
           </div>
+          <AchievementBadges achievements={achievements} />
         </div>
-      </div>
+      </AngularBorder>
 
       {soonLiveClass ? (
-        <div className="clip-panel flex items-center justify-between gap-4 border border-accent-soft bg-linear-to-r from-accent-soft to-surface p-4">
+        <AngularBorder
+          color="var(--accent-soft)"
+          className="flex items-center justify-between gap-4 bg-linear-to-r from-accent-soft to-surface p-4"
+        >
           <div className="flex items-center gap-3">
             <span className="clip-chip flex h-10.5 w-10.5 items-center justify-center bg-indigo-600 font-mono text-[10px] font-bold text-white">
               LIVE
@@ -143,10 +157,10 @@ export default async function HomePage() {
           >
             Join class
           </a>
-        </div>
+        </AngularBorder>
       ) : null}
 
-      <div className="clip-panel border border-line bg-surface p-5">
+      <AngularBorder color="var(--line)" className="bg-surface p-5">
         <h2 className="font-brand text-base font-bold text-ink">
           What to do next
         </h2>
@@ -181,10 +195,10 @@ export default async function HomePage() {
             Practice, Prove and Career are being built next.
           </p>
         )}
-      </div>
+      </AngularBorder>
 
       <div className="grid grid-cols-1 gap-4.5 lg:grid-cols-[1.15fr_1fr]">
-        <div className="clip-panel border border-line bg-surface p-5">
+        <AngularBorder color="var(--line)" className="bg-surface p-5">
           {overallReadiness !== null ? (
             <>
               <div className="flex items-center justify-between gap-3">
@@ -214,9 +228,9 @@ export default async function HomePage() {
               </p>
             </div>
           )}
-        </div>
+        </AngularBorder>
 
-        <div className="clip-panel border border-line bg-surface p-5">
+        <AngularBorder color="var(--line)" className="bg-surface p-5">
           <h2 className="font-brand text-base font-bold text-ink">
             Activity streak
           </h2>
@@ -227,10 +241,10 @@ export default async function HomePage() {
               longestStreak={longestStreak}
             />
           </div>
-        </div>
+        </AngularBorder>
       </div>
 
-      <div className="clip-panel border border-line bg-surface p-5">
+      <AngularBorder color="var(--line)" className="bg-surface p-5">
         {leaderboard ? (
           <>
             <div className="flex items-center gap-3">
@@ -282,7 +296,17 @@ export default async function HomePage() {
             </a>
           </div>
         )}
-      </div>
+      </AngularBorder>
+
+      <AngularBorder color="var(--line)" className="bg-surface p-5">
+        <h2 className="font-brand text-base font-bold text-ink">Achievements</h2>
+        <p className="mt-0.5 text-xs text-ink-faint">
+          {achievements.filter((a) => a.earned).length} of {achievements.length} unlocked
+        </p>
+        <div className="mt-4">
+          <AchievementGrid achievements={achievements} />
+        </div>
+      </AngularBorder>
     </div>
   );
 }
@@ -385,7 +409,10 @@ function NextActionRow({
   cta: string;
 }) {
   return (
-    <div className="clip-panel mt-3 flex items-center gap-4 border border-[#DDD9FB] bg-accent-soft px-4 py-3">
+    <AngularBorder
+      color="#DDD9FB"
+      className="mt-3 flex items-center gap-4 bg-accent-soft px-4 py-3"
+    >
       <span className="clip-chip flex h-10.5 w-10.5 shrink-0 items-center justify-center bg-surface text-indigo-600">
         <Icon className="h-5 w-5" strokeWidth={1.75} />
       </span>
@@ -393,12 +420,11 @@ function NextActionRow({
         <div className="text-sm font-medium text-ink">{title}</div>
         <div className="text-xs text-ink-faint">{description}</div>
       </div>
-      <a
-        href={href}
-        className="clip-chip shrink-0 border border-[#DDD9FB] px-3 py-1.5 text-xs font-semibold text-indigo-600 hover:bg-surface"
-      >
-        {cta}
-      </a>
-    </div>
+      <AngularBorder color="#DDD9FB" clip="clip-chip" className="shrink-0 bg-surface hover:bg-surface">
+        <a href={href} className="block px-3 py-1.5 text-xs font-semibold text-indigo-600">
+          {cta}
+        </a>
+      </AngularBorder>
+    </AngularBorder>
   );
 }
