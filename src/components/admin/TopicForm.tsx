@@ -100,6 +100,7 @@ export default function TopicForm({
           className="w-full rounded-md border border-line px-3 py-2 text-sm"
         >
           <option value="">None yet</option>
+          <option value="array-ops-custom">Arrays: custom insert/delete/search/traverse</option>
           <option value="sorting-comparison">Sorting comparison + deep dive</option>
           <option value="array-vs-list-insert">Array vs. linked list insert</option>
           <option value="stack-vs-queue">Stack vs. queue</option>

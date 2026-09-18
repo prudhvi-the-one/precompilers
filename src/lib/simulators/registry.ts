@@ -1,5 +1,6 @@
 import type { ComponentType } from "react";
 import SortingSimulator from "@/components/simulators/SortingSimulator";
+import ArraysCustomSimulator from "@/components/simulators/ArraysCustomSimulator";
 import LinkedListInsertSimulator from "@/components/simulators/LinkedListInsertSimulator";
 import StackVsQueueSimulator from "@/components/simulators/StackVsQueueSimulator";
 import BstSimulator from "@/components/simulators/BstSimulator";
@@ -34,6 +35,7 @@ import MlDriftDetectionSimulator from "@/components/simulators/MlDriftDetectionS
 import MlCanaryRolloutSimulator from "@/components/simulators/MlCanaryRolloutSimulator";
 
 export const SIMULATOR_REGISTRY: Record<string, ComponentType> = {
+  "array-ops-custom": ArraysCustomSimulator,
   "sorting-comparison": SortingSimulator,
   "array-vs-list-insert": LinkedListInsertSimulator,
   "stack-vs-queue": StackVsQueueSimulator,
