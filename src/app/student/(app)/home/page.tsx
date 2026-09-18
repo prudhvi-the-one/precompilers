@@ -11,6 +11,7 @@ import { computeAchievements } from "@/lib/achievements";
 import StreakHeatmap from "@/components/home/StreakHeatmap";
 import RadarChart from "@/components/charts/RadarChart";
 import AchievementBadges from "@/components/home/AchievementBadges";
+import AchievementGrid from "@/components/home/AchievementGrid";
 import AngularBorder from "@/components/ui/AngularBorder";
 import { avatarColor, initialsFromName } from "@/lib/avatar";
 
@@ -81,7 +82,12 @@ export default async function HomePage() {
   ]);
   const currentStreak = currentStreakFromMap(activityByDay);
   const longestStreak = longestStreakFromMap(activityByDay);
-  const achievements = await computeAchievements(user.id, longestStreak);
+  const achievements = await computeAchievements(user.id, {
+    longestStreak,
+    profileComplete,
+    pillars,
+    leaderboardRank: leaderboard?.rank ?? null,
+  });
   const rank = overallReadiness !== null ? rankForScore(overallReadiness) : null;
 
   return (
@@ -290,6 +296,16 @@ export default async function HomePage() {
             </a>
           </div>
         )}
+      </AngularBorder>
+
+      <AngularBorder color="var(--line)" className="bg-surface p-5">
+        <h2 className="font-brand text-base font-bold text-ink">Achievements</h2>
+        <p className="mt-0.5 text-xs text-ink-faint">
+          {achievements.filter((a) => a.earned).length} of {achievements.length} unlocked
+        </p>
+        <div className="mt-4">
+          <AchievementGrid achievements={achievements} />
+        </div>
       </AngularBorder>
     </div>
   );
