@@ -204,7 +204,7 @@ export default async function ProblemsPage({
                   {problem.tags.map((tag) => (
                     <span
                       key={tag}
-                      className="clip-chip bg-accent-soft px-2 py-0.5 text-[11px] font-medium text-indigo-600"
+                      className="clip-chip bg-accent-soft px-2 py-0.5 text-[11px] font-medium text-accent"
                     >
                       {tag}
                     </span>

@@ -79,7 +79,7 @@ export default async function LectureDetailPage({
           </p>
           <a
             href="/learn"
-            className="mt-4 inline-block text-sm font-semibold text-indigo-600 hover:underline"
+            className="mt-4 inline-block text-sm font-semibold text-accent hover:underline"
           >
             Back to Skill tracks
           </a>

@@ -75,7 +75,7 @@ export default async function QuizHistoryPage() {
       ) : (
         <AngularBorder color="var(--line)" className="bg-surface p-6 text-center text-sm text-ink-muted">
           No attempts yet.{" "}
-          <a href="/practice/quizzes" className="font-semibold text-indigo-600 hover:underline">
+          <a href="/practice/quizzes" className="font-semibold text-accent hover:underline">
             Take your first quiz
           </a>
           .

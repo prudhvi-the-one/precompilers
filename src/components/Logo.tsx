@@ -47,7 +47,7 @@ export default function Logo({
             : "text-lg font-extrabold tracking-tight"
         }
       >
-        <span className="text-indigo-600">Pre</span>
+        <span className="text-accent">Pre</span>
         <span className="text-ink">Compilers</span>
       </span>
     </a>

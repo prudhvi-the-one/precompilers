@@ -73,7 +73,7 @@ export default async function ProblemSubmissionHistoryPage() {
       ) : (
         <AngularBorder color="var(--line)" className="bg-surface p-6 text-center text-sm text-ink-muted">
           No submissions yet.{" "}
-          <a href="/practice/problems" className="font-semibold text-indigo-600 hover:underline">
+          <a href="/practice/problems" className="font-semibold text-accent hover:underline">
             Solve your first problem
           </a>
           .

@@ -55,7 +55,7 @@ export default async function ProjectsPage() {
                 ) : null}
               </div>
               <details className="mt-2">
-                <summary className="cursor-pointer text-sm font-medium text-indigo-600">
+                <summary className="cursor-pointer text-sm font-medium text-accent">
                   Read the brief
                 </summary>
                 <p className="mt-2 whitespace-pre-line text-sm text-ink-muted">
@@ -79,7 +79,7 @@ export default async function ProjectsPage() {
                       {submission._count.reviews} of 2 reviews received ·{" "}
                       <a
                         href="/prove/feedback-received"
-                        className="font-semibold text-indigo-600 hover:underline"
+                        className="font-semibold text-accent hover:underline"
                       >
                         View feedback
                       </a>

@@ -84,7 +84,7 @@ export default async function CompanyQuestionsPage({
                   <span className="mr-2 inline-block text-ink-faintest transition-transform group-open:rotate-90">
                     ›
                   </span>
-                  <span className="clip-chip mr-2 bg-accent-soft px-2 py-0.5 text-[11px] font-medium text-indigo-600">
+                  <span className="clip-chip mr-2 bg-accent-soft px-2 py-0.5 text-[11px] font-medium text-accent">
                     {q.companyName}
                   </span>
                   <span className="clip-chip mr-2 bg-line-soft px-2 py-0.5 text-[11px] font-medium text-ink-muted">

@@ -413,7 +413,7 @@ function NextActionRow({
       color="#DDD9FB"
       className="mt-3 flex items-center gap-4 bg-accent-soft px-4 py-3"
     >
-      <span className="clip-chip flex h-10.5 w-10.5 shrink-0 items-center justify-center bg-surface text-indigo-600">
+      <span className="clip-chip flex h-10.5 w-10.5 shrink-0 items-center justify-center bg-surface text-accent">
         <Icon className="h-5 w-5" strokeWidth={1.75} />
       </span>
       <div className="min-w-0 flex-1">
@@ -421,7 +421,7 @@ function NextActionRow({
         <div className="text-xs text-ink-faint">{description}</div>
       </div>
       <AngularBorder color="#DDD9FB" clip="clip-chip" className="shrink-0 bg-surface hover:bg-surface">
-        <a href={href} className="block px-3 py-1.5 text-xs font-semibold text-indigo-600">
+        <a href={href} className="block px-3 py-1.5 text-xs font-semibold text-accent">
           {cta}
         </a>
       </AngularBorder>

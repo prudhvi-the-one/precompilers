@@ -92,7 +92,7 @@ export default async function MocksPage() {
                   <p className="text-sm font-medium text-ink">
                     {slot.mentor.user.name ?? slot.mentor.user.email}
                     {preferredMentorIds.has(slot.mentorId) ? (
-                      <span className="clip-chip ml-2 bg-accent-soft px-2 py-0.5 text-[10px] font-semibold text-indigo-600">
+                      <span className="clip-chip ml-2 bg-accent-soft px-2 py-0.5 text-[10px] font-semibold text-accent">
                         Preferred by your college
                       </span>
                     ) : null}
@@ -136,7 +136,7 @@ export default async function MocksPage() {
           <div className="divide-y divide-line-soft">
             {feedbackReceived.map((fb) => (
               <div key={fb.id} className="flex items-center gap-4 px-5 py-4">
-                <div className="clip-chip flex h-11 w-11 shrink-0 flex-col items-center justify-center bg-accent-soft font-brand text-sm font-bold text-indigo-600">
+                <div className="clip-chip flex h-11 w-11 shrink-0 flex-col items-center justify-center bg-accent-soft font-brand text-sm font-bold text-accent">
                   {fb.score}
                   <span className="text-[9px] font-normal text-ink-faintest">/5</span>
                 </div>

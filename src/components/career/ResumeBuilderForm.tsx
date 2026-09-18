@@ -291,7 +291,7 @@ export default function ResumeBuilderForm({
         <button
           type="button"
           onClick={() => setEducation((prev) => [...prev, emptyEducation()])}
-          className="text-xs font-semibold text-indigo-600 hover:underline"
+          className="text-xs font-semibold text-accent hover:underline"
         >
           + Add education
         </button>
@@ -346,7 +346,7 @@ export default function ResumeBuilderForm({
         <button
           type="button"
           onClick={() => setExperience((prev) => [...prev, emptyExperience()])}
-          className="text-xs font-semibold text-indigo-600 hover:underline"
+          className="text-xs font-semibold text-accent hover:underline"
         >
           + Add experience
         </button>
@@ -362,7 +362,7 @@ export default function ResumeBuilderForm({
                   key={s.id}
                   type="button"
                   onClick={() => importSubmission(s)}
-                  className="clip-chip bg-accent-soft px-2.5 py-1 text-xs font-medium text-indigo-600 hover:bg-[#E4E2FD]"
+                  className="clip-chip bg-accent-soft px-2.5 py-1 text-xs font-medium text-accent hover:bg-[#E4E2FD]"
                 >
                   + Import &quot;{s.title}&quot;
                 </button>
@@ -411,7 +411,7 @@ export default function ResumeBuilderForm({
         <button
           type="button"
           onClick={() => setProjects((prev) => [...prev, emptyProject()])}
-          className="text-xs font-semibold text-indigo-600 hover:underline"
+          className="text-xs font-semibold text-accent hover:underline"
         >
           + Add project
         </button>

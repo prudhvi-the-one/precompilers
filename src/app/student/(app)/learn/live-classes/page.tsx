@@ -109,7 +109,7 @@ export default async function LiveClassesPage() {
                     <p className="flex-1 text-sm font-medium text-ink">
                       {liveClass.title}
                     </p>
-                    <span className="clip-chip shrink-0 bg-accent-soft px-2.5 py-0.5 font-mono text-[10.5px] text-indigo-600">
+                    <span className="clip-chip shrink-0 bg-accent-soft px-2.5 py-0.5 font-mono text-[10.5px] text-accent">
                       {formatSchedule(liveClass.scheduledAt)}
                     </span>
                     <span className="shrink-0 text-xs text-ink-faintest">

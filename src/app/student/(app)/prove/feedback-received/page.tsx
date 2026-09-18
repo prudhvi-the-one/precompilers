@@ -40,7 +40,7 @@ export default async function FeedbackReceivedPage() {
       {submissions.length === 0 ? (
         <AngularBorder color="var(--line)" className="bg-surface p-6 text-center text-sm text-ink-muted">
           You haven&apos;t submitted a project yet.{" "}
-          <a href="/prove/projects" className="font-semibold text-indigo-600 hover:underline">
+          <a href="/prove/projects" className="font-semibold text-accent hover:underline">
             Pick a brief
           </a>
           .
