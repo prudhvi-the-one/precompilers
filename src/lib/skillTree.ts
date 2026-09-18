@@ -13,13 +13,15 @@ export async function isTopicUnlocked(userId: string, topic: Pick<Topic, "subjec
   return Boolean(prevProgress?.completedAt);
 }
 
-// A topic is "completed" the first time its linked quiz is submitted — matches
-// LectureProgress's existing low-friction "watched it" semantics rather than
-// inventing a pass/fail threshold that doesn't exist anywhere else in this
-// schema today. Detected lazily on read rather than hooking into the shared
-// quiz-submission route, and persisted only once observed true — the same
-// "compute live, freeze on first true" convention already used for vendor
-// billing/certificates.
+export const TOPIC_QUIZ_PASS_THRESHOLD = 90;
+
+// A topic is "completed" only once its linked quiz has been passed at
+// PASS_THRESHOLD% or better on some attempt — a student can retake it as many
+// times as needed (StartQuizButton already labels a retry "Retake" once any
+// attempt exists). Detected lazily on read rather than hooking into the
+// shared quiz-submission route, and persisted only once observed true — the
+// same "compute live, freeze on first true" convention already used for
+// vendor billing/certificates.
 async function ensureTopicProgressSynced(userId: string, topic: Topic): Promise<void> {
   if (!topic.linkedQuizId) return;
   const existing = await prisma.topicProgress.findUnique({
@@ -27,10 +29,15 @@ async function ensureTopicProgressSynced(userId: string, topic: Topic): Promise<
   });
   if (existing?.completedAt) return;
 
-  const submittedAttempt = await prisma.quizAttempt.findFirst({
-    where: { userId, quizId: topic.linkedQuizId, submittedAt: { not: null } },
+  const passedAttempt = await prisma.quizAttempt.findFirst({
+    where: {
+      userId,
+      quizId: topic.linkedQuizId,
+      submittedAt: { not: null },
+      score: { gte: TOPIC_QUIZ_PASS_THRESHOLD },
+    },
   });
-  if (!submittedAttempt) return;
+  if (!passedAttempt) return;
 
   await prisma.topicProgress.upsert({
     where: { userId_topicId: { userId, topicId: topic.id } },
