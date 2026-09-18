@@ -1,14 +1,27 @@
 import { redirect } from "next/navigation";
 import Image from "next/image";
-import { Target, UserCircle, Compass, PlayCircle, type LucideIcon } from "lucide-react";
+import { UserCircle, Compass, PlayCircle, type LucideIcon } from "lucide-react";
 import { getCurrentUser } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { computeReadinessPillars, computeOverallReadiness } from "@/lib/readiness";
 import { computeBatchLeaderboard } from "@/lib/leaderboard";
 import { computeActivityByDay, currentStreakFromMap, longestStreakFromMap } from "@/lib/streak";
+import { rankForScore, TIER_BADGE_SRC } from "@/lib/rank";
 import StreakHeatmap from "@/components/home/StreakHeatmap";
 import RadarChart from "@/components/charts/RadarChart";
 import { avatarColor, initialsFromName } from "@/lib/avatar";
+
+// Same order as computeReadinessPillars: Fundamentals, Aptitude &
+// communication, Problem solving, Industry skills, Projects, Interview
+// performance.
+const PILLAR_ICONS = [
+  "/rank-hud/icons/fundamentals.png",
+  "/rank-hud/icons/aptitude.png",
+  "/rank-hud/icons/problem-solving.png",
+  "/rank-hud/icons/industry-skills.png",
+  "/rank-hud/icons/projects.png",
+  "/rank-hud/icons/interview.png",
+];
 
 function minutesUntil(date: Date): number {
   return Math.round((date.getTime() - Date.now()) / 60000);
@@ -65,15 +78,17 @@ export default async function HomePage() {
   ]);
   const currentStreak = currentStreakFromMap(activityByDay);
   const longestStreak = longestStreakFromMap(activityByDay);
+  const rank = overallReadiness !== null ? rankForScore(overallReadiness) : null;
 
   return (
     <div className="max-w-5xl space-y-4.5">
-      <div className="relative overflow-hidden rounded-xl border border-line-soft bg-linear-to-r from-accent-soft to-surface p-5">
+      <div className="clip-panel relative overflow-hidden border-2 border-accent bg-surface p-5">
         <div
           className="pointer-events-none absolute -top-16 -right-10 h-56 w-56 rounded-full opacity-10 blur-3xl"
           style={{ background: "var(--accent)" }}
         />
-        <div className="relative flex items-center gap-5">
+        <div className="relative flex items-center gap-6 flex-wrap">
+          {rank ? <HeroRankBadge score={overallReadiness as number} rank={rank} /> : null}
           <div className="min-w-0 flex-1">
             <h1 className="font-brand text-[25px] font-bold tracking-[-0.02em] text-ink">
               Welcome{user.name ? `, ${user.name}` : ""}
@@ -85,26 +100,32 @@ export default async function HomePage() {
                   ? `Class of ${user.gradYear}`
                   : "Let's get your profile set up first."}
             </p>
-            {overallReadiness !== null ? (
-              <span className="mt-3 inline-block rounded-full bg-accent-soft px-2.5 py-1 font-mono text-[12px] text-accent">
-                {overallReadiness} readiness score
-              </span>
+            {rank ? (
+              <div className="mt-3 max-w-xs">
+                <div className="flex items-center justify-between gap-3 text-[11px] text-ink-faint">
+                  <span>
+                    {rank.pointsToNext !== null
+                      ? `${rank.pointsToNext} pts to ${rank.nextTierLabel}`
+                      : "Top rank reached"}
+                  </span>
+                  <span className="font-mono">{overallReadiness}/100</span>
+                </div>
+                <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-line-soft">
+                  <div
+                    className="h-full rounded-full"
+                    style={{ width: `${rank.progressPct}%`, background: `var(--tier-${rank.tier})` }}
+                  />
+                </div>
+              </div>
             ) : null}
           </div>
-          <Image
-            src="/student-home/hero.png"
-            alt=""
-            width={230}
-            height={125}
-            className="hidden shrink-0 sm:block"
-          />
         </div>
       </div>
 
       {soonLiveClass ? (
-        <div className="flex items-center justify-between gap-4 rounded-xl border border-accent-soft bg-linear-to-r from-accent-soft to-surface p-4">
+        <div className="clip-panel flex items-center justify-between gap-4 border border-accent-soft bg-linear-to-r from-accent-soft to-surface p-4">
           <div className="flex items-center gap-3">
-            <span className="flex h-10.5 w-10.5 items-center justify-center rounded-lg bg-indigo-600 font-mono text-[10px] font-bold text-white">
+            <span className="clip-chip flex h-10.5 w-10.5 items-center justify-center bg-indigo-600 font-mono text-[10px] font-bold text-white">
               LIVE
             </span>
             <div>
@@ -118,14 +139,14 @@ export default async function HomePage() {
           </div>
           <a
             href={`/live/${soonLiveClass.id}`}
-            className="shrink-0 rounded-lg bg-indigo-600 px-4 py-2 font-brand text-[13px] font-semibold text-white hover:bg-accent-hover"
+            className="clip-btn shrink-0 bg-indigo-600 px-4 py-2 font-brand text-[13px] font-semibold text-white hover:bg-accent-hover"
           >
             Join class
           </a>
         </div>
       ) : null}
 
-      <div className="rounded-xl border border-line bg-surface p-5">
+      <div className="clip-panel border border-line bg-surface p-5">
         <h2 className="font-brand text-base font-bold text-ink">
           What to do next
         </h2>
@@ -163,30 +184,29 @@ export default async function HomePage() {
       </div>
 
       <div className="grid grid-cols-1 gap-4.5 lg:grid-cols-[1.15fr_1fr]">
-        <div className="rounded-xl border border-line bg-surface p-5">
+        <div className="clip-panel border border-line bg-surface p-5">
           {overallReadiness !== null ? (
             <>
               <div className="flex items-center justify-between gap-3">
-                <h2 className="flex items-center gap-2 font-brand text-base font-bold text-ink">
-                  <Target className="h-4 w-4 text-indigo-600" />
+                <h2 className="font-brand text-base font-bold text-ink">
                   Readiness by pillar
                 </h2>
                 <span className="font-mono text-xl font-bold text-ink">{overallReadiness}</span>
               </div>
               <RadarChart
                 axes={pillars.map((pillar) => ({ label: pillar.label, value: pillar.value ?? 0 }))}
+                icons={PILLAR_ICONS}
                 boldLabels
               />
             </>
           ) : (
-            <div className="flex flex-col items-center py-4 text-center">
-              <Image
-                src="/illustrations/getting-started.png"
-                alt=""
-                width={200}
-                height={167}
-                className="mb-3"
-              />
+            <div className="flex flex-col items-center py-2 text-center">
+              <div className="pointer-events-none opacity-40 grayscale-[0.4]">
+                <RadarChart
+                  axes={pillars.map((pillar) => ({ label: pillar.label, value: pillar.value ?? 0 }))}
+                  icons={PILLAR_ICONS}
+                />
+              </div>
               <p className="text-sm font-semibold text-ink">No readiness data yet</p>
               <p className="mt-1 max-w-xs text-xs text-ink-faint">
                 Take a quiz or two once you&apos;ve set your track — this is where your pillar
@@ -196,7 +216,7 @@ export default async function HomePage() {
           )}
         </div>
 
-        <div className="rounded-xl border border-line bg-surface p-5">
+        <div className="clip-panel border border-line bg-surface p-5">
           <h2 className="font-brand text-base font-bold text-ink">
             Activity streak
           </h2>
@@ -210,11 +230,13 @@ export default async function HomePage() {
         </div>
       </div>
 
-      <div className="rounded-xl border border-line bg-surface p-5">
+      <div className="clip-panel border border-line bg-surface p-5">
         {leaderboard ? (
           <>
             <div className="flex items-center gap-3">
-              <Image src="/student-home/trophy.png" alt="" width={44} height={44} />
+              <span className="clip-chip flex h-11 w-11 shrink-0 items-center justify-center bg-accent-soft text-accent">
+                <TrophyIcon />
+              </span>
               <div>
                 <h2 className="font-brand text-base font-bold text-ink">Your batch</h2>
                 <p className="text-sm text-ink-muted">
@@ -236,14 +258,17 @@ export default async function HomePage() {
             </div>
           </>
         ) : (
-          <div className="flex flex-col items-center py-4 text-center">
-            <Image
-              src="/illustrations/getting-started.png"
-              alt=""
-              width={200}
-              height={167}
-              className="mb-3"
-            />
+          <div className="flex flex-col items-center py-2 text-center">
+            <div className="relative mb-3 h-28 w-28">
+              <Image
+                src="/rank-hud/league-gate.png"
+                alt=""
+                fill
+                sizes="112px"
+                className="object-contain"
+                style={{ filter: "drop-shadow(0 0 18px var(--accent-soft))" }}
+              />
+            </div>
             <p className="text-sm font-semibold text-ink">Join a batch to see the leaderboard</p>
             <p className="mt-1 max-w-xs text-xs text-ink-faint">
               Take a quiz or two once you&apos;re in a batch to see how you compare with your
@@ -251,7 +276,7 @@ export default async function HomePage() {
             </p>
             <a
               href="/onboarding"
-              className="mt-3 rounded-lg bg-indigo-600 px-4 py-2 font-brand text-[13px] font-semibold text-white hover:bg-accent-hover"
+              className="clip-btn mt-3 bg-indigo-600 px-4 py-2 font-brand text-[13px] font-semibold text-white hover:bg-accent-hover"
             >
               Set your track
             </a>
@@ -259,6 +284,50 @@ export default async function HomePage() {
         )}
       </div>
     </div>
+  );
+}
+
+function HeroRankBadge({ score, rank }: { score: number; rank: ReturnType<typeof rankForScore> }) {
+  return (
+    <div className="relative flex h-24 w-24 shrink-0 items-center justify-center">
+      <svg className="animate-orbit-spin absolute inset-0" viewBox="0 0 96 96" aria-hidden="true">
+        <circle
+          cx="48"
+          cy="48"
+          r="45"
+          fill="none"
+          stroke={`var(--tier-${rank.tier})`}
+          strokeWidth="1.5"
+          strokeDasharray="4 7"
+          opacity="0.5"
+        />
+      </svg>
+      <div className="animate-badge-in relative h-20 w-20">
+        <Image
+          src={TIER_BADGE_SRC[rank.tier]}
+          alt={`${rank.tierLabel} rank badge`}
+          fill
+          sizes="80px"
+          className="object-contain"
+          style={{ filter: `drop-shadow(0 0 16px var(--tier-${rank.tier}))` }}
+        />
+      </div>
+      <span
+        className="font-brand absolute text-lg font-extrabold"
+        style={{ color: "#1a1a2e", textShadow: "0 1px 0 rgba(255,255,255,0.3)" }}
+      >
+        {score}
+      </span>
+    </div>
+  );
+}
+
+function TrophyIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4Z" />
+      <path d="M7 6H4a2 2 0 0 0 2 4M17 6h3a2 2 0 0 1-2 4" />
+    </svg>
   );
 }
 
@@ -316,8 +385,8 @@ function NextActionRow({
   cta: string;
 }) {
   return (
-    <div className="mt-3 flex items-center gap-4 rounded-lg border border-[#DDD9FB] bg-accent-soft px-4 py-3">
-      <span className="flex h-10.5 w-10.5 shrink-0 items-center justify-center rounded-[11px] bg-surface text-indigo-600">
+    <div className="clip-panel mt-3 flex items-center gap-4 border border-[#DDD9FB] bg-accent-soft px-4 py-3">
+      <span className="clip-chip flex h-10.5 w-10.5 shrink-0 items-center justify-center bg-surface text-indigo-600">
         <Icon className="h-5 w-5" strokeWidth={1.75} />
       </span>
       <div className="min-w-0 flex-1">
@@ -326,7 +395,7 @@ function NextActionRow({
       </div>
       <a
         href={href}
-        className="shrink-0 rounded-md border border-[#DDD9FB] px-3 py-1.5 text-xs font-semibold text-indigo-600 hover:bg-surface"
+        className="clip-chip shrink-0 border border-[#DDD9FB] px-3 py-1.5 text-xs font-semibold text-indigo-600 hover:bg-surface"
       >
         {cta}
       </a>

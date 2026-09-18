@@ -24,6 +24,23 @@
   --error-soft: #fdebec;
   --pillar-pink: #db2777;
   --chart-secondary: #0891b2;
+
+  /* Rank HUD tokens — used by the student shell/home page's angular,
+     game-rank-inspired treatment. Tier hex colours (bronze..diamond) are
+     fixed across themes since they're graphics (badge glow/fills), not
+     text. The "-ink" variants are theme-aware because gold/silver are too
+     light to use directly as text on a light background. */
+  --tier-bronze: #c97b3d;
+  --tier-silver: #b9c2cc;
+  --tier-gold: #ffd54a;
+  --tier-platinum: #5eead4;
+  --tier-diamond: #7c6fff;
+  --tier-silver-ink: #5b5f6b;
+  --tier-gold-ink: #8a6d00;
+  --chart-line: rgba(40, 30, 100, 0.22);
+  --icon-chip-fill: rgba(79, 70, 229, 0.1);
+  --icon-chip-edge: rgba(79, 70, 229, 0.4);
+  --icon-filter: none;
 }
 
 :root[data-theme="dark"] {
@@ -50,6 +67,13 @@
   --error-soft: #3d1a1a;
   --pillar-pink: #f472b6;
   --chart-secondary: #22d3ee;
+
+  --tier-silver-ink: #b9c2cc;
+  --tier-gold-ink: #ffd54a;
+  --chart-line: rgba(255, 255, 255, 0.24);
+  --icon-chip-fill: rgba(155, 149, 255, 0.14);
+  --icon-chip-edge: rgba(155, 149, 255, 0.4);
+  --icon-filter: brightness(3.4) drop-shadow(0 0 3px rgba(155, 149, 255, 0.7));
 }
 
 @media (prefers-color-scheme: dark) {
@@ -74,6 +98,13 @@
     --error-soft: #3d1a1a;
     --pillar-pink: #f472b6;
     --chart-secondary: #22d3ee;
+
+    --tier-silver-ink: #b9c2cc;
+    --tier-gold-ink: #ffd54a;
+    --chart-line: rgba(255, 255, 255, 0.24);
+    --icon-chip-fill: rgba(155, 149, 255, 0.14);
+    --icon-chip-edge: rgba(155, 149, 255, 0.4);
+    --icon-filter: brightness(3.4) drop-shadow(0 0 3px rgba(155, 149, 255, 0.7));
   }
 }
 
@@ -83,6 +114,7 @@
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --font-brand: var(--font-sora);
+  --font-display: var(--font-chakra-petch);
 
   --color-ink: var(--ink);
   --color-ink-secondary: var(--ink-secondary);
@@ -104,6 +136,15 @@
   --color-error-soft: var(--error-soft);
   --color-pillar-pink: var(--pillar-pink);
   --color-chart-secondary: var(--chart-secondary);
+
+  --color-tier-bronze: var(--tier-bronze);
+  --color-tier-silver: var(--tier-silver);
+  --color-tier-gold: var(--tier-gold);
+  --color-tier-platinum: var(--tier-platinum);
+  --color-tier-diamond: var(--tier-diamond);
+  --color-tier-silver-ink: var(--tier-silver-ink);
+  --color-tier-gold-ink: var(--tier-gold-ink);
+  --color-chart-line: var(--chart-line);
 }
 
 body {
@@ -194,4 +235,58 @@ body {
       transparent 1px,
       transparent 7px
     );
+}
+
+/* --- Rank HUD: angular, game-rank-inspired chrome for the student shell
+   and home page (nav, topbar chips, panels, rank badge). Kept generic and
+   reusable rather than page-specific, same convention as the animation
+   vocabulary above. --- */
+.clip-tab {
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 8px 100%);
+}
+.clip-chip {
+  clip-path: polygon(6px 0, 100% 0, 100% 100%, 0 100%);
+}
+.clip-panel {
+  clip-path: polygon(
+    16px 0,
+    100% 0,
+    100% calc(100% - 16px),
+    calc(100% - 16px) 100%,
+    0 100%,
+    0 16px
+  );
+}
+.clip-btn {
+  clip-path: polygon(
+    10px 0,
+    100% 0,
+    100% calc(100% - 10px),
+    calc(100% - 10px) 100%,
+    0 100%,
+    0 10px
+  );
+}
+.clip-hex {
+  clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+}
+
+@keyframes orbit-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.animate-orbit-spin { animation: orbit-spin 14s linear infinite; }
+
+@keyframes badge-in {
+  from { transform: scale(0.4) rotate(-30deg); opacity: 0; }
+  to { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+.animate-badge-in { animation: badge-in 0.6s cubic-bezier(0.2, 0.8, 0.3, 1.2) both; }
+
+/* Icon overlays on RadarChart axes: dark-indigo line art has almost no
+   contrast against a dark panel, so dark mode brightens it via
+   --icon-filter (light mode leaves it untouched — natural contrast is
+   already fine there). */
+.chart-icon {
+  filter: var(--icon-filter);
 }

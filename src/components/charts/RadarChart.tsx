@@ -4,6 +4,9 @@ const CENTER_X = WIDTH / 2;
 const CENTER_Y = HEIGHT / 2;
 const MAX_RADIUS = 65;
 const MAX_LABEL_CHARS = 15;
+// Extra viewBox margin so axis icons (rendered above/below the label,
+// outside the base 0-HEIGHT box) don't get clipped.
+const ICON_MARGIN = 24;
 
 function truncateLabel(label: string): string {
   return label.length > MAX_LABEL_CHARS ? `${label.slice(0, MAX_LABEL_CHARS - 1)}…` : label;
@@ -21,9 +24,13 @@ function pointOnAxis(index: number, count: number, radius: number) {
 export default function RadarChart({
   axes,
   boldLabels = false,
+  icons,
 }: {
   axes: { label: string; value: number }[];
   boldLabels?: boolean;
+  /** Optional icon src per axis, same order as `axes`. When omitted, no
+   * icon overlay is rendered (the vendor statistics page's usage). */
+  icons?: string[];
 }) {
   const count = axes.length;
   const shapePoints = axes
@@ -32,9 +39,19 @@ export default function RadarChart({
       return `${p.x},${p.y}`;
     })
     .join(" ");
+  const hasIcons = Boolean(icons?.length);
 
   return (
-    <svg width="100%" height={HEIGHT} viewBox={`0 0 ${WIDTH} ${HEIGHT}`} className="mx-auto block">
+    <svg
+      width="100%"
+      height={hasIcons ? HEIGHT + ICON_MARGIN * 2 : HEIGHT}
+      viewBox={
+        hasIcons
+          ? `0 ${-ICON_MARGIN} ${WIDTH} ${HEIGHT + ICON_MARGIN * 2}`
+          : `0 0 ${WIDTH} ${HEIGHT}`
+      }
+      className="mx-auto block overflow-visible"
+    >
       {[1, 2, 3].map((ring) => (
         <circle
           key={ring}
@@ -64,17 +81,36 @@ export default function RadarChart({
       {axes.map((axis, i) => {
         const labelPoint = pointOnAxis(i, count, MAX_RADIUS + 26);
         const anchor = labelPoint.x < CENTER_X - 5 ? "end" : labelPoint.x > CENTER_X + 5 ? "start" : "middle";
+        const iconSrc = icons?.[i];
+        // Icon sits further out than the label, on the same side (above
+        // the top labels, below the bottom ones), never overlapping it.
+        const iconY = labelPoint.y < CENTER_Y - 5 ? labelPoint.y - 15 : labelPoint.y + 15;
+
         return (
-          <text
-            key={axis.label}
-            x={labelPoint.x}
-            y={labelPoint.y}
-            textAnchor={anchor}
-            className={boldLabels ? "text-[9.5px] font-bold" : "text-[9.5px]"}
-            fill={boldLabels ? "var(--ink-muted)" : "var(--ink-faint)"}
-          >
-            {truncateLabel(axis.label)} {Math.round(axis.value)}
-          </text>
+          <g key={axis.label}>
+            {iconSrc ? (
+              <>
+                <circle cx={labelPoint.x} cy={iconY} r={13} fill="var(--icon-chip-fill)" stroke="var(--icon-chip-edge)" />
+                <image
+                  href={iconSrc}
+                  x={labelPoint.x - 10}
+                  y={iconY - 10}
+                  width={20}
+                  height={20}
+                  className="chart-icon"
+                />
+              </>
+            ) : null}
+            <text
+              x={labelPoint.x}
+              y={labelPoint.y}
+              textAnchor={anchor}
+              className={boldLabels ? "text-[9.5px] font-bold" : "text-[9.5px]"}
+              fill={boldLabels ? "var(--ink-muted)" : "var(--ink-faint)"}
+            >
+              {truncateLabel(axis.label)} {Math.round(axis.value)}
+            </text>
+          </g>
         );
       })}
     </svg>

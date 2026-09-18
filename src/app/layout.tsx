@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono, Sora } from "next/font/google";
+import { Geist, Geist_Mono, Sora, Chakra_Petch } from "next/font/google";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -16,6 +16,14 @@ const sora = Sora({
   variable: "--font-sora",
   subsets: ["latin"],
   weight: ["600", "700", "800"],
+});
+
+// Display face for the Rank HUD treatment (student shell nav, rank badge,
+// panel headings) — distinct from Sora's brand wordmark use.
+const chakraPetch = Chakra_Petch({
+  variable: "--font-chakra-petch",
+  subsets: ["latin"],
+  weight: ["500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -48,7 +56,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${sora.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${sora.variable} ${chakraPetch.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <head>

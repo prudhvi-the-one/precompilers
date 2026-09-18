@@ -81,7 +81,7 @@ function NavList({
           const badge = item.soon ? "Soon" : "Upgrade";
           const content = (
             <>
-              <Icon className="h-4 w-4 shrink-0" strokeWidth={1.5} color="#C6C6D4" />
+              <Icon className="h-4 w-4 shrink-0 text-ink-faintest" strokeWidth={1.5} />
               {item.label}
               <span className="ml-auto rounded-full bg-line-soft px-2 py-0.5 font-mono text-[10px] text-ink-faintest">
                 {badge}
@@ -96,7 +96,7 @@ function NavList({
                 key={item.href}
                 href="/upgrade"
                 onClick={onNavigate}
-                className="flex items-center gap-2.75 rounded-[9px] px-3 py-2.5 text-sm text-ink-faintest hover:bg-line-soft"
+                className="clip-tab flex items-center gap-2.75 px-3 py-2.5 text-sm text-ink-faintest hover:bg-line-soft"
               >
                 {content}
               </a>
@@ -105,7 +105,7 @@ function NavList({
           return (
             <span
               key={item.href}
-              className="flex cursor-default items-center gap-2.75 rounded-[9px] px-3 py-2.5 text-sm text-ink-faintest"
+              className="clip-tab flex cursor-default items-center gap-2.75 px-3 py-2.5 text-sm text-ink-faintest"
             >
               {content}
             </span>
@@ -124,15 +124,11 @@ function NavList({
               onClick={onNavigate}
               className={
                 active
-                  ? "flex items-center gap-2.75 rounded-[9px] bg-accent-soft px-3 py-2.5 text-sm font-semibold text-accent"
-                  : "flex items-center gap-2.75 rounded-[9px] px-3 py-2.5 text-sm text-ink-muted hover:bg-line-soft"
+                  ? "clip-tab flex items-center gap-2.75 border-l-2 border-accent bg-accent-soft px-3 py-2.5 text-sm font-semibold text-accent"
+                  : "clip-tab flex items-center gap-2.75 border-l-2 border-transparent px-3 py-2.5 text-sm text-ink-muted hover:bg-line-soft hover:text-ink"
               }
             >
-              <Icon
-                className="h-4 w-4 shrink-0"
-                strokeWidth={active ? 2 : 1.5}
-                color={active ? "#4F46E5" : "#C6C6D4"}
-              />
+              <Icon className="h-4 w-4 shrink-0" strokeWidth={active ? 2 : 1.5} />
               {item.label}
             </a>
 
@@ -148,7 +144,7 @@ function NavList({
                         key={sub.label}
                         href="/upgrade"
                         onClick={onNavigate}
-                        className="flex items-center gap-1.5 text-[13.5px] text-[#B8B8C7] hover:text-ink-faintest"
+                        className="flex items-center gap-1.5 text-[13.5px] text-ink-faintest hover:text-ink-faint"
                       >
                         {sub.label}
                         <span className="rounded-full bg-line-soft px-1.5 py-0.5 font-mono text-[9px] text-ink-faintest">
@@ -168,7 +164,7 @@ function NavList({
                       className={
                         subActive
                           ? "text-[13.5px] font-medium text-ink"
-                          : "text-[13.5px] text-[#6E6E86] hover:text-ink"
+                          : "text-[13.5px] text-ink-muted hover:text-ink"
                       }
                     >
                       {sub.label}

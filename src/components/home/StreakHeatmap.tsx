@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Image from "next/image";
+import { Flame } from "lucide-react";
 import { daysBefore, toISTDateKey } from "@/lib/streak";
 
 const DAYS_PER_WEEK = 7;
@@ -60,13 +60,9 @@ export default function StreakHeatmap({
   return (
     <div>
       <div className="flex items-center gap-3">
-        <Image
-          src="/student-home/streak-flame.png"
-          alt=""
-          width={40}
-          height={40}
-          className="shrink-0"
-        />
+        <span className="clip-chip flex h-10 w-10 shrink-0 items-center justify-center bg-warn-soft text-warn">
+          <Flame className="h-5 w-5" strokeWidth={1.75} />
+        </span>
         <div>
           <div className="font-brand text-xl font-bold text-ink">
             {currentStreak} {currentStreak === 1 ? "day" : "days"}

@@ -55,12 +55,12 @@ export default function Topbar({
         <ThemeToggle />
         <NotificationBell />
 
-        <span className="hidden items-center gap-1 rounded-full bg-accent-soft px-2.5 py-1 font-mono text-[12.5px] text-accent sm:flex">
+        <span className="clip-chip hidden items-center gap-1 bg-accent-soft px-2.5 py-1 font-mono text-[12.5px] text-accent sm:flex">
           <Zap className="h-3.5 w-3.5" />
           Lvl {level} &middot; {totalXp} XP
         </span>
 
-        <span className="hidden items-center gap-1 rounded-full bg-warn-soft px-2.5 py-1 font-mono text-[12.5px] text-warn sm:flex">
+        <span className="clip-chip hidden items-center gap-1 bg-warn-soft px-2.5 py-1 font-mono text-[12.5px] text-warn sm:flex">
           <Flame className="h-3.5 w-3.5" />
           {currentStreak}-day streak
         </span>
