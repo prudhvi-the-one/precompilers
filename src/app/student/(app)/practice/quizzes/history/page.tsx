@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
 import { requireTierAccess } from "@/lib/tier";
 import { prisma } from "@/lib/prisma";
+import AngularBorder from "@/components/ui/AngularBorder";
 
 function formatDate(date: Date): string {
   return date.toLocaleDateString("en-US", {
@@ -38,7 +39,7 @@ export default async function QuizHistoryPage() {
       </div>
 
       {attempts.length ? (
-        <div className="divide-y divide-line-soft rounded-xl border border-line bg-surface">
+        <AngularBorder color="var(--line)" className="divide-y divide-line-soft bg-surface">
           {attempts.map((attempt) => {
             const verified = attempt.proctored && !attempt.endedByViolation;
             return (
@@ -55,8 +56,8 @@ export default async function QuizHistoryPage() {
                       <span
                         className={
                           verified
-                            ? "ml-2 rounded-full bg-success-soft px-2 py-0.5 font-semibold text-success"
-                            : "ml-2 rounded-full bg-line-soft px-2 py-0.5 font-semibold text-ink-faint"
+                            ? "clip-chip ml-2 bg-success-soft px-2 py-0.5 font-semibold text-success"
+                            : "clip-chip ml-2 bg-line-soft px-2 py-0.5 font-semibold text-ink-faint"
                         }
                       >
                         {verified ? "VERIFIED" : "SELF-PACED"}
@@ -70,15 +71,15 @@ export default async function QuizHistoryPage() {
               </a>
             );
           })}
-        </div>
+        </AngularBorder>
       ) : (
-        <div className="rounded-xl border border-line bg-surface p-6 text-center text-sm text-ink-muted">
+        <AngularBorder color="var(--line)" className="bg-surface p-6 text-center text-sm text-ink-muted">
           No attempts yet.{" "}
           <a href="/practice/quizzes" className="font-semibold text-indigo-600 hover:underline">
             Take your first quiz
           </a>
           .
-        </div>
+        </AngularBorder>
       )}
     </div>
   );

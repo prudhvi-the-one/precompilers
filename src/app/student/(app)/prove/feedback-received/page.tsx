@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
 import { requireTierAccess } from "@/lib/tier";
 import { prisma } from "@/lib/prisma";
+import AngularBorder from "@/components/ui/AngularBorder";
 
 const HIRE_LABEL: Record<string, string> = {
   NOT_YET: "Not yet",
@@ -37,16 +38,16 @@ export default async function FeedbackReceivedPage() {
       </div>
 
       {submissions.length === 0 ? (
-        <div className="rounded-xl border border-line bg-surface p-6 text-center text-sm text-ink-muted">
+        <AngularBorder color="var(--line)" className="bg-surface p-6 text-center text-sm text-ink-muted">
           You haven&apos;t submitted a project yet.{" "}
           <a href="/prove/projects" className="font-semibold text-indigo-600 hover:underline">
             Pick a brief
           </a>
           .
-        </div>
+        </AngularBorder>
       ) : (
         submissions.map((submission) => (
-          <div key={submission.id} className="rounded-xl border border-line bg-surface">
+          <AngularBorder key={submission.id} color="var(--line)" className="bg-surface">
             <div className="border-b border-line-soft px-5 py-3.5">
               <h2 className="font-brand text-sm font-bold text-ink">
                 {submission.project.title}
@@ -71,7 +72,7 @@ export default async function FeedbackReceivedPage() {
                 ))}
               </div>
             )}
-          </div>
+          </AngularBorder>
         ))
       )}
     </div>

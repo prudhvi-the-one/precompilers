@@ -3,6 +3,7 @@ import { getCurrentUser } from "@/lib/session";
 import { requireTierAccess } from "@/lib/tier";
 import { prisma } from "@/lib/prisma";
 import BookCounsellingSlot from "@/components/career/BookCounsellingSlot";
+import AngularBorder from "@/components/ui/AngularBorder";
 
 function formatSlotTime(date: Date): string {
   return date.toLocaleDateString("en-US", {
@@ -47,7 +48,7 @@ export default async function CounsellingPage() {
         </p>
       </div>
 
-      <div className="rounded-xl border border-line bg-surface">
+      <AngularBorder color="var(--line)" className="bg-surface">
         <div className="border-b border-line-soft px-5 py-3.5">
           <h2 className="font-brand text-base font-bold text-ink">Book a session</h2>
         </div>
@@ -73,9 +74,9 @@ export default async function CounsellingPage() {
         ) : (
           <p className="px-5 py-4 text-sm text-ink-faint">No mentor slots open right now.</p>
         )}
-      </div>
+      </AngularBorder>
 
-      <div className="rounded-xl border border-line bg-surface">
+      <AngularBorder color="var(--line)" className="bg-surface">
         <div className="border-b border-line-soft px-5 py-3.5">
           <h2 className="font-brand text-sm font-bold text-ink">Past sessions</h2>
         </div>
@@ -100,7 +101,7 @@ export default async function CounsellingPage() {
             ))}
           </div>
         )}
-      </div>
+      </AngularBorder>
     </div>
   );
 }

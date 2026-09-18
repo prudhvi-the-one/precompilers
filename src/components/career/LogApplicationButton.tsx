@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import AngularBorder from "@/components/ui/AngularBorder";
 
 export default function LogApplicationButton({ driveId }: { driveId: string }) {
   const router = useRouter();
@@ -21,13 +22,15 @@ export default function LogApplicationButton({ driveId }: { driveId: string }) {
   }
 
   return (
-    <button
-      type="button"
-      onClick={handleClick}
-      disabled={submitting}
-      className="shrink-0 rounded-md border border-line px-3 py-1.5 text-xs font-semibold text-ink-secondary hover:bg-surface-sunk disabled:opacity-50"
-    >
-      {submitting ? "Marking…" : "Mark as applied"}
-    </button>
+    <AngularBorder clip="clip-btn" color="var(--line)" className="bg-surface" wrapperClassName="shrink-0">
+      <button
+        type="button"
+        onClick={handleClick}
+        disabled={submitting}
+        className="px-3 py-1.5 text-xs font-semibold text-ink-secondary hover:bg-surface-sunk disabled:opacity-50"
+      >
+        {submitting ? "Marking…" : "Mark as applied"}
+      </button>
+    </AngularBorder>
   );
 }

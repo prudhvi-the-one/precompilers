@@ -4,6 +4,7 @@ import { requireTierAccess } from "@/lib/tier";
 import { prisma } from "@/lib/prisma";
 import { meetsEntitlement } from "@/lib/entitlement";
 import StartQuizButton from "@/components/quiz/StartQuizButton";
+import AngularBorder from "@/components/ui/AngularBorder";
 
 export default async function QuizzesPage() {
   const user = await getCurrentUser();
@@ -68,7 +69,7 @@ export default async function QuizzesPage() {
         </a>
       </div>
 
-      <div className="divide-y divide-line-soft rounded-xl border border-line bg-surface">
+      <AngularBorder color="var(--line)" className="divide-y divide-line-soft bg-surface">
         {quizzes.map((quiz) => {
           const totalQuestions = quiz.sections.reduce(
             (n, s) => n + s.questions.length,
@@ -102,7 +103,7 @@ export default async function QuizzesPage() {
             </div>
           );
         })}
-      </div>
+      </AngularBorder>
     </div>
   );
 }

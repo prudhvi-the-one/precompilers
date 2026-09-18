@@ -4,6 +4,7 @@ import { requireTierAccess } from "@/lib/tier";
 import { prisma } from "@/lib/prisma";
 import MockPoolStatus from "@/components/prove/MockPoolStatus";
 import BookMentorSlot from "@/components/prove/BookMentorSlot";
+import AngularBorder from "@/components/ui/AngularBorder";
 
 function formatDate(date: Date): string {
   return date.toLocaleDateString("en-US", { day: "numeric", month: "short" });
@@ -75,7 +76,7 @@ export default async function MocksPage() {
         </p>
       </div>
 
-      <div className="rounded-xl border border-line bg-surface">
+      <AngularBorder color="var(--line)" className="bg-surface">
         <div className="border-b border-line-soft px-5 py-3.5">
           <h2 className="font-brand text-base font-bold text-ink">With a mentor</h2>
           <p className="text-xs text-ink-faint">
@@ -91,7 +92,7 @@ export default async function MocksPage() {
                   <p className="text-sm font-medium text-ink">
                     {slot.mentor.user.name ?? slot.mentor.user.email}
                     {preferredMentorIds.has(slot.mentorId) ? (
-                      <span className="ml-2 rounded-full bg-accent-soft px-2 py-0.5 text-[10px] font-semibold text-indigo-600">
+                      <span className="clip-chip ml-2 bg-accent-soft px-2 py-0.5 text-[10px] font-semibold text-indigo-600">
                         Preferred by your college
                       </span>
                     ) : null}
@@ -110,9 +111,9 @@ export default async function MocksPage() {
         ) : (
           <p className="px-5 py-4 text-sm text-ink-faint">No mentor slots open right now.</p>
         )}
-      </div>
+      </AngularBorder>
 
-      <div className="rounded-xl border border-[#DDD9FB] bg-accent-soft p-5">
+      <AngularBorder color="var(--accent-soft)" className="bg-surface p-5">
         <h2 className="font-brand text-base font-bold text-ink">With a peer</h2>
         <p className="mt-1 text-sm text-ink-muted">
           Paired with another student. You interview them, they interview you.
@@ -123,9 +124,9 @@ export default async function MocksPage() {
             initialPaired={Boolean(active?.pairedWithId)}
           />
         </div>
-      </div>
+      </AngularBorder>
 
-      <div className="rounded-xl border border-line bg-surface">
+      <AngularBorder color="var(--line)" className="bg-surface">
         <div className="border-b border-line-soft px-5 py-3.5">
           <h2 className="font-brand text-sm font-bold text-ink">Past mocks</h2>
         </div>
@@ -135,7 +136,7 @@ export default async function MocksPage() {
           <div className="divide-y divide-line-soft">
             {feedbackReceived.map((fb) => (
               <div key={fb.id} className="flex items-center gap-4 px-5 py-4">
-                <div className="flex h-11 w-11 shrink-0 flex-col items-center justify-center rounded-lg bg-accent-soft font-brand text-sm font-bold text-indigo-600">
+                <div className="clip-chip flex h-11 w-11 shrink-0 flex-col items-center justify-center bg-accent-soft font-brand text-sm font-bold text-indigo-600">
                   {fb.score}
                   <span className="text-[9px] font-normal text-ink-faintest">/5</span>
                 </div>
@@ -151,7 +152,7 @@ export default async function MocksPage() {
             ))}
           </div>
         )}
-      </div>
+      </AngularBorder>
     </div>
   );
 }

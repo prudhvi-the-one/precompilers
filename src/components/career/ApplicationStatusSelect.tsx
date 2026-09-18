@@ -43,7 +43,7 @@ export default function ApplicationStatusSelect({
       value={current}
       disabled={updating}
       onChange={(e) => handleChange(e.target.value)}
-      className={`rounded-full border-none px-2.5 py-1 text-xs font-semibold ${STATUS_STYLE[current]}`}
+      className={`clip-chip border-none px-2.5 py-1 text-xs font-semibold ${STATUS_STYLE[current]}`}
     >
       <option value="APPLIED">Applied</option>
       <option value="INTERVIEWING">Interviewing</option>

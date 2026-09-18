@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import AngularBorder from "@/components/ui/AngularBorder";
 
 type EducationDraft = {
   institution: string;
@@ -173,7 +174,7 @@ export default function ResumeBuilderForm({
 
   return (
     <div className="space-y-6">
-      <div className="rounded-xl border border-line bg-surface p-5 space-y-4">
+      <AngularBorder color="var(--line)" className="bg-surface p-5 space-y-4">
         <h2 className="font-brand text-base font-bold text-ink">Header</h2>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <input
@@ -232,12 +233,12 @@ export default function ResumeBuilderForm({
           className="w-full rounded-md border border-line p-2.5 text-sm focus:border-black focus:outline-none"
           placeholder="Skills, comma-separated (e.g. Python, React, SQL)"
         />
-      </div>
+      </AngularBorder>
 
-      <div className="rounded-xl border border-line bg-surface p-5 space-y-4">
+      <AngularBorder color="var(--line)" className="bg-surface p-5 space-y-4">
         <h2 className="font-brand text-base font-bold text-ink">Education</h2>
         {education.map((e, index) => (
-          <div key={index} className="grid grid-cols-1 gap-2 rounded-lg border border-line-soft bg-surface-sunk p-3 sm:grid-cols-3">
+          <AngularBorder key={index} color="var(--line-soft)" className="grid grid-cols-1 gap-2 bg-surface-sunk p-3 sm:grid-cols-3">
             <input
               value={e.institution}
               onChange={(ev) => updateEducation(index, { institution: ev.target.value })}
@@ -285,7 +286,7 @@ export default function ResumeBuilderForm({
                 </button>
               ) : null}
             </div>
-          </div>
+          </AngularBorder>
         ))}
         <button
           type="button"
@@ -294,12 +295,12 @@ export default function ResumeBuilderForm({
         >
           + Add education
         </button>
-      </div>
+      </AngularBorder>
 
-      <div className="rounded-xl border border-line bg-surface p-5 space-y-4">
+      <AngularBorder color="var(--line)" className="bg-surface p-5 space-y-4">
         <h2 className="font-brand text-base font-bold text-ink">Experience</h2>
         {experience.map((e, index) => (
-          <div key={index} className="space-y-2 rounded-lg border border-line-soft bg-surface-sunk p-3">
+          <AngularBorder key={index} color="var(--line-soft)" className="space-y-2 bg-surface-sunk p-3">
             <div className="grid grid-cols-1 gap-2 sm:grid-cols-4">
               <input
                 value={e.company}
@@ -340,7 +341,7 @@ export default function ResumeBuilderForm({
             >
               Remove
             </button>
-          </div>
+          </AngularBorder>
         ))}
         <button
           type="button"
@@ -349,9 +350,9 @@ export default function ResumeBuilderForm({
         >
           + Add experience
         </button>
-      </div>
+      </AngularBorder>
 
-      <div className="rounded-xl border border-line bg-surface p-5 space-y-4">
+      <AngularBorder color="var(--line)" className="bg-surface p-5 space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="font-brand text-base font-bold text-ink">Projects</h2>
           {importableSubmissions.length ? (
@@ -361,7 +362,7 @@ export default function ResumeBuilderForm({
                   key={s.id}
                   type="button"
                   onClick={() => importSubmission(s)}
-                  className="rounded-full border border-indigo-200 bg-accent-soft px-2.5 py-1 text-xs font-medium text-indigo-600 hover:bg-[#E4E2FD]"
+                  className="clip-chip bg-accent-soft px-2.5 py-1 text-xs font-medium text-indigo-600 hover:bg-[#E4E2FD]"
                 >
                   + Import &quot;{s.title}&quot;
                 </button>
@@ -370,7 +371,7 @@ export default function ResumeBuilderForm({
           ) : null}
         </div>
         {projects.map((p, index) => (
-          <div key={index} className="space-y-2 rounded-lg border border-line-soft bg-surface-sunk p-3">
+          <AngularBorder key={index} color="var(--line-soft)" className="space-y-2 bg-surface-sunk p-3">
             <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
               <input
                 value={p.title}
@@ -405,7 +406,7 @@ export default function ResumeBuilderForm({
             >
               Remove
             </button>
-          </div>
+          </AngularBorder>
         ))}
         <button
           type="button"
@@ -414,7 +415,7 @@ export default function ResumeBuilderForm({
         >
           + Add project
         </button>
-      </div>
+      </AngularBorder>
 
       {error ? <p className="text-sm text-red-600">{error}</p> : null}
       {saved ? <p className="text-sm text-green-700">Saved.</p> : null}
@@ -425,22 +426,24 @@ export default function ResumeBuilderForm({
             type="button"
             onClick={handleSave}
             disabled={submitting || fullName.trim().length === 0}
-            className="rounded-md bg-ink px-4 py-2.5 text-sm font-semibold text-surface disabled:opacity-50"
+            className="clip-btn bg-ink px-4 py-2.5 text-sm font-semibold text-surface disabled:opacity-50"
           >
             {submitting ? "Saving…" : "Save"}
           </button>
           {hasResume ? (
-            <a
-              href="/api/profile/resume/pdf"
-              className="rounded-md border border-line px-4 py-2.5 text-sm font-semibold text-ink-secondary"
-            >
-              Download PDF
-            </a>
+            <AngularBorder clip="clip-btn" color="var(--line)" className="bg-surface">
+              <a
+                href="/api/profile/resume/pdf"
+                className="block px-4 py-2.5 text-sm font-semibold text-ink-secondary"
+              >
+                Download PDF
+              </a>
+            </AngularBorder>
           ) : null}
         </div>
 
         {fullName.trim() ? (
-          <div className="w-full max-w-70 rounded-lg border border-line bg-surface p-4 shadow-[0_2px_10px_rgba(15,16,32,0.05)]">
+          <AngularBorder color="var(--line)" className="w-full bg-surface p-4" wrapperClassName="w-full max-w-70 shadow-[0_2px_10px_rgba(15,16,32,0.05)]">
             <p className="font-mono text-[9px] tracking-[0.08em] text-ink-faintest uppercase">
               Preview
             </p>
@@ -451,7 +454,7 @@ export default function ResumeBuilderForm({
             {summary.trim() ? (
               <p className="mt-2 line-clamp-3 text-[11.5px] text-ink-muted">{summary}</p>
             ) : null}
-          </div>
+          </AngularBorder>
         ) : null}
       </div>
     </div>

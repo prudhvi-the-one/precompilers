@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
 import { requireTierAccess } from "@/lib/tier";
 import { prisma } from "@/lib/prisma";
+import AngularBorder from "@/components/ui/AngularBorder";
 
 function formatSchedule(date: Date): string {
   return date.toLocaleString("en-US", {
@@ -40,7 +41,7 @@ export default async function GroupDiscussionsPage() {
         </p>
       </div>
 
-      <div className="divide-y divide-line-soft rounded-xl border border-line bg-surface">
+      <AngularBorder color="var(--line)" className="divide-y divide-line-soft bg-surface">
         {sessions.map((session) => (
           <div key={session.id} className="flex items-center justify-between gap-3 px-5 py-4">
             <div>
@@ -54,13 +55,13 @@ export default async function GroupDiscussionsPage() {
             </div>
             <a
               href={`/gd-room/${session.id}`}
-              className="shrink-0 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-accent-hover"
+              className="clip-btn shrink-0 bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-accent-hover"
             >
               Join
             </a>
           </div>
         ))}
-      </div>
+      </AngularBorder>
     </div>
   );
 }

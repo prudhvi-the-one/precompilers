@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import AngularBorder from "@/components/ui/AngularBorder";
 
 export default function NotifyIfCriteriaChangeButton({
   driveId,
@@ -26,13 +27,15 @@ export default function NotifyIfCriteriaChangeButton({
   }
 
   return (
-    <button
-      type="button"
-      onClick={handleClick}
-      disabled={submitting}
-      className="shrink-0 rounded-md border border-line px-3 py-1.5 text-xs font-semibold text-ink-secondary hover:bg-surface-sunk disabled:opacity-50"
-    >
-      {submitting ? "Saving…" : "Notify if criteria change"}
-    </button>
+    <AngularBorder clip="clip-btn" color="var(--line)" className="bg-surface" wrapperClassName="shrink-0">
+      <button
+        type="button"
+        onClick={handleClick}
+        disabled={submitting}
+        className="px-3 py-1.5 text-xs font-semibold text-ink-secondary hover:bg-surface-sunk disabled:opacity-50"
+      >
+        {submitting ? "Saving…" : "Notify if criteria change"}
+      </button>
+    </AngularBorder>
   );
 }

@@ -4,6 +4,7 @@ import { requireTierAccess } from "@/lib/tier";
 import { prisma } from "@/lib/prisma";
 import { meetsEntitlement } from "@/lib/entitlement";
 import StartAptitudePaperButtons from "@/components/quiz/StartAptitudePaperButtons";
+import AngularBorder from "@/components/ui/AngularBorder";
 
 export default async function AptitudePapersPage() {
   const user = await getCurrentUser();
@@ -64,10 +65,7 @@ export default async function AptitudePapersPage() {
           const best = bestByPaper.get(paper.id);
 
           return (
-            <div
-              key={paper.id}
-              className="flex items-center justify-between gap-4 rounded-xl border border-line bg-surface p-5"
-            >
+            <AngularBorder key={paper.id} color="var(--line)" className="flex items-center justify-between gap-4 bg-surface p-5">
               <div>
                 <p className="text-sm font-medium text-ink">{paper.title}</p>
                 <p className="mt-0.5 text-xs text-ink-faint">
@@ -77,11 +75,11 @@ export default async function AptitudePapersPage() {
                   <p className="mt-1 text-xs text-ink-faint">
                     Best score {best.score}%
                     {best.verified ? (
-                      <span className="ml-1.5 rounded-full bg-success-soft px-2 py-0.5 font-semibold text-success">
+                      <span className="clip-chip ml-1.5 bg-success-soft px-2 py-0.5 font-semibold text-success">
                         VERIFIED
                       </span>
                     ) : (
-                      <span className="ml-1.5 rounded-full bg-line-soft px-2 py-0.5 font-semibold text-ink-faint">
+                      <span className="clip-chip ml-1.5 bg-line-soft px-2 py-0.5 font-semibold text-ink-faint">
                         SELF-PACED
                       </span>
                     )}
@@ -93,7 +91,7 @@ export default async function AptitudePapersPage() {
               ) : (
                 <StartAptitudePaperButtons paperId={paper.id} />
               )}
-            </div>
+            </AngularBorder>
           );
         })}
       </div>

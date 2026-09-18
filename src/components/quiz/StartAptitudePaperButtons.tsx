@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import AngularBorder from "@/components/ui/AngularBorder";
 
 // Real <form> POSTs, not fetch()-then-navigate — see the route for why: a
 // JS-triggered navigation after an awaited async gap (the camera check, or
@@ -46,19 +47,21 @@ export default function StartAptitudePaperButtons({ paperId }: { paperId: string
           <button
             type="submit"
             disabled={checking}
-            className="shrink-0 cursor-pointer rounded-lg bg-indigo-600 px-3.5 py-2 text-[13px] font-semibold text-white hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-50"
+            className="clip-btn shrink-0 cursor-pointer bg-indigo-600 px-3.5 py-2 text-[13px] font-semibold text-white hover:bg-accent-hover disabled:cursor-not-allowed disabled:opacity-50"
           >
             {checking ? "Requesting camera…" : "Start proctored"}
           </button>
         </form>
         <form action={`/api/quizzes/${paperId}/start`} method="POST">
           <input type="hidden" name="proctored" value="false" />
-          <button
-            type="submit"
-            className="shrink-0 cursor-pointer rounded-lg border border-[#DDDDE7] px-3.5 py-2 text-[13px] font-semibold text-ink hover:bg-surface-sunk disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            Start practice
-          </button>
+          <AngularBorder clip="clip-btn" color="var(--line)" className="bg-surface">
+            <button
+              type="submit"
+              className="shrink-0 cursor-pointer px-3.5 py-2 text-[13px] font-semibold text-ink hover:bg-surface-sunk disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              Start practice
+            </button>
+          </AngularBorder>
         </form>
       </div>
       {error ? <p className="max-w-xs text-xs text-pillar-pink">{error}</p> : null}

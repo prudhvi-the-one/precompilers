@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import AngularBorder from "@/components/ui/AngularBorder";
 
 type Participant = { userId: string; displayName: string };
 
@@ -73,22 +74,22 @@ export default function GdRoomClient({
   const seats = Math.max(minParticipants + 1, participants.length);
 
   return (
-    <div className="flex min-h-screen flex-col bg-[#0F1020]">
-      <header className="flex items-center justify-between border-b border-[#23243D] px-6 py-3">
+    <div className="flex min-h-screen flex-col bg-surface-sunk">
+      <header className="flex items-center justify-between border-b border-line-soft px-6 py-3">
         <div className="flex items-center gap-3">
-          <span className="flex items-center gap-1.5 font-mono text-xs text-[#E4E4F0]">
-            <span className="h-2 w-2 rounded-full bg-[#EF4444]" />
+          <span className="flex items-center gap-1.5 font-mono text-xs text-ink">
+            <span className="h-2 w-2 rounded-full bg-error" />
             {ended ? "ENDED" : "IN SESSION"} ·{" "}
             {String(Math.max(0, Math.floor(elapsedMinutes))).padStart(2, "0")}:
             {String(Math.floor((Math.max(0, elapsedMinutes) % 1) * 60)).padStart(2, "0")} /{" "}
             {TOTAL_MINUTES}:00
           </span>
-          <p className="font-brand text-sm font-bold text-[#E4E4F0]">&quot;{topic}&quot;</p>
+          <p className="font-brand text-sm font-bold text-ink">&quot;{topic}&quot;</p>
         </div>
         <button
           type="button"
           onClick={() => router.push(`/prove/group-discussions/${sessionId}/rate`)}
-          className="rounded-lg bg-[#EF4444] px-4 py-2 text-sm font-semibold text-white hover:bg-[#DC2626]"
+          className="clip-btn bg-error px-4 py-2 text-sm font-semibold text-white hover:opacity-90"
         >
           Leave
         </button>
@@ -103,7 +104,7 @@ export default function GdRoomClient({
                 return (
                   <div
                     key={`empty-${i}`}
-                    className="flex aspect-[4/3] items-center justify-center rounded-xl border border-dashed border-[#33344F] text-center text-xs text-[#5C5D7A]"
+                    className="clip-panel flex aspect-[4/3] items-center justify-center border-2 border-dashed border-line text-center text-xs text-ink-faintest"
                   >
                     Seat empty
                     <br />
@@ -112,55 +113,52 @@ export default function GdRoomClient({
                 );
               }
               return (
-                <div
-                  key={p.userId}
-                  className="flex aspect-[4/3] flex-col items-center justify-center gap-2 rounded-xl border border-[#23243D] bg-[#151633]"
-                >
+                <AngularBorder key={p.userId} color="var(--line-soft)" className="flex aspect-[4/3] flex-col items-center justify-center gap-2 bg-surface">
                   <span className="flex h-14 w-14 items-center justify-center rounded-full bg-indigo-600 text-lg font-semibold text-white">
                     {p.displayName.slice(0, 2).toUpperCase()}
                   </span>
-                  <span className="text-sm text-[#E4E4F0]">{p.displayName}</span>
-                </div>
+                  <span className="text-sm text-ink">{p.displayName}</span>
+                </AngularBorder>
               );
             })}
           </div>
 
           {phase ? (
-            <div className="rounded-xl border border-[#23243D] bg-[#151633] p-4">
-              <p className="font-mono text-[10px] uppercase text-[#7A7A96]">
+            <AngularBorder color="var(--line-soft)" className="bg-surface p-4">
+              <p className="font-mono text-[10px] uppercase text-ink-faintest">
                 Phase {phase.index + 1} of {PHASES.length}
               </p>
-              <p className="mt-0.5 text-sm font-semibold text-[#E4E4F0]">{phase.label}</p>
-              <p className="mt-1 text-xs text-[#7A7A96]">
+              <p className="mt-0.5 text-sm font-semibold text-ink">{phase.label}</p>
+              <p className="mt-1 text-xs text-ink-faint">
                 2 min prep · 10 min discussion · 3 min summary. Everyone must speak
                 before anyone speaks twice.
               </p>
-              <div className="mt-2 h-1.5 rounded-full bg-[#23243D]">
+              <div className="mt-2 h-1.5 rounded-full bg-line-soft">
                 <div
-                  className="h-full rounded-full bg-indigo-500"
+                  className="h-full rounded-full bg-accent"
                   style={{
                     width: `${Math.min(100, Math.max(0, (elapsedMinutes / TOTAL_MINUTES) * 100))}%`,
                   }}
                 />
               </div>
-            </div>
+            </AngularBorder>
           ) : null}
         </div>
 
         <div className="w-[320px] shrink-0 space-y-4">
-          <div className="aspect-[4/3] overflow-hidden rounded-xl border border-[#23243D] bg-black">
+          <AngularBorder color="var(--line-soft)" className="aspect-[4/3] overflow-hidden bg-black">
             <iframe
               src={`${roomUrl}?name=${encodeURIComponent(displayName)}`}
               allow="camera; microphone; fullscreen; display-capture; autoplay"
               className="h-full w-full border-0"
             />
-          </div>
+          </AngularBorder>
 
-          <div className="rounded-xl border border-[#23243D] bg-[#151633] p-4 text-xs text-[#7A7A96]">
+          <AngularBorder color="var(--line-soft)" className="bg-surface p-4 text-xs text-ink-faint">
             Every participant rates every other participant on clarity, content and
             courtesy after the session. Ratings are anonymous; nothing else about
             the discussion is recorded.
-          </div>
+          </AngularBorder>
         </div>
       </div>
     </div>

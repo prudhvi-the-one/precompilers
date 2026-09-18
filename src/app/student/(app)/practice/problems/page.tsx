@@ -4,6 +4,7 @@ import { getCurrentUser } from "@/lib/session";
 import { requireTierAccess } from "@/lib/tier";
 import { prisma } from "@/lib/prisma";
 import CompanyFilterSelect from "@/components/practice/CompanyFilterSelect";
+import AngularBorder from "@/components/ui/AngularBorder";
 
 const FILTERS = [
   { key: "all", label: "All" },
@@ -142,18 +143,17 @@ export default async function ProblemsPage({
             if (f.key !== "all") params.set("filter", f.key);
             if (company !== "all") params.set("company", company);
             const query = params.toString();
-            return (
-              <a
-                key={f.key}
-                href={query ? `/practice/problems?${query}` : "/practice/problems"}
-                className={`rounded-full px-3.5 py-1.5 text-[13px] font-medium ${
-                  filter === f.key
-                    ? "bg-ink text-surface"
-                    : "border border-line text-ink-secondary hover:bg-surface"
-                }`}
-              >
+            const href = query ? `/practice/problems?${query}` : "/practice/problems";
+            return filter === f.key ? (
+              <a key={f.key} href={href} className="clip-chip bg-ink px-3.5 py-1.5 text-[13px] font-medium text-surface">
                 {f.label}
               </a>
+            ) : (
+              <AngularBorder key={f.key} clip="clip-chip" color="var(--line)" className="bg-surface">
+                <a href={href} className="block px-3.5 py-1.5 text-[13px] font-medium text-ink-secondary hover:bg-surface-sunk">
+                  {f.label}
+                </a>
+              </AngularBorder>
             );
           })}
           {companies.length ? (
@@ -168,58 +168,59 @@ export default async function ProblemsPage({
           const accuracy = accuracyByProblem.get(problem.id);
           const closesAt = closesAtByProblem.get(problem.id);
           return (
-            <a
-              key={problem.id}
-              href={`/practice/problems/${problem.id}`}
-              className="rounded-xl border border-line bg-surface p-4 hover:bg-surface-sunk"
-            >
-              <div className="flex items-center gap-2 text-xs">
-                <span
-                  className={`rounded-full px-2.5 py-0.5 font-mono uppercase ${DIFFICULTY_STYLE[problem.difficulty]}`}
-                >
-                  {problem.difficulty}
-                </span>
-                <span className="text-ink-faintest">{problem.category}</span>
-                {accuracy !== undefined ? (
-                  <span className="font-mono text-ink-faintest">{accuracy}% acc.</span>
+            <div key={problem.id} className="clip-panel bg-line p-[2px]">
+              <a
+                href={`/practice/problems/${problem.id}`}
+                className="clip-panel block bg-surface p-4 hover:bg-surface-sunk"
+              >
+                <div className="flex items-center gap-2 text-xs">
+                  <span
+                    className={`clip-chip px-2.5 py-0.5 font-mono uppercase ${DIFFICULTY_STYLE[problem.difficulty]}`}
+                  >
+                    {problem.difficulty}
+                  </span>
+                  <span className="text-ink-faintest">{problem.category}</span>
+                  {accuracy !== undefined ? (
+                    <span className="font-mono text-ink-faintest">{accuracy}% acc.</span>
+                  ) : null}
+                  {solved ? <span className="ml-auto text-success">✓ Solved</span> : null}
+                </div>
+                {closesAt ? (
+                  <p className="mt-1 text-[11px] text-ink-faint">
+                    Closes{" "}
+                    {closesAt.toLocaleString("en-US", {
+                      day: "numeric",
+                      month: "short",
+                      hour: "numeric",
+                      minute: "2-digit",
+                      hourCycle: "h23",
+                    })}
+                  </p>
                 ) : null}
-                {solved ? <span className="ml-auto text-success">✓ Solved</span> : null}
-              </div>
-              {closesAt ? (
-                <p className="mt-1 text-[11px] text-ink-faint">
-                  Closes{" "}
-                  {closesAt.toLocaleString("en-US", {
-                    day: "numeric",
-                    month: "short",
-                    hour: "numeric",
-                    minute: "2-digit",
-                    hourCycle: "h23",
-                  })}
-                </p>
-              ) : null}
-              <h2 className="mt-2 font-brand text-base font-bold text-ink">
-                {problem.title}
-              </h2>
-              <div className="mt-3 flex flex-wrap gap-1.5">
-                {problem.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="rounded-full bg-accent-soft px-2 py-0.5 text-[11px] font-medium text-indigo-600"
-                  >
-                    {tag}
-                  </span>
-                ))}
-                {problem.companies.map((c) => (
-                  <span
-                    key={c}
-                    className="flex items-center gap-1 rounded-full bg-line-soft px-2 py-0.5 text-[11px] font-medium text-ink-muted"
-                  >
-                    <Building2 className="h-3 w-3" strokeWidth={2} />
-                    {c}
-                  </span>
-                ))}
-              </div>
-            </a>
+                <h2 className="mt-2 font-brand text-base font-bold text-ink">
+                  {problem.title}
+                </h2>
+                <div className="mt-3 flex flex-wrap gap-1.5">
+                  {problem.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="clip-chip bg-accent-soft px-2 py-0.5 text-[11px] font-medium text-indigo-600"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                  {problem.companies.map((c) => (
+                    <span
+                      key={c}
+                      className="clip-chip flex items-center gap-1 bg-line-soft px-2 py-0.5 text-[11px] font-medium text-ink-muted"
+                    >
+                      <Building2 className="h-3 w-3" strokeWidth={2} />
+                      {c}
+                    </span>
+                  ))}
+                </div>
+              </a>
+            </div>
           );
         })}
       </div>
@@ -228,7 +229,7 @@ export default async function ProblemsPage({
         <div className="space-y-3">
           <h2 className="font-brand text-lg font-bold text-ink">LeetCode problems</h2>
           {leetCodeAccountStatus !== "ACTIVE" ? (
-            <p className="rounded-lg border border-line bg-warn-soft px-4 py-2.5 text-sm text-warn">
+            <AngularBorder color="var(--line)" className="bg-warn-soft px-4 py-2.5 text-sm text-warn">
               {leetCodeAccountStatus === "BLOCKED_OR_PRIVATE"
                 ? "We lost track of your LeetCode activity — check your submission-history privacy setting on LeetCode, then re-verify on your "
                 : "Link your LeetCode account on your "}
@@ -236,38 +237,39 @@ export default async function ProblemsPage({
                 profile
               </a>{" "}
               to get credit for these.
-            </p>
+            </AngularBorder>
           ) : null}
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {externalReleases.map((release) => (
-              <a
-                key={release.id}
-                href={`https://leetcode.com/problems/${release.externalProblemSlug}/`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="rounded-xl border border-line bg-surface p-4 hover:bg-surface-sunk"
-              >
-                <div className="flex items-center gap-2 text-xs">
-                  <span className="rounded-full bg-line-soft px-2.5 py-0.5 font-mono uppercase text-ink-muted">
-                    LeetCode
-                  </span>
-                  {release.solved ? <span className="ml-auto text-success">✓ Solved</span> : null}
-                </div>
-                <p className="mt-1 text-[11px] text-ink-faint">
-                  Closes{" "}
-                  {release.closesAt.toLocaleString("en-US", {
-                    day: "numeric",
-                    month: "short",
-                    hour: "numeric",
-                    minute: "2-digit",
-                    hourCycle: "h23",
-                  })}
-                </p>
-                <h2 className="mt-2 font-brand text-base font-bold text-ink">
-                  {release.externalProblemTitle ?? release.externalProblemSlug}
-                </h2>
-                <p className="mt-2 text-xs font-medium text-accent">Solve on LeetCode ↗</p>
-              </a>
+              <div key={release.id} className="clip-panel bg-line p-[2px]">
+                <a
+                  href={`https://leetcode.com/problems/${release.externalProblemSlug}/`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="clip-panel block bg-surface p-4 hover:bg-surface-sunk"
+                >
+                  <div className="flex items-center gap-2 text-xs">
+                    <span className="clip-chip bg-line-soft px-2.5 py-0.5 font-mono uppercase text-ink-muted">
+                      LeetCode
+                    </span>
+                    {release.solved ? <span className="ml-auto text-success">✓ Solved</span> : null}
+                  </div>
+                  <p className="mt-1 text-[11px] text-ink-faint">
+                    Closes{" "}
+                    {release.closesAt.toLocaleString("en-US", {
+                      day: "numeric",
+                      month: "short",
+                      hour: "numeric",
+                      minute: "2-digit",
+                      hourCycle: "h23",
+                    })}
+                  </p>
+                  <h2 className="mt-2 font-brand text-base font-bold text-ink">
+                    {release.externalProblemTitle ?? release.externalProblemSlug}
+                  </h2>
+                  <p className="mt-2 text-xs font-medium text-accent">Solve on LeetCode ↗</p>
+                </a>
+              </div>
             ))}
           </div>
         </div>

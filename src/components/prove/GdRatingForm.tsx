@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import AngularBorder from "@/components/ui/AngularBorder";
 
 type Peer = { userId: string; displayName: string };
 type Scores = { clarity: number; content: number; courtesy: number };
@@ -60,7 +61,7 @@ export default function GdRatingForm({
   return (
     <div className="space-y-4">
       {peers.map((p) => (
-        <div key={p.userId} className="rounded-xl border border-line bg-surface p-4">
+        <AngularBorder key={p.userId} color="var(--line)" className="bg-surface p-4">
           <p className="text-sm font-semibold text-ink">{p.displayName}</p>
           <div className="mt-2 space-y-2">
             {DIMENSIONS.map((d) => (
@@ -82,13 +83,13 @@ export default function GdRatingForm({
               </div>
             ))}
           </div>
-        </div>
+        </AngularBorder>
       ))}
       <button
         type="button"
         onClick={handleSubmit}
         disabled={!canSubmit || submitting}
-        className="w-full rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-accent-hover disabled:opacity-50"
+        className="clip-btn w-full bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-accent-hover disabled:opacity-50"
       >
         {submitting ? "Submitting…" : "Submit ratings"}
       </button>

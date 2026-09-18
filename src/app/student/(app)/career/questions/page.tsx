@@ -3,6 +3,7 @@ import { getCurrentUser } from "@/lib/session";
 import { requireTierAccess } from "@/lib/tier";
 import { prisma } from "@/lib/prisma";
 import CompanyQuestionFilterSelect from "@/components/career/CompanyQuestionFilterSelect";
+import AngularBorder from "@/components/ui/AngularBorder";
 
 const CATEGORY_FILTERS = [
   { key: "all", label: "All" },
@@ -55,18 +56,17 @@ export default async function CompanyQuestionsPage({
             if (f.key !== "all") params.set("category", f.key);
             if (company !== "all") params.set("company", company);
             const query = params.toString();
-            return (
-              <a
-                key={f.key}
-                href={query ? `/career/questions?${query}` : "/career/questions"}
-                className={`rounded-full px-3.5 py-1.5 text-[13px] font-medium ${
-                  category === f.key
-                    ? "bg-ink text-surface"
-                    : "border border-line text-ink-secondary hover:bg-surface"
-                }`}
-              >
+            const href = query ? `/career/questions?${query}` : "/career/questions";
+            return category === f.key ? (
+              <a key={f.key} href={href} className="clip-chip bg-ink px-3.5 py-1.5 text-[13px] font-medium text-surface">
                 {f.label}
               </a>
+            ) : (
+              <AngularBorder key={f.key} clip="clip-chip" color="var(--line)" className="bg-surface">
+                <a href={href} className="block px-3.5 py-1.5 text-[13px] font-medium text-ink-secondary hover:bg-surface-sunk">
+                  {f.label}
+                </a>
+              </AngularBorder>
             );
           })}
           {companies.length ? (
@@ -78,32 +78,31 @@ export default async function CompanyQuestionsPage({
       {questions.length ? (
         <div className="space-y-3">
           {questions.map((q) => (
-            <details
-              key={q.id}
-              className="group rounded-xl border border-line bg-surface open:pb-5"
-            >
-              <summary className="cursor-pointer list-none px-5 py-4 marker:content-none">
-                <span className="mr-2 inline-block text-ink-faintest transition-transform group-open:rotate-90">
-                  ›
-                </span>
-                <span className="mr-2 rounded-full bg-accent-soft px-2 py-0.5 text-[11px] font-medium text-indigo-600">
-                  {q.companyName}
-                </span>
-                <span className="mr-2 rounded-full bg-line-soft px-2 py-0.5 text-[11px] font-medium text-ink-muted">
-                  {q.category}
-                </span>
-                <span className="font-brand text-[15px] font-bold text-ink">
-                  {q.question}
-                </span>
-              </summary>
-              <p className="px-5 text-sm whitespace-pre-line text-ink-secondary">{q.guidance}</p>
-            </details>
+            <AngularBorder key={q.id} color="var(--line)">
+              <details className="group clip-panel bg-surface open:pb-5">
+                <summary className="cursor-pointer list-none px-5 py-4 marker:content-none">
+                  <span className="mr-2 inline-block text-ink-faintest transition-transform group-open:rotate-90">
+                    ›
+                  </span>
+                  <span className="clip-chip mr-2 bg-accent-soft px-2 py-0.5 text-[11px] font-medium text-indigo-600">
+                    {q.companyName}
+                  </span>
+                  <span className="clip-chip mr-2 bg-line-soft px-2 py-0.5 text-[11px] font-medium text-ink-muted">
+                    {q.category}
+                  </span>
+                  <span className="font-brand text-[15px] font-bold text-ink">
+                    {q.question}
+                  </span>
+                </summary>
+                <p className="px-5 text-sm whitespace-pre-line text-ink-secondary">{q.guidance}</p>
+              </details>
+            </AngularBorder>
           ))}
         </div>
       ) : (
-        <div className="rounded-xl border border-line bg-surface p-6 text-center text-sm text-ink-muted">
+        <AngularBorder color="var(--line)" className="bg-surface p-6 text-center text-sm text-ink-muted">
           No questions match these filters yet.
-        </div>
+        </AngularBorder>
       )}
     </div>
   );

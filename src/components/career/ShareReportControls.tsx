@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import AngularBorder from "@/components/ui/AngularBorder";
 
 export default function ShareReportControls({
   initialToken,
@@ -51,7 +52,7 @@ export default function ShareReportControls({
   }
 
   return (
-    <div className="rounded-xl border border-line bg-surface p-5">
+    <AngularBorder color="var(--line)" className="bg-surface p-5">
       <h2 className="font-brand text-base font-bold text-ink">Sharing</h2>
       <p className="mt-1 text-sm text-ink-muted">
         Anyone with the link can view a live, read-only version of this report — no login
@@ -89,7 +90,7 @@ export default function ShareReportControls({
           <button
             type="button"
             onClick={copyLink}
-            className="rounded-md bg-ink px-3 py-2 text-sm font-semibold text-surface"
+            className="clip-btn bg-ink px-3 py-2 text-sm font-semibold text-surface"
           >
             {copied ? "Copied!" : "Copy link"}
           </button>
@@ -102,7 +103,7 @@ export default function ShareReportControls({
         Your placement cell sees this report if your college holds a licence. Individual
         submissions are never shared.
       </p>
-    </div>
+    </AngularBorder>
   );
 }
 

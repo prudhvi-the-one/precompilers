@@ -4,6 +4,7 @@ import { requireTierAccess } from "@/lib/tier";
 import { prisma } from "@/lib/prisma";
 import ApplicationForm from "@/components/career/ApplicationForm";
 import ApplicationStatusSelect from "@/components/career/ApplicationStatusSelect";
+import AngularBorder from "@/components/ui/AngularBorder";
 
 const FILTERS = [
   { key: "all", label: "All" },
@@ -57,25 +58,26 @@ export default async function ApplicationsPage({
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          {FILTERS.map((f) => (
-            <a
-              key={f.key}
-              href={f.key === "all" ? "/career/applications" : `/career/applications?filter=${f.key}`}
-              className={`rounded-full px-3.5 py-1.5 text-[13px] font-medium ${
-                filter === f.key
-                  ? "bg-ink text-surface"
-                  : "border border-line text-ink-secondary hover:bg-surface"
-              }`}
-            >
-              {f.label}
-            </a>
-          ))}
+          {FILTERS.map((f) => {
+            const href = f.key === "all" ? "/career/applications" : `/career/applications?filter=${f.key}`;
+            return filter === f.key ? (
+              <a key={f.key} href={href} className="clip-chip bg-ink px-3.5 py-1.5 text-[13px] font-medium text-surface">
+                {f.label}
+              </a>
+            ) : (
+              <AngularBorder key={f.key} clip="clip-chip" color="var(--line)" className="bg-surface">
+                <a href={href} className="block px-3.5 py-1.5 text-[13px] font-medium text-ink-secondary hover:bg-surface-sunk">
+                  {f.label}
+                </a>
+              </AngularBorder>
+            );
+          })}
         </div>
       </div>
 
       <ApplicationForm />
 
-      <div className="rounded-xl border border-line bg-surface">
+      <AngularBorder color="var(--line)" className="bg-surface">
         {applications.length ? (
           <div className="divide-y divide-line-soft">
             {applications.map((application) => (
@@ -101,7 +103,7 @@ export default async function ApplicationsPage({
             No applications logged yet — use the form above or log one directly from a drive on the Career page.
           </p>
         )}
-      </div>
+      </AngularBorder>
     </div>
   );
 }

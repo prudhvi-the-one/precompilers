@@ -3,6 +3,7 @@ import { getCurrentUser } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import StartQuizButton from "@/components/quiz/StartQuizButton";
 import StartAptitudePaperButtons from "@/components/quiz/StartAptitudePaperButtons";
+import AngularBorder from "@/components/ui/AngularBorder";
 
 export default async function AttemptResultsPage({
   params,
@@ -55,16 +56,16 @@ export default async function AttemptResultsPage({
         ← {isPaper ? "Aptitude papers" : "Topic quizzes"}
       </a>
 
-      <div className="rounded-xl border border-line bg-surface p-6">
+      <AngularBorder color="var(--line)" className="bg-surface p-6">
         <div className="flex items-center gap-2">
           <p className="font-brand text-lg font-bold text-ink">{attempt.quiz.title}</p>
           {isPaper ? (
             verified ? (
-              <span className="rounded-full bg-success-soft px-2.5 py-0.5 text-xs font-semibold text-success">
+              <span className="clip-chip bg-success-soft px-2.5 py-0.5 text-xs font-semibold text-success">
                 VERIFIED
               </span>
             ) : (
-              <span className="rounded-full bg-line-soft px-2.5 py-0.5 text-xs font-semibold text-ink-faint">
+              <span className="clip-chip bg-line-soft px-2.5 py-0.5 text-xs font-semibold text-ink-faint">
                 SELF-PACED
               </span>
             )
@@ -83,10 +84,10 @@ export default async function AttemptResultsPage({
         {attempt.sectionAttempts.length > 1 ? (
           <div className="mt-4 grid grid-cols-3 gap-3">
             {attempt.sectionAttempts.map((sa) => (
-              <div key={sa.id} className="rounded-lg border border-line p-3">
+              <AngularBorder key={sa.id} color="var(--line)" className="bg-surface p-3">
                 <p className="text-xs text-ink-faint">{sa.section.name}</p>
                 <p className="mt-1 font-brand text-xl font-bold text-ink">{sa.score}%</p>
-              </div>
+              </AngularBorder>
             ))}
           </div>
         ) : null}
@@ -98,10 +99,10 @@ export default async function AttemptResultsPage({
             <StartQuizButton quizId={attempt.quizId} label="Retake quiz" />
           )}
         </div>
-      </div>
+      </AngularBorder>
 
       {sections.map((section) => (
-        <div key={section.id} className="rounded-xl border border-line bg-surface">
+        <AngularBorder key={section.id} color="var(--line)" className="bg-surface">
           <div className="border-b border-line-soft px-5 py-3.5">
             <h2 className="font-brand text-sm font-bold text-ink">{section.name}</h2>
           </div>
@@ -117,7 +118,7 @@ export default async function AttemptResultsPage({
                       className={
                         isCorrect
                           ? "mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-success-soft text-xs text-success"
-                          : "mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#FFF0F6] text-xs text-pillar-pink"
+                          : "mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-pillar-pink-soft text-xs text-pillar-pink"
                       }
                     >
                       {isCorrect ? "✓" : "✗"}
@@ -143,7 +144,7 @@ export default async function AttemptResultsPage({
               );
             })}
           </div>
-        </div>
+        </AngularBorder>
       ))}
     </div>
   );

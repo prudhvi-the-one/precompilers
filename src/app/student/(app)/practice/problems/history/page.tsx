@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/session";
 import { requireTierAccess } from "@/lib/tier";
 import { prisma } from "@/lib/prisma";
+import AngularBorder from "@/components/ui/AngularBorder";
 
 const VERDICT_STYLE: Record<string, string> = {
   ACCEPTED: "bg-success-soft text-success",
@@ -45,7 +46,7 @@ export default async function ProblemSubmissionHistoryPage() {
       </div>
 
       {submissions.length ? (
-        <div className="divide-y divide-line-soft rounded-xl border border-line bg-surface">
+        <AngularBorder color="var(--line)" className="divide-y divide-line-soft bg-surface">
           {submissions.map((submission) => (
             <a
               key={submission.id}
@@ -62,21 +63,21 @@ export default async function ProblemSubmissionHistoryPage() {
                 </p>
               </div>
               <span
-                className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${VERDICT_STYLE[submission.verdict]}`}
+                className={`clip-chip px-2.5 py-0.5 text-xs font-semibold ${VERDICT_STYLE[submission.verdict]}`}
               >
                 {submission.verdict.replaceAll("_", " ")}
               </span>
             </a>
           ))}
-        </div>
+        </AngularBorder>
       ) : (
-        <div className="rounded-xl border border-line bg-surface p-6 text-center text-sm text-ink-muted">
+        <AngularBorder color="var(--line)" className="bg-surface p-6 text-center text-sm text-ink-muted">
           No submissions yet.{" "}
           <a href="/practice/problems" className="font-semibold text-indigo-600 hover:underline">
             Solve your first problem
           </a>
           .
-        </div>
+        </AngularBorder>
       )}
     </div>
   );

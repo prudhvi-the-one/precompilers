@@ -56,7 +56,7 @@ export default function SubmitProjectForm({
         type="button"
         onClick={handleSubmit}
         disabled={submitting || !submissionUrl || description.length < 20}
-        className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-accent-hover disabled:opacity-50"
+        className="clip-btn bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-accent-hover disabled:opacity-50"
       >
         {submitting ? "Submitting…" : initialUrl ? "Update submission" : "Submit"}
       </button>
