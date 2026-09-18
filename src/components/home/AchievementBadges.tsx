@@ -1,6 +1,7 @@
+import Image from "next/image";
 import type { Achievement } from "@/lib/achievements";
+import { ACHIEVEMENT_BADGE_SRC } from "@/lib/achievements";
 import AngularBorder from "@/components/ui/AngularBorder";
-import { ACHIEVEMENT_ICONS } from "@/components/home/achievementIcons";
 
 /** The hero's compact "spotlight" row — tiered achievements only (they
  * carry real progress, which reads well at a glance). The full trophy
@@ -12,12 +13,22 @@ export default function AchievementBadges({ achievements }: { achievements: Achi
   return (
     <div className="flex flex-wrap gap-2.5">
       {tiered.map((achievement) => {
-        const Icon = ACHIEVEMENT_ICONS[achievement.icon];
         const content = (
           <div className="flex items-center gap-2 px-3 py-2">
-            <span className={achievement.earned ? "text-accent" : "text-ink-faintest"}>
-              <Icon className="h-4 w-4" strokeWidth={1.75} />
-            </span>
+            <div className="relative h-7 w-7 shrink-0">
+              <Image
+                src={ACHIEVEMENT_BADGE_SRC[achievement.key]}
+                alt=""
+                fill
+                sizes="28px"
+                className="object-contain"
+                style={
+                  achievement.earned
+                    ? undefined
+                    : { filter: "grayscale(0.85) brightness(0.85) opacity(0.6)" }
+                }
+              />
+            </div>
             <div>
               <div className={`text-xs font-semibold ${achievement.earned ? "text-accent" : "text-ink-faint"}`}>
                 {achievement.label}
