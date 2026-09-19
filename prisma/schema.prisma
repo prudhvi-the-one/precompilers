@@ -175,6 +175,7 @@ model User {
   loginEvents              LoginEvent[]
   certificates             Certificate[]
   topicProgress            TopicProgress[]
+  simulatorProgress        SimulatorProgress[]
 
   @@unique([vendorId, rollNumber])
   @@index([institutionId, role])
@@ -330,9 +331,50 @@ model Topic {
   createdAt    DateTime        @default(now())
   updatedAt    DateTime        @updatedAt
 
-  progress TopicProgress[]
+  progress          TopicProgress[]
+  simulatorProgress SimulatorProgress[]
 
   @@unique([subjectId, order])
+}
+
+// A student's progress inside one topic's bespoke Simulator — its own XP
+// economy and rank ladder (see SIMULATOR_RANKS), separate from the topic's
+// own xpReward/mastery. Only a fraction of this XP also counts toward the
+// student's real, global Level (see globalXpEarned + computeTotalXp).
+model SimulatorProgress {
+  id      String @id @default(cuid())
+  userId  String
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  topicId String
+  topic   Topic  @relation(fields: [topicId], references: [id], onDelete: Cascade)
+
+  simulatorXp          Int @default(0)
+  globalXpEarned       Int @default(0)
+  currentCorrectStreak Int @default(0)
+
+  questFirstStepsAt             DateTime?
+  questAllOperationsAttemptedAt DateTime?
+  questStreakAt                 DateTime?
+  questAllMasteredAt            DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  operations SimulatorOperationProgress[]
+
+  @@unique([userId, topicId])
+}
+
+model SimulatorOperationProgress {
+  id         String            @id @default(cuid())
+  progressId String
+  progress   SimulatorProgress @relation(fields: [progressId], references: [id], onDelete: Cascade)
+  operation  String
+  attempts   Int               @default(0)
+  correct    Int               @default(0)
+  masteredAt DateTime?
+
+  @@unique([progressId, operation])
 }
 
 model TopicProgress {

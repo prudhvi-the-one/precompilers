@@ -39,9 +39,12 @@ async function ensureTopicProgressSynced(userId: string, topic: Topic): Promise<
   });
   if (!passedAttempt) return;
 
+  // increment (not overwrite): a TopicProgress row can already carry
+  // xpEarned from simulator-XP trickle (see SimulatorProgress.globalXpEarned)
+  // before the topic is ever completed — this must add to that, not clobber it.
   await prisma.topicProgress.upsert({
     where: { userId_topicId: { userId, topicId: topic.id } },
-    update: { completedAt: new Date(), xpEarned: topic.xpReward },
+    update: { completedAt: new Date(), xpEarned: { increment: topic.xpReward } },
     create: { userId, topicId: topic.id, completedAt: new Date(), xpEarned: topic.xpReward },
   });
 }
@@ -86,11 +89,22 @@ export async function computeSubjectPath(userId: string, subjectId: string): Pro
 }
 
 export async function computeTotalXp(userId: string): Promise<number> {
-  const rows = await prisma.topicProgress.findMany({
-    where: { userId, completedAt: { not: null } },
-    select: { xpEarned: true },
-  });
-  return rows.reduce((sum, r) => sum + r.xpEarned, 0);
+  const [topicRows, simulatorRows] = await Promise.all([
+    prisma.topicProgress.findMany({
+      where: { userId, completedAt: { not: null } },
+      select: { xpEarned: true },
+    }),
+    // A small, always-counted trickle from simulator activity (see
+    // SimulatorProgress.globalXpEarned) — independent of whether the
+    // topic itself has been mastered yet, unlike topic xpReward above.
+    prisma.simulatorProgress.findMany({
+      where: { userId },
+      select: { globalXpEarned: true },
+    }),
+  ]);
+  const topicXp = topicRows.reduce((sum, r) => sum + r.xpEarned, 0);
+  const simulatorXp = simulatorRows.reduce((sum, r) => sum + r.globalXpEarned, 0);
+  return topicXp + simulatorXp;
 }
 
 export function levelForXp(xp: number): number {
