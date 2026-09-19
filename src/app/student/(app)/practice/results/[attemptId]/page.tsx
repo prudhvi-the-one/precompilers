@@ -138,6 +138,11 @@ export default async function AttemptResultsPage({
                           Correct answer: {correctOption.label}. {correctOption.text}
                         </p>
                       ) : null}
+                      {question.explanation ? (
+                        <p className="mt-2 rounded-md bg-line-soft px-3 py-2 text-xs text-ink-secondary">
+                          {question.explanation}
+                        </p>
+                      ) : null}
                     </div>
                   </div>
                 </div>

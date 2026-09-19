@@ -35,6 +35,9 @@ const COLUMN_ALIASES: Record<string, string> = {
   correctoption: "correctOption",
   "correct option": "correctOption",
   correct: "correctOption",
+  explanation: "explanation",
+  questionexplanation: "explanation",
+  "question explanation": "explanation",
 };
 
 type RowResult = { row: number; identifier: string; reason: string };
@@ -86,6 +89,7 @@ export async function POST(request: Request) {
             text: row.questionText ?? "",
             marks: Number.parseInt(row.questionMarks ?? "", 10),
             order: qIndex,
+            explanation: row.explanation ?? "",
             options: (["A", "B", "C", "D"] as const).map((label) => ({
               label,
               text: row[`option${label}`] ?? "",
@@ -139,6 +143,7 @@ export async function POST(request: Request) {
                   text: question.text,
                   marks: question.marks,
                   order: question.order,
+                  explanation: question.explanation,
                   options: {
                     create: question.options.map((option) => ({
                       label: option.label,
