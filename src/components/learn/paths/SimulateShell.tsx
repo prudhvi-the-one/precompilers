@@ -2,7 +2,7 @@
 
 import { useState, type ReactNode } from "react";
 
-type SimTab = "simulator" | "challenges" | "progress";
+export type SimTab = "simulator" | "challenges" | "progress";
 
 const TABS: { key: SimTab; label: string }[] = [
   { key: "simulator", label: "Simulator" },
@@ -15,16 +15,31 @@ const TABS: { key: SimTab; label: string }[] = [
 // custom Simulator, auto-generated Challenges built from that same engine,
 // and per-operation Progress. None of these are gated by the Quiz — they
 // stay separate from topic mastery.
+//
+// `activeTab`/`onActiveTabChange` are optional so this stays usable by any
+// topic with no external control (self-managed tab state) — Arrays uses
+// them so a "Try in Simulator" click from Challenges can switch this shell
+// to the Simulator tab from the outside.
 export default function SimulateShell({
   simulatorContent,
   challengesContent,
   progressContent,
+  activeTab,
+  onActiveTabChange,
 }: {
   simulatorContent: ReactNode;
   challengesContent: ReactNode;
   progressContent: ReactNode;
+  activeTab?: SimTab;
+  onActiveTabChange?: (tab: SimTab) => void;
 }) {
-  const [tab, setTab] = useState<SimTab>("simulator");
+  const [internalTab, setInternalTab] = useState<SimTab>("simulator");
+  const tab = activeTab ?? internalTab;
+
+  function selectTab(next: SimTab) {
+    setInternalTab(next);
+    onActiveTabChange?.(next);
+  }
 
   const content =
     tab === "simulator" ? simulatorContent : tab === "challenges" ? challengesContent : progressContent;
@@ -36,7 +51,7 @@ export default function SimulateShell({
           <button
             key={t.key}
             type="button"
-            onClick={() => setTab(t.key)}
+            onClick={() => selectTab(t.key)}
             className={`rounded-lg border px-4 py-2 font-brand text-[12.5px] font-bold ${
               tab === t.key
                 ? "border-accent bg-accent-soft text-accent"

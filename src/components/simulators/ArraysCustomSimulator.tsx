@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import SimulatorControls from "@/components/simulators/SimulatorControls";
+import { useArraysSimulator } from "@/components/simulators/ArraysSimulatorContext";
 import {
   DEFAULT_ARRAY,
   MAX_ARRAY_LENGTH,
@@ -31,21 +32,30 @@ function cellClass(cell: number | null, index: number, marks: ArrayOpStep["marks
   return "bg-line-soft text-ink";
 }
 
+function stepsFor(op: ArrayOp, arr: number[], index: number | null, value: number) {
+  if (op === "insert") return generateInsertSteps(arr, index, value);
+  if (op === "delete") return generateDeleteSteps(arr, index);
+  if (op === "search") return generateSearchSteps(arr, value);
+  return generateTraverseSteps(arr);
+}
+
+// The parent (ArraysSimulateShell) remounts this component with a fresh
+// `key` on every new replay request, so a pending replay is only ever read
+// here as an INITIAL value (lazy useState initializers) — never copied in
+// via an effect, which would just be re-deriving state from a prop change.
 export default function ArraysCustomSimulator() {
-  const [arr, setArr] = useState<number[]>(DEFAULT_ARRAY);
-  const [loadInput, setLoadInput] = useState(DEFAULT_ARRAY.join(", "));
-  const [op, setOp] = useState<ArrayOp>("insert");
-  const [valueInput, setValueInput] = useState("4");
-  const [indexInput, setIndexInput] = useState("2");
-  const [steps, setSteps] = useState<ArrayOpStep[] | null>(null);
+  const { replay } = useArraysSimulator();
+  const [arr, setArr] = useState<number[]>(() => replay?.arr ?? DEFAULT_ARRAY);
+  const [loadInput, setLoadInput] = useState(() => (replay?.arr ?? DEFAULT_ARRAY).join(", "));
+  const [op, setOp] = useState<ArrayOp>(() => replay?.op ?? "insert");
+  const [valueInput, setValueInput] = useState(() => (replay?.value !== undefined ? String(replay.value) : "4"));
+  const [indexInput, setIndexInput] = useState(() => (replay?.index !== undefined ? String(replay.index) : "2"));
+  const [steps, setSteps] = useState<ArrayOpStep[] | null>(() =>
+    replay ? stepsFor(replay.op, replay.arr, replay.index ?? null, replay.value ?? 0).steps : null
+  );
   const [stepIndex, setStepIndex] = useState(0);
   const [playing, setPlaying] = useState(false);
-  const [opCounts, setOpCounts] = useState<Record<ArrayOp, number>>({
-    insert: 0,
-    delete: 0,
-    search: 0,
-    traverse: 0,
-  });
+  const [replayBanner, setReplayBanner] = useState(() => Boolean(replay));
 
   const clearSteps = () => {
     setSteps(null);
@@ -57,23 +67,11 @@ export default function ArraysCustomSimulator() {
     const parsedIndex = indexInput.trim() === "" ? null : Number.parseInt(indexInput, 10);
     const parsedValue = Number.parseInt(valueInput, 10) || 0;
     const safeIndex = parsedIndex !== null && !Number.isNaN(parsedIndex) ? parsedIndex : null;
-
-    let result;
-    if (op === "insert") {
-      result = generateInsertSteps(arr, safeIndex, parsedValue);
-    } else if (op === "delete") {
-      result = generateDeleteSteps(arr, safeIndex);
-    } else if (op === "search") {
-      result = generateSearchSteps(arr, parsedValue);
-    } else {
-      result = generateTraverseSteps(arr);
-    }
-
+    const result = stepsFor(op, arr, safeIndex, parsedValue);
     setSteps(result.steps);
     setStepIndex(0);
     setPlaying(false);
     setArr(result.finalArr);
-    setOpCounts((prev) => ({ ...prev, [op]: prev[op] + 1 }));
   }
 
   function loadArray() {
@@ -84,12 +82,14 @@ export default function ArraysCustomSimulator() {
       .slice(0, MAX_ARRAY_LENGTH);
     setArr(parsed.length ? parsed : [0]);
     clearSteps();
+    setReplayBanner(false);
   }
 
   function resetArray() {
     setArr(DEFAULT_ARRAY);
     setLoadInput(DEFAULT_ARRAY.join(", "));
     clearSteps();
+    setReplayBanner(false);
   }
 
   const current = steps ? steps[stepIndex] : null;
@@ -99,10 +99,18 @@ export default function ArraysCustomSimulator() {
   const complexity = complexityFor(op, arr.length, Number.isNaN(parsedIndexForBadge ?? NaN) ? null : parsedIndexForBadge);
   const showValueField = op === "insert" || op === "search";
   const showIndexField = op === "insert" || op === "delete";
-  const maxCount = Math.max(1, ...OPS.map((o) => opCounts[o.key]));
 
   return (
     <div className="space-y-4">
+      {replayBanner ? (
+        <div className="flex items-center justify-between rounded-lg border border-accent/40 bg-accent-soft px-3.5 py-2.5 text-[12.5px] text-accent">
+          <span>Replaying the exact scenario from that Challenge — step through it below.</span>
+          <button type="button" onClick={() => setReplayBanner(false)} className="text-ink-faintest hover:text-ink-secondary">
+            ✕
+          </button>
+        </div>
+      ) : null}
+
       <div className="rounded-xl border border-line bg-surface p-4">
         <div className="mb-3 flex items-center justify-between">
           <span className="text-sm font-semibold text-ink">Array (base address {formatAddress(0)})</span>
@@ -194,7 +202,10 @@ export default function ArraysCustomSimulator() {
           ) : null}
           <button
             type="button"
-            onClick={runOp}
+            onClick={() => {
+              runOp();
+              setReplayBanner(false);
+            }}
             className="rounded-lg bg-accent px-4.5 py-2.5 text-[12.5px] font-semibold text-surface hover:bg-accent-hover"
           >
             Run {OPS.find((o) => o.key === op)?.label}
@@ -220,27 +231,6 @@ export default function ArraysCustomSimulator() {
           </button>
           <span className="text-[11px] text-ink-faint">comma-separated, up to {MAX_ARRAY_LENGTH} values</span>
         </div>
-      </div>
-
-      <div className="rounded-xl border border-line bg-surface p-4">
-        <div className="mb-2.5 text-[12.5px] font-semibold text-ink">Operation mastery (this session)</div>
-        <div className="flex flex-col gap-2.5">
-          {OPS.map((o) => (
-            <div key={o.key} className="flex items-center gap-3">
-              <span className="w-16 shrink-0 text-[11.5px] text-ink-secondary">{o.label}</span>
-              <div className="h-1.5 flex-grow overflow-hidden rounded-full bg-line-soft">
-                <div
-                  className="h-full rounded-full bg-accent transition-all"
-                  style={{ width: `${Math.round((opCounts[o.key] / maxCount) * 100)}%` }}
-                />
-              </div>
-              <span className="w-7 shrink-0 text-right font-mono text-[11px] text-ink-faint">{opCounts[o.key]}</span>
-            </div>
-          ))}
-        </div>
-        <p className="mt-2 text-[10.5px] text-ink-faintest">
-          Counts how many times you&apos;ve run each op this session — the real Progress tab (per-topic, persisted) is still on the roadmap.
-        </p>
       </div>
     </div>
   );

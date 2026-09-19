@@ -7,11 +7,16 @@ import { computeSubjectPath, markTopicStarted } from "@/lib/skillTree";
 import { DIFFICULTY_STYLE, DIFFICULTY_LABEL, estimatedMinutesFor } from "@/lib/topicDisplay";
 import { LEARN_CONTENT_REGISTRY } from "@/lib/learnContent/registry";
 import { SIMULATOR_REGISTRY } from "@/lib/simulators/registry";
+import { SIMULATOR_PROGRESS_CONTENT, rankForXp } from "@/lib/simulators/progressConfig";
 import { ArrayCellsIcon, AnalogyIcon, ProductionIcon, ConceptsIcon, CurriculumIcon, LaunchIcon } from "@/components/learn/paths/icons";
 import CyberScope from "@/components/learn/paths/CyberScope";
 import SimulateShell from "@/components/learn/paths/SimulateShell";
 import ComingNextPanel from "@/components/learn/paths/ComingNextPanel";
 import StartQuizButton from "@/components/quiz/StartQuizButton";
+import { ArraysSimulatorProvider, type ArraysProgressState } from "@/components/simulators/ArraysSimulatorContext";
+import ArraysSimulateShell from "@/components/simulators/ArraysSimulateShell";
+import ArraysChallenges from "@/components/simulators/ArraysChallenges";
+import ArraysProgress from "@/components/simulators/ArraysProgress";
 import TopicStepView from "./TopicStepView";
 import LaunchSimulatorButton from "./LaunchSimulatorButton";
 
@@ -47,6 +52,34 @@ export default async function TopicPage({
   const learn = LEARN_CONTENT_REGISTRY[topic.slug];
   const HeaderIcon = learn?.headerIcon ?? ArrayCellsIcon;
   const estMinutes = estimatedMinutesFor(topic.xpReward);
+
+  const progressContentDef = topic.simulatorKey ? SIMULATOR_PROGRESS_CONTENT[topic.simulatorKey] : undefined;
+  let initialProgress: ArraysProgressState | null = null;
+  if (progressContentDef && !locked) {
+    const saved = await prisma.simulatorProgress.findUnique({
+      where: { userId_topicId: { userId: user.id, topicId: topic.id } },
+      include: { operations: true },
+    });
+    const operations: ArraysProgressState["operations"] = {};
+    for (const op of progressContentDef.operations) {
+      const row = saved?.operations.find((o) => o.operation === op);
+      operations[op] = { attempts: row?.attempts ?? 0, correct: row?.correct ?? 0, mastered: Boolean(row?.masteredAt) };
+    }
+    const simulatorXp = saved?.simulatorXp ?? 0;
+    initialProgress = {
+      simulatorXp,
+      globalXpEarned: saved?.globalXpEarned ?? 0,
+      currentCorrectStreak: saved?.currentCorrectStreak ?? 0,
+      operations,
+      quests: {
+        firstSteps: Boolean(saved?.questFirstStepsAt),
+        allOperationsAttempted: Boolean(saved?.questAllOperationsAttemptedAt),
+        streak: Boolean(saved?.questStreakAt),
+        allMastered: Boolean(saved?.questAllMasteredAt),
+      },
+      rank: rankForXp(topic.simulatorKey as string, simulatorXp).name,
+    };
+  }
 
   return (
     <CyberScope>
@@ -193,34 +226,44 @@ export default async function TopicPage({
             </div>
           }
           simulateContent={
-            <SimulateShell
-              simulatorContent={
-                SimulatorComponent ? (
-                  createElement(SimulatorComponent)
-                ) : (
+            initialProgress ? (
+              <ArraysSimulatorProvider topicId={topic.id} initialProgress={initialProgress}>
+                <ArraysSimulateShell
+                  simulatorContent={SimulatorComponent ? createElement(SimulatorComponent) : null}
+                  challengesContent={<ArraysChallenges />}
+                  progressContent={<ArraysProgress />}
+                />
+              </ArraysSimulatorProvider>
+            ) : (
+              <SimulateShell
+                simulatorContent={
+                  SimulatorComponent ? (
+                    createElement(SimulatorComponent)
+                  ) : (
+                    <ComingNextPanel
+                      icon={<ProductionIcon className="h-9 w-9 text-cyan-300" />}
+                      title="Custom Simulator — built next"
+                      description="Build your own array, step through push, pop, insert, delete and search, and watch memory addresses update live as you go."
+                    />
+                  )
+                }
+                challengesContent={
                   <ComingNextPanel
-                    icon={<ProductionIcon className="h-9 w-9 text-cyan-300" />}
-                    title="Custom Simulator — built next"
-                    description="Build your own array, step through push, pop, insert, delete and search, and watch memory addresses update live as you go."
+                    icon={<CurriculumIcon className="h-9 w-9 text-warn" />}
+                    title="Challenges — built next"
+                    description="Procedural practice questions generated from this same simulator's engine — unlimited retries. Answer one wrong and you drop straight back into the simulator with that exact data, to see where it broke."
+                    note="Not the same as the Quiz step — Challenges don't gate mastery or grant bonus XP."
                   />
-                )
-              }
-              challengesContent={
-                <ComingNextPanel
-                  icon={<CurriculumIcon className="h-9 w-9 text-warn" />}
-                  title="Challenges — built next"
-                  description="Procedural practice questions generated from this same simulator's engine — unlimited retries. Answer one wrong and you drop straight back into the simulator with that exact data, to see where it broke."
-                  note="Not the same as the Quiz step — Challenges don't gate mastery or grant bonus XP."
-                />
-              }
-              progressContent={
-                <ComingNextPanel
-                  icon={<ConceptsIcon className="h-9 w-9 text-accent" />}
-                  title="Operation Mastery — built next"
-                  description="Per-operation mastery, achievements and levels earned inside this topic's simulator — scoped to this topic, separate from your overall subject progress on the Path map."
-                />
-              }
-            />
+                }
+                progressContent={
+                  <ComingNextPanel
+                    icon={<ConceptsIcon className="h-9 w-9 text-accent" />}
+                    title="Operation Mastery — built next"
+                    description="Per-operation mastery, achievements and levels earned inside this topic's simulator — scoped to this topic, separate from your overall subject progress on the Path map."
+                  />
+                }
+              />
+            )
           }
           quizContent={
             topic.linkedQuizId ? (

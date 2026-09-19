@@ -22,12 +22,18 @@ export const ACHIEVEMENT_BADGE_SRC: Record<string, string> = {
   "perfect-quiz": "/rank-hud/achievements/perfect-quiz.png",
   "all-rounder": "/rank-hud/achievements/all-rounder.png",
   top3: "/rank-hud/achievements/top3.png",
+  "array-master": "/rank-hud/achievements/array-master.png",
+  "simulator-ops-mastered": "/rank-hud/achievements/simulator-ops-mastered.png",
 };
 
 const STREAK_TIERS = [7, 30, 100];
 const PROBLEM_TIERS = [10, 50, 100];
 const QUIZ_TIERS = [10, 50];
 const LIVE_CLASS_TIERS = [1, 5, 20];
+// Counts mastered operations across every topic's Simulator, not just
+// Arrays — the only one that exists today, but this tier list doesn't
+// assume that stays true.
+const SIMULATOR_OPS_TIERS = [1, 4, 10];
 
 function pickTier(value: number, tiers: number[]) {
   const earnedTier = tiers.filter((t) => value >= t).at(-1) ?? null;
@@ -79,6 +85,7 @@ export async function computeAchievements(
     projectCount,
     mockInterviewCount,
     perfectQuizCount,
+    simulatorProgress,
   ] = await Promise.all([
     prisma.submission
       .findMany({
@@ -92,7 +99,14 @@ export async function computeAchievements(
     prisma.projectSubmission.count({ where: { userId } }),
     prisma.mentorSession.count({ where: { studentId: userId, kind: "MOCK", status: "COMPLETED" } }),
     prisma.quizAttempt.count({ where: { userId, score: 100 } }),
+    prisma.simulatorProgress.findMany({ where: { userId }, include: { operations: true } }),
   ]);
+
+  const operationsMastered = simulatorProgress.reduce(
+    (sum, p) => sum + p.operations.filter((o) => o.masteredAt).length,
+    0
+  );
+  const arrayMasterEarned = simulatorProgress.some((p) => p.questAllMasteredAt !== null);
 
   const allRounder =
     ctx.pillars.length > 0 && ctx.pillars.every((p) => (p.value ?? 0) >= 50);
@@ -109,5 +123,12 @@ export async function computeAchievements(
     buildMilestone("perfect-quiz", perfectQuizCount > 0, "Perfect Score", "Score 100% on any quiz"),
     buildMilestone("all-rounder", allRounder, "All-Rounder", "Get all 6 pillars to 50+"),
     buildMilestone("top3", top3, "Top 3 in Batch", "Finish top 3 in your batch"),
+    buildTiered("simulator-ops-mastered", operationsMastered, SIMULATOR_OPS_TIERS, (n) => `${n} Operations Mastered`),
+    buildMilestone(
+      "array-master",
+      arrayMasterEarned,
+      "Array Master",
+      "Master all 4 operations in the Arrays simulator"
+    ),
   ];
 }
